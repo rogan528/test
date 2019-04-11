@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Main1Activity">
+
+    <FrameLayout
+        android:id="@+id/pptLayout"
+        android:layout_width="100dp"
+        android:layout_height="100dp">
+    </FrameLayout>
+    <com.zhangbin.paint.DragVideoView
+        android:id="@+id/videoView"
+        android:layout_width="180dp"
+        android:layout_height="85dp"
+        android:layout_gravity="right|bottom"
+        android:clickable="false"
+        android:longClickable="false" />
+    <com.zhangbin.paint.DragTextView
+        android:id="@+id/textView"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="200dp"
+        android:clickable="false"
+        android:gravity="center"
+        android:longClickable="false"
+        android:text="基础作业! \n 三年级!" />
+
+    <Button
+        android:id="@+id/jx_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="20dp"
+        android:text="解析" />
+    <Button
+        android:id="@+id/undo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginLeft="90dp"
+        android:text="撤销" />
+    <Button
+        android:id="@+id/redo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginRight="150dp"
+        android:text="恢复" />
+    <Button
+        android:id="@+id/clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="150dp"
+
+        android:text="清空" />
+
+</FrameLayout>
