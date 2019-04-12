@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.zhangbin.paint.video.shape.BaseDraw;
@@ -32,17 +31,11 @@ public class DrawLayerView
      */
     private boolean isDrawAll = false;
     private float scaleRatio = 1.0F;
-    private float cmdScaleRatio = 0.625F;
-    private float cmdPPTRatio = 0.625F;
     private Paint paint;
-    private int undoDrawableSize = 0;
-    private int redoDrawableSize = 0;
     private Paint.Style style = Paint.Style.STROKE;
     private int drawType = 0;
     private List<BaseDraw> fabricViewDataList = new CopyOnWriteArrayList();
     private List<BaseDraw> undoDrawableList = new CopyOnWriteArrayList();
-    private List<List<BaseDraw>> q = new CopyOnWriteArrayList();
-    private List<List<BaseDraw>> r = new CopyOnWriteArrayList();
     private List<BaseDraw> redoDrawableList = new CopyOnWriteArrayList();
     private ListInter t;
     private int layerId = 0;
@@ -88,18 +81,11 @@ public class DrawLayerView
         }
 
         if (this.t != null) {
-            if (this.undoDrawableList.size() - this.undoDrawableSize > 0) {
-                this.t.a(this.fabricViewDataList, this.undoDrawableList, this.redoDrawableList, this.q, (BaseDraw) this.undoDrawableList.get(this.undoDrawableList.size() - 1));
-            } else if (this.redoDrawableList.size() - this.redoDrawableSize > 0) {
-                this.t.a(this.fabricViewDataList, this.undoDrawableList, this.redoDrawableList, this.q, (BaseDraw) this.redoDrawableList.get(this.redoDrawableList.size() - 1));
-            } else if (this.isDrawAll) {
-                this.t.a(this.fabricViewDataList, this.undoDrawableList, this.redoDrawableList, this.q, null);
+
+            if (this.isDrawAll) {
+                this.t.a(this.fabricViewDataList, this.undoDrawableList, this.redoDrawableList, null);
                 this.isDrawAll = false;
             }
-            this.undoDrawableSize = this.undoDrawableList.size();
-            this.redoDrawableSize = this.redoDrawableList.size();
-            Log.i("列表undo", this.undoDrawableSize + "");
-            Log.i("列表redo", this.redoDrawableSize + "");
         }
     }
 
@@ -173,11 +159,9 @@ public class DrawLayerView
     }
 
     public final void setCmdScaleRatio(float cmdScaleRatio) {
-        this.cmdScaleRatio = cmdScaleRatio;
     }
 
     public final void setCmdPPTRatio(float cmdPPTRatio) {
-        this.cmdPPTRatio = cmdPPTRatio;
     }
 
 
@@ -262,9 +246,9 @@ public class DrawLayerView
 //            }
         }
     }
+
     /**
      * 501指令,撤销
-     *
      */
     public void undo() {
         int size = undoDrawableList.size();
@@ -274,6 +258,7 @@ public class DrawLayerView
             this.fabricViewDataList.clear();
             redoDrawableList.add(undoDrawableList.get(size - 1));
             undoDrawableList.remove(size - 1);
+            isDrawAll = true;
             redrawOnBitmap();
         }
     }
@@ -281,19 +266,21 @@ public class DrawLayerView
     /**
      * 502指令,恢复
      */
-    public void redo(){
+    public void redo() {
         int size = redoDrawableList.size();
         if (size == 0) {
             return;
         } else {
             undoDrawableList.add(redoDrawableList.get(size - 1));
             redoDrawableList.remove(size - 1);
+            isDrawAll = true;
             redrawOnBitmap();
         }
     }
+
     //将剩下的path重绘
     private void redrawOnBitmap() {
-        Iterator<BaseDraw> iterator =undoDrawableList .iterator();
+        Iterator<BaseDraw> iterator = undoDrawableList.iterator();
         while (iterator.hasNext()) {
             BaseDraw localDraw = (BaseDraw) iterator.next();
             if (localDraw == null) {
@@ -305,12 +292,9 @@ public class DrawLayerView
     }
 
     public final void DrawLayerView() {
-        this.isDrawAll = true;
         this.undoDrawableList.clear();
         this.fabricViewDataList.clear();
-        this.r.clear();
         this.redoDrawableList.clear();
-        this.q.clear();
         invalidate();
     }
 

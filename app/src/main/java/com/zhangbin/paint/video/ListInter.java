@@ -11,5 +11,5 @@ import java.util.List;
  * @Date 2019/3/28 下午4:33
  */
 public interface ListInter {
-    public void a(List<BaseDraw> paramList1, List<BaseDraw> paramList2, List<BaseDraw> paramList3, List<List<BaseDraw>> paramList, BaseDraw paramf);
+    public void a(List<BaseDraw> fabricViewDataList, List<BaseDraw> paramList2, List<BaseDraw> paramList3, BaseDraw paramf);
 }

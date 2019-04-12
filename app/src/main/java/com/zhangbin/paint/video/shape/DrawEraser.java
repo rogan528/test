@@ -9,7 +9,7 @@ import com.zhangbin.paint.util.OperationUtils;
 
 public class DrawEraser extends DrawBrush {
     public DrawEraser() {
-        setDrawType(8);
+        setDrawType(0);
     }
 
     public final void draw(Canvas canvas) {

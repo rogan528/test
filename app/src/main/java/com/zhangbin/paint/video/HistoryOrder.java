@@ -2,7 +2,6 @@ package com.zhangbin.paint.video;
 
 import android.support.v4.util.SparseArrayCompat;
 
-
 import com.zhangbin.paint.video.shape.BaseDraw;
 
 import java.util.Iterator;
@@ -27,34 +26,49 @@ public final class HistoryOrder {
         return true;
     }
 
+    public final boolean getDrawB(int pageIndex, BaseDraw baseDraw) {
+        CopyOnWriteArrayList lst = this.getDrawB(pageIndex);
+        clear(baseDraw, lst);
+        return true;
+    }
+
     public final boolean clear(int pageIndex) {
 
         CopyOnWriteArrayList arrayList = this.a.get(pageIndex);
         if (arrayList != null && arrayList.size() > 0) {
             arrayList.clear();
         }
+        CopyOnWriteArrayList arrayListb = this.b.get(pageIndex);
+        if (arrayListb != null && arrayListb.size() > 0) {
+            arrayListb.clear();
+        }
 
         return true;
 
     }
 
-    private static void clear(BaseDraw baseDraw, CopyOnWriteArrayList<BaseDraw> baseDraws) {
-        if ((baseDraw == null) || (baseDraws == null)) {
+    private static void clear(BaseDraw shapeDraw, CopyOnWriteArrayList<BaseDraw> baseDraws) {
+        if ((shapeDraw == null) || (baseDraws == null)) {
             return;
         }
+
+
         Iterator iterator = baseDraws.iterator();
         while (iterator.hasNext()) {
-            BaseDraw baseDraw1 = (BaseDraw) iterator.next();
-            if (baseDraw1.getId() != null && !"".equals(baseDraw1.getId()) && baseDraw.getId() != null && !"".equals(baseDraw.getId())) {
-                baseDraws.remove(baseDraw1);
-                break;
+            BaseDraw localBaseDraw = (BaseDraw) iterator.next();
+            if (localBaseDraw.getId() != null && !"".equals(localBaseDraw.getId())
+                    && shapeDraw.getId() != null && !"".equals(shapeDraw.getId())) {
+                if (localBaseDraw.getId().equals(shapeDraw.getId())) {
+                    baseDraws.remove(localBaseDraw);
+                    break;
+                }
             }
         }
 
-
 //        if (baseDraw.getIsShow()) {
-        baseDraws.add(baseDraw);
+        baseDraws.add(shapeDraw);
 //        }
+
     }
 
     public final CopyOnWriteArrayList<BaseDraw> getDrawA(int pageIndex) {
@@ -87,7 +101,7 @@ public final class HistoryOrder {
         this.a.clear();
     }
 
-    public final void getDrawA() {
+    public final void clearAll() {
         clear();
     }
 }

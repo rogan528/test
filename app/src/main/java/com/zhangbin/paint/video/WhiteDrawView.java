@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.zhangbin.paint.util.OperationUtils;
 import com.zhangbin.paint.video.shape.BaseDraw;
 
 import java.util.List;
@@ -67,7 +66,7 @@ public final class WhiteDrawView extends FrameLayout {
         this.frameLayout.addView(this.imageFabricView, layoutParams);
         this.frameLayout.addView(this.drawFabricView, layoutParams);
         this.addView(this.frameLayout, paramInt);
-        this.drawFabricView.setOnDrawListener(new ListInterImpl(this));
+
 
     }
 
@@ -199,14 +198,13 @@ public final class WhiteDrawView extends FrameLayout {
         }
     }
 
-    public final void init(int pageIndex, BaseDraw baseDraw) {
-        if (this.pageWhite != null) {
-            this.pageWhite.drawObjA(pageIndex, baseDraw);
-        }
-    }
+//    public final void init(int pageIndex, BaseDraw baseDraw) {
+//        if (this.pageWhite != null) {
+//            this.pageWhite.drawObjA(pageIndex, baseDraw);
+//        }
+//    }
 
     public final void drawObj(int pageIndex, BaseDraw baseDraw) {
-
 
         if (this.pageWhite != null) {
             this.pageWhite.drawObjB(pageIndex, baseDraw);
@@ -328,7 +326,8 @@ public final class WhiteDrawView extends FrameLayout {
      *
      */
     public void undo() {
-        drawFabricView.undo();
+        this.pageWhite.undo();
+
         //imageFabricView.undo();
     }
 
@@ -336,7 +335,8 @@ public final class WhiteDrawView extends FrameLayout {
      * 502指令,恢复
      */
     public void redo(){
-        drawFabricView.redo();
+        this.pageWhite.redo();
+
         //imageFabricView.redo();
     }
 
@@ -344,27 +344,7 @@ public final class WhiteDrawView extends FrameLayout {
 //    public static enum b {}
 
 
-    class ListInterImpl implements ListInter {
 
-        private WhiteDrawView whiteDrawView;
-
-        ListInterImpl(WhiteDrawView var1) {
-            this.whiteDrawView = var1;
-        }
-
-        @Override
-        public final void a(List<BaseDraw> var1, List<BaseDraw> var2, List<BaseDraw> var3, List<List<BaseDraw>> var4, BaseDraw var5) {
-
-//            if (this.whiteDrawView.g != null) {
-//                this.whiteDrawView.whiteDrawView(var1, var2, var3, var4, var5);
-//            }
-//            if (this.whiteDrawView.j != null) {
-//                var3.size();
-//                var2.size();
-//            }
-
-        }
-    }
 
 
 }
