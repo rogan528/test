@@ -237,6 +237,7 @@ public class DrawLayerView
                 if (localDraw.getId() != null && !"".equals(localDraw.getId()) && draw.getId() != null && !"".equals(draw.getId())) {
                     if (localDraw.getId().equals(draw.getId())) {
                         this.fabricViewDataList.remove(localDraw);
+
                         break;
                     }
                 }

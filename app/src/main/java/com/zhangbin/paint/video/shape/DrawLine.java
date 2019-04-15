@@ -30,6 +30,16 @@ public class DrawLine
     }
 
 
+    @Override
+    public void moveTo(float x, float y) {
+        super.moveOffset(x - this.x1, y - this.y1);
+        this.x1 = this.x1 + offsetX;
+        this.y1 = this.y1 + offsetY;
+        this.x2 = this.x2 + offsetX;
+        this.y2 = this.y2 + this.offsetY;
+    }
+
+
     public final void toLine(float x, float y) {
         this.path.lineTo(x, y);
     }
@@ -49,6 +59,7 @@ public class DrawLine
         this.y1 = orderBean.getY1();
         this.x2 = orderBean.getX2();
         this.y2 = orderBean.getY1();
+        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
         this.paint.setColor(OperationUtils.getInstance().mCurrentPenColor);
         this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
     }

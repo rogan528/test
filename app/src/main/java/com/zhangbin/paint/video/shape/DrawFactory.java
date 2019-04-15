@@ -45,11 +45,13 @@ public class DrawFactory {
             case 403:
                 var3 = new DrawText();
                 break;
+            //移动
             case 404:
-                var3 = new DrawText();
+                var3 = new DrawMove();
                 break;
-//            case 21:
-//                var3 = new DrawDotLine();
+            case 409:
+                var3 = new DrawMove();
+                break;
 
             default:
                 var3 = null;

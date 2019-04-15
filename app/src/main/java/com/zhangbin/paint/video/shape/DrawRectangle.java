@@ -20,7 +20,23 @@ public final class DrawRectangle
     }
 
     public final void draw(Canvas canvas) {
-        canvas.drawRect(this.left * this.scaleRatio, this.top * this.scaleRatio, this.right * this.scaleRatio, this.bottom * this.scaleRatio, this.paint);
+        canvas.drawRect(
+                this.left * this.scaleRatio,
+                this.top * this.scaleRatio,
+                this.right * this.scaleRatio,
+                this.bottom * this.scaleRatio, this.paint);
+
+    }
+
+
+    public void moveTo(float x, float y) {
+        super.moveOffset(x - this.left, y - this.top);
+        this.left = this.left + this.offsetX;
+        this.top = this.top + this.offsetY;
+        this.right = this.right + this.offsetX;
+        this.bottom = this.bottom + this.offsetY;
+
+
     }
 
     public final void add(float left, float top, float right, float bottom) {
@@ -45,6 +61,7 @@ public final class DrawRectangle
         this.right = orderBean.getX2();
         this.bottom = orderBean.getY2();
         this.paint.setColor(OperationUtils.getInstance().mCurrentPenColor);
+        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
         this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
 
     }

@@ -20,6 +20,11 @@ public final class DrawArrow
         setDrawType(0);
     }
 
+    @Override
+    public void moveTo(float x, float y) {
+
+    }
+
     public final void draw(Canvas canvas) {
         int var10002 = (int) (this.j * this.scaleRatio);
         int var10003 = (int) (this.k * this.scaleRatio);

@@ -6,7 +6,17 @@ import com.zhangbin.paint.beans.OrderBean;
 
 public abstract class BaseShape
         extends BaseDraw {
+
+
     public BaseShape() {
+    }
+
+
+
+    //移动
+    public void moveOffset(float offsetX, float offsetY) {
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     public BaseShape(Paint paint) {

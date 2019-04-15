@@ -8,7 +8,9 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 
 import com.zhangbin.paint.video.shape.BaseDraw;
+import com.zhangbin.paint.video.shape.DrawMove;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -97,10 +99,20 @@ public final class PageWhite {
      * @param draw
      */
     public final void drawObjB(int toPage, BaseDraw draw) {
+
         //如果初始为-1，并要进行绘画就跳到第一页
         if (this.page == -1) {
             ToPage(1);
         }
+
+        //转换移动为普通绘画
+        if (draw.getDrawType() == 10) {
+            BaseDraw d = this.converMoveTo(draw);
+            if (d != null) {
+                draw = d;
+            }
+        }
+
         if ((this.historyOrder != null) && ((this.r) || (this.q.get()))) {
             Log.i("长度类型", "a:" + draw.getDrawType());
             if (draw.getDrawType() == 0) {
@@ -121,6 +133,56 @@ public final class PageWhite {
             }
             undoDrawableList.add(draw.getDrawType());
         }
+    }
+
+
+    /**
+     * 转换移动指令为普通绘画指类
+     *
+     * @param draw
+     * @return
+     */
+    private BaseDraw converMoveTo(BaseDraw draw) {
+        if (draw == null) {
+            return null;
+        }
+        //如果初始为-1，并要进行绘画就跳到第一页
+        if (this.page == -1) {
+            return null;
+        }
+        if (this.historyOrder == null) {
+            return null;
+        }
+
+        if (!(draw instanceof DrawMove)) {
+            return null;
+        }
+
+        CopyOnWriteArrayList<BaseDraw> lst = this.historyOrder.getDrawB(this.page);
+        Iterator iterator = lst.iterator();
+        while (iterator.hasNext()) {
+            BaseDraw localBaseDraw = (BaseDraw) iterator.next();
+            if (localBaseDraw.getId() != null && !"".equals(localBaseDraw.getId())
+                    && draw.getId() != null && !"".equals(draw.getId())) {
+                if (localBaseDraw.getId().equals(draw.getId())) {
+                    DrawMove drawMove = (DrawMove) draw;
+
+                    try {
+                        BaseDraw b;
+                        b = (BaseDraw) localBaseDraw.clone();
+                        b.moveTo(drawMove.getX(), drawMove.getY());
+                        return b;
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
+
+                }
+            }
+        }
+
+        return null;
     }
 
     public final void drawObjA(int pageIndex) {
@@ -420,7 +482,7 @@ public final class PageWhite {
         }
 
         @Override
-        public final void a(List<BaseDraw> fabricViewDataList, List<BaseDraw> var2, List<BaseDraw> var3,  BaseDraw var5) {
+        public final void a(List<BaseDraw> fabricViewDataList, List<BaseDraw> var2, List<BaseDraw> var3, BaseDraw var5) {
             if (var5 == null) {
                 if (layerType == 1) {
                     CopyOnWriteArrayList lst = historyOrder.getDrawA(page);

@@ -11,7 +11,6 @@ import com.zhangbin.paint.util.OperationUtils;
  */
 public final class DrawCircle
         extends BaseShape {
-    private RectF rectF;
     private float left;
     private float top;
     private float right;
@@ -22,10 +21,22 @@ public final class DrawCircle
     }
 
     public final void draw(Canvas canvas) {
-        this.rectF = new RectF(this.left * this.scaleRatio, this.top * this.scaleRatio, this.right * this.scaleRatio, this.bottom * this.scaleRatio);
-        canvas.drawOval(this.rectF, this.paint);
+        RectF rectF = new RectF(this.left * this.scaleRatio,
+                this.top * this.scaleRatio,
+                this.right * this.scaleRatio,
+                this.bottom * this.scaleRatio);
+        canvas.drawOval(rectF, this.paint);
     }
 
+    @Override
+    public void moveTo(float x, float y) {
+
+        super.moveOffset(x - this.left, y - this.top);
+        this.left = this.left + this.offsetX;
+        this.top = this.top + this.offsetY;
+        this.right = this.right + this.offsetX;
+        this.bottom = this.bottom + this.offsetY;
+    }
 
     public final void add(float left, float top, float right, float bottom) {
         this.left = left;
@@ -48,6 +59,7 @@ public final class DrawCircle
         this.top = orderBean.getY1();
         this.right = orderBean.getX2();
         this.bottom = orderBean.getY2();
+        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
         this.paint.setColor(OperationUtils.getInstance().mCurrentPenColor);
         this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
     }

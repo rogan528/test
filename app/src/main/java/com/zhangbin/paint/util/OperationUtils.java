@@ -21,7 +21,7 @@ public class OperationUtils {
     /**
      * 当前画笔大小
      */
-    public float mCurrentPenSize = 5;
+    public float mCurrentPenSize = 2;
     /**
      * 当前橡皮擦大小
      */
@@ -29,7 +29,7 @@ public class OperationUtils {
     /**
      * 当前文字大小
      */
-    public float mCurrentTextSize = 50;
+    public float mCurrentTextSize = 25;
     /**
      * 当前文字颜色
      */

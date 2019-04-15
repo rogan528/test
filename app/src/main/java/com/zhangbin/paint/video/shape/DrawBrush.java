@@ -18,6 +18,11 @@ public class DrawBrush
         setDrawType(0);
     }
 
+    @Override
+    public void moveTo(float x, float y) {
+
+    }
+
 
     public  void draw(Canvas canvas) {
         if ((this.dataList != null) && (this.dataList.size() > 0)) {
@@ -36,7 +41,7 @@ public class DrawBrush
         this.path.lineTo(x, y);
     }
 
-    public final void moveTo(float x, float y) {
+    public final void move(float x, float y) {
         this.path.moveTo(x, y);
     }
 
@@ -48,6 +53,7 @@ public class DrawBrush
     public final void explainOrder(OrderBean orderBean) {
         super.explainOrder(orderBean);
         this.paint.setColor(OperationUtils.getInstance().mCurrentPenColor);
+        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
         this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
     }
 }

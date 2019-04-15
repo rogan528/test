@@ -111,19 +111,22 @@ public class OrderDrawManger {
                 case 406:
                 case 407:
                 case 408:
+                case 409:
                     whiteboardPresenter.addDrawData(orderBean);
                     break;
-                case 409:
-                    break;
                 case 410:
+                    whiteboardPresenter.openDraftPaper();
                     break;
                 case 411:
+                    whiteboardPresenter.closeDraftPaper();
                     break;
                 case 412:
                     break;
                 case 413:
+                    whiteboardPresenter.setBackgroundColor(this.orderBean.getValue());
                     break;
                 case 414:
+                    whiteboardPresenter.addDraftPaper();
                     break;
                 case 500:
                     whiteboardPresenter.orderClear();

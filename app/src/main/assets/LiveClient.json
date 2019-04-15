@@ -18,6 +18,19 @@
     "y1": -9,
     "y2": 11
 },{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "414"
+},{
+    "startTime": 1553151656678,
+    "type": "308",
+    "value": 30
+},{
+    "startTime": 1553151656678,
+    "type": "309",
+    "value": "#00FFFF"
+},{
     "endTime": 1553152554055,
     "startTime": 1553152553145,
     "type": "402",
@@ -26,19 +39,36 @@
     "y": 25,
     "w": 50,
     "h": 50,
-    "text": "文本输入"
+    "text": "草稿纸文字"
 },{
-    "startTime": 1553151656678,
-    "type": "309",
-    "value": "#00FFFF"
+    "currentAnimation": 1,
+    "value": 2,
+    "startTime": 1553152635217,
+    "type": "413"
 },{
-    "startTime": 1553151656678,
-    "type": "308",
-    "value": 50
+    "endTime": 1553152554055,
+    "startTime": 1553152553145,
+    "type": "403",
+    "uuid": "{b34a8ccd-5947-4ef1-879e-132c6b25f7c6}",
+    "x": -24,
+    "y": 25,
+    "w": 50,
+    "h": 50,
+    "text": "草稿纸文字编辑"
+},{
+    "endTime": 1553152554055,
+    "startTime": 1553152553145,
+    "type": "404",
+    "uuid": "{b34a8ccd-5947-4ef1-879e-132c6b25f7c6}",
+    "x": -80,
+    "y": -60,
+    "w": 50,
+    "h": 50,
+    "text": "草稿纸文字移动"
 },{
     "startTime": 1553152553145,
     "type": "305",
-    "value": 5
+    "value": 30
 },{
     "startTime": 1553152553145,
     "type": "306",
@@ -53,6 +83,11 @@
     "y1": -50,
     "y2": 160
 },{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "411"
+},{
     "endTime": 1553152554055,
     "startTime": 1553152553145,
     "type": "407",
@@ -61,6 +96,35 @@
     "x2": 250,
     "y1": -39,
     "y2": 110
+},{
+    "endTime": 1553152554055,
+    "startTime": 1553152553145,
+    "type": "402",
+    "uuid": "{b34a8ccd-5947-4ef1-879e-132c6b25f7c6}",
+    "x": -24,
+    "y": 25,
+    "w": 50,
+    "h": 50,
+    "text": "文本输入"
+},{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "410"
+},{
+  "currentAnimation": 1,
+  "endTime": 1553152636046,
+  "startTime": 1553152635217,
+  "type": "411"
+},{
+  "endTime": 1553152554055,
+  "startTime": 1553152553145,
+  "type": "407",
+  "uuid": "{b34a8ccd-8520-4fe1-87e9-132c6b25f7c6}",
+  "x1": -50,
+  "x2": 250,
+  "y1": -39,
+  "y2": 110
 },{
     "endTime": 1553152554055,
     "startTime": 1553152553145,
@@ -4608,6 +4672,11 @@
     "currentPage": 3,
     "startTime": 1553151758350,
     "type": "503"
+},{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "414"
 },{
     "currentAnimation": 1,
     "currentPage": 4,

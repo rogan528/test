@@ -8,6 +8,7 @@ package com.zhangbin.paint.video;
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -21,6 +22,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.zhangbin.paint.R;
+import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.video.shape.BaseDraw;
 
 import java.util.List;
@@ -288,6 +291,32 @@ public final class WhiteDrawView extends FrameLayout {
 //        this.j = paramb;
 //    }
 
+    /**
+     * 410 打开草稿纸
+     * @param currentPage
+     */
+    public void openDraftPaper(int currentPage) {
+        webView.setVisibility(INVISIBLE);
+        jumpPage(currentPage,1);
+    }
+
+    /**
+     * 411 关闭草稿纸
+     * @param currentPage
+     */
+    public void closeDraftPaper(int currentPage) {
+        webView.setVisibility(VISIBLE);
+        jumpPage(currentPage,1);
+    }
+
+    /**
+     * 414 增加草稿纸
+     * @param currentPage
+     */
+    public void addDraftPaper(int currentPage) {
+        webView.setVisibility(INVISIBLE);
+        this.pageWhite.ToPage(currentPage);
+    }
     public void jumpPage(int currentPage, int currentAnimation) {
 
         webView.evaluateJavascript("javascript:JumpPage(" + currentPage + "," + currentAnimation + ",1)", new ValueCallback<String>() {

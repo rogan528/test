@@ -9,7 +9,7 @@ import com.zhangbin.paint.beans.OrderBean;
 import java.util.List;
 
 //画图基类
-public abstract class BaseDraw {
+public abstract class BaseDraw implements Cloneable {
     public Paint paint;
     private int drawType;
     public String id = "";
@@ -19,6 +19,9 @@ public abstract class BaseDraw {
     public float strokeWidth;
     public List<OrderBean.DataBean> dataList;
 
+    float offsetX;
+    float offsetY;
+
     public BaseDraw() {
         this.paint = new Paint();
         this.paint.setAntiAlias(true);
@@ -27,6 +30,15 @@ public abstract class BaseDraw {
         this.paint.setStrokeCap(Paint.Cap.ROUND);
         this.paint.setColor(Color.RED);
     }
+
+    //移动
+    public void moveOffset(float offsetX, float offsetY) {
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+    }
+
+    //移动
+    public abstract void moveTo(float x, float y);
 
     public BaseDraw(Paint paint) {
         this.paint = paint;
@@ -121,5 +133,10 @@ public abstract class BaseDraw {
     public static int convertAlpha(Float alpha) {
         return (int) (alpha.floatValue() * 255.0F);
     }
-}
 
+    @Override
+    public  Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+}

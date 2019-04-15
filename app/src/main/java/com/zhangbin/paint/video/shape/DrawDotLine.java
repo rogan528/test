@@ -25,6 +25,7 @@ public final class DrawDotLine
         setDot();
     }
 
+
     private void setDot() {
 
         float f1 = (8.0F + this.strokeWidth) * this.scaleRatio;
@@ -40,6 +41,7 @@ public final class DrawDotLine
 
     public final void explainOrder(OrderBean orderBean) {
         super.explainOrder(orderBean);
+        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
         this.paint.setColor(OperationUtils.getInstance().mCurrentPenColor);
         this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
     }
