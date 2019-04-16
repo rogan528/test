@@ -47,7 +47,7 @@ public class WhiteboardPresenter {
         this.whiteDrawView = new WhiteDrawView(this.context);
         this.whiteDrawView.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         setPPTContainer(viewGroup);
-        this.whiteDrawView.init(this.indexPage, true);
+        this.whiteDrawView.init(true);
 
     }
 
@@ -180,6 +180,7 @@ public class WhiteboardPresenter {
         OperationUtils.getInstance().mCurrentTextColor = backTextColor;
         this.whiteDrawView.closeDraftPaper(backPage);
         this.indexPage = backPage;
+
     }
     /**
      * 413 草稿纸背景切换

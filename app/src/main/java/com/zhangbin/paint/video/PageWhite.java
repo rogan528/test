@@ -13,7 +13,6 @@ import com.zhangbin.paint.video.shape.DrawMove;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 白板控制类
@@ -47,21 +46,27 @@ public final class PageWhite {
     //是否是草稿纸
     private boolean isScratch = false;
     private Integer page = -1;
-    private AtomicBoolean q = new AtomicBoolean(false);
-    private boolean r = false;
+    //是否是客户端
+    private boolean isClient = false;
     private Drawable drawable = null;
 
 
+    /**
+     * 构造函数
+     *
+     * @param b             标志
+     * @param whitedrawView
+     */
     public PageWhite(boolean b, WhiteDrawView whitedrawView) {
         this.whitedrawView = whitedrawView;
         this.bFabricView = whitedrawView.getDrawFabricView();
         this.aFabricView = whitedrawView.getImageFabricView();
-        this.r = b;
+        this.isClient = b;
         this.historyOrder = new HistoryOrder();
         this.undoDrawableList = new CopyOnWriteArrayList();
         this.redoDrawableList = new CopyOnWriteArrayList();
-        this.aFabricView.setOnDrawListener(new ListInterImpl(1));
-        this.bFabricView.setOnDrawListener(new ListInterImpl(2));
+        this.aFabricView.setOnDrawListener(new CallBackImpl(1));
+        this.bFabricView.setOnDrawListener(new CallBackImpl(2));
     }
 
     public final void drawObjA(final float x) {
@@ -73,21 +78,21 @@ public final class PageWhite {
             return;
         }
 
-        this.whitedrawView.post(new RunnableScroll(this, x, y2));
+//        this.whitedrawView.post(new RunnableScroll(this, x, y2));
 
-//        this.whitedrawView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                whitedrawView.scrollTo((int) x, y2);
-//            }
-//        });
+        this.whitedrawView.post(new Runnable() {
+            @Override
+            public void run() {
+                whitedrawView.scrollTo((int) x, y2);
+            }
+        });
     }
 
     public final void drawObjA(int toPage, BaseDraw baseDraw) {
-        if ((this.historyOrder != null) && ((this.r) || (this.q.get()))) {
+        if ((this.historyOrder != null) && this.isClient) {
             this.historyOrder.clear(toPage, baseDraw);
         }
-        if ((this.page == toPage) && (!this.q.get())) {
+        if (this.page == toPage) {
             this.aFabricView.DrawLayerView(baseDraw);
         }
     }
@@ -105,6 +110,8 @@ public final class PageWhite {
             ToPage(1);
         }
 
+        Log.i("页", this.page + "");
+
         //转换移动为普通绘画
         if (draw.getDrawType() == 10) {
             BaseDraw d = this.converMoveTo(draw);
@@ -113,19 +120,19 @@ public final class PageWhite {
             }
         }
 
-        if ((this.historyOrder != null) && ((this.r) || (this.q.get()))) {
-            Log.i("长度类型", "a:" + draw.getDrawType());
+        if ((this.historyOrder != null) && (this.isClient)) {
+            Log.i("长度类型", "onDrawBack:" + draw.getDrawType());
             if (draw.getDrawType() == 0) {
                 this.historyOrder.getDrawA(toPage, draw);
             } else {
                 this.historyOrder.getDrawB(toPage, draw);
             }
 
-            Log.i("长度", "a:" + this.historyOrder.getDrawA(toPage).size() + "b:" + this.historyOrder.getDrawB(toPage).size());
+            Log.i("长度画前", "onDrawBack:" + this.historyOrder.getDrawA(toPage).size() + "b:" + this.historyOrder.getDrawB(toPage).size());
 
         }
 
-        if ((this.page == toPage) && (!this.q.get())) {
+        if (this.page == toPage) {
             if (draw.getDrawType() == 0) {
                 this.aFabricView.DrawLayerView(draw);
             } else {
@@ -133,6 +140,9 @@ public final class PageWhite {
             }
             undoDrawableList.add(draw.getDrawType());
         }
+
+
+        Log.i("长度画后", "onDrawBack:" + this.historyOrder.getDrawA(toPage).size() + "b:" + this.historyOrder.getDrawB(toPage).size());
     }
 
 
@@ -189,8 +199,8 @@ public final class PageWhite {
         if (this.historyOrder != null) {
             this.historyOrder.clear(pageIndex);
         }
-        if ((this.page == pageIndex) && (!this.q.get())) {
-            this.bFabricView.DrawLayerView();
+        if (this.page == pageIndex) {
+            this.aFabricView.DrawLayerView();
         }
     }
 
@@ -214,15 +224,16 @@ public final class PageWhite {
     public final void ToPage(int pageIndex) {
 
 
-        boolean b = (this.page != pageIndex) || (!this.r);
+        boolean b = (this.page != pageIndex) || (!this.isClient);
         this.page = pageIndex;
-        if (!this.r) {
+
+        if (!this.isClient) {
             this.historyOrder.clear(pageIndex);
             this.undoDrawableList.clear();
             this.redoDrawableList.clear();
         }
 
-        this.q.set(false);
+
         drawObjA(this.imageWidth, this.imageHeight);
         if (b) {
             drawObjB();
@@ -256,11 +267,11 @@ public final class PageWhite {
     }
 
     public final void drawObjA(CopyOnWriteArrayList<BaseDraw> drawLayerViews) {
-        this.bFabricView.setFabricViewDataList(drawLayerViews);
+        this.aFabricView.setFabricViewDataList(drawLayerViews);
     }
 
     public final void drawObjB(CopyOnWriteArrayList<BaseDraw> drawLayerViews) {
-        this.aFabricView.setFabricViewDataList(drawLayerViews);
+        this.bFabricView.setFabricViewDataList(drawLayerViews);
     }
 
     public final void drawObjA() {
@@ -471,41 +482,32 @@ public final class PageWhite {
         }
     }
 
-    class ListInterImpl implements ListInter {
+    class CallBackImpl implements CallBack {
 
         private int layerType;
 
 
-        ListInterImpl(int layerType) {
+        CallBackImpl(int layerType) {
             this.layerType = layerType;
 
         }
 
+
         @Override
-        public final void a(List<BaseDraw> fabricViewDataList, List<BaseDraw> var2, List<BaseDraw> var3, BaseDraw var5) {
-            if (var5 == null) {
+        public final void onDrawBack(List<BaseDraw> fabricViewDataList, List<BaseDraw> undoDrawableList, List<BaseDraw> redoDrawableList, BaseDraw bDraw) {
+            if (bDraw == null) {
                 if (layerType == 1) {
                     CopyOnWriteArrayList lst = historyOrder.getDrawA(page);
                     lst.clear();
                     lst.addAll(fabricViewDataList);
-                    Log.i("重写历史", 1 + "" + "当前页" + page);
                 }
 
                 if (layerType == 2) {
                     CopyOnWriteArrayList lst = historyOrder.getDrawB(page);
                     lst.clear();
                     lst.addAll(fabricViewDataList);
-                    Log.i("重写历史", 2 + "");
                 }
             }
-
-//            if (this.historyOrder1.g != null) {
-//                this.historyOrder1.historyOrder1(var1, var2, var3, var4, var5);
-//            }
-//            if (this.historyOrder1.j != null) {
-//                var3.size();
-//                var2.size();
-//            }
 
         }
     }

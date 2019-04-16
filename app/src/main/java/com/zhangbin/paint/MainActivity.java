@@ -77,8 +77,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Medi
         realHeight = screenHeight;
         orderDrawManger = new OrderDrawManger(whiteboardPresenter);
         mVideoView.setOnPreparedListener(this);
-        String input = Util.readFileFromAssets(this, "LiveClient.json");
-        //String input = Util.readFileFromAssets(this, "LiveClient2.json");
+ //       String input = Util.readFileFromAssets(this, "LiveClient.json");
+        String input = Util.readFileFromAssets(this, "LiveClient2.json");
         Gson gson = new Gson();
         listOrderBean = gson.fromJson(input, new TypeToken<ArrayList<OrderBean>>() {
         }.getType());

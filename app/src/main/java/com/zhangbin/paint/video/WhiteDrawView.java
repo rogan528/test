@@ -8,7 +8,6 @@ package com.zhangbin.paint.video;
  */
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -22,11 +21,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.zhangbin.paint.R;
-import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.video.shape.BaseDraw;
-
-import java.util.List;
 
 
 public final class WhiteDrawView extends FrameLayout {
@@ -66,8 +61,8 @@ public final class WhiteDrawView extends FrameLayout {
         initWebSetting();
         this.frameLayout.addView(this.webView, layoutParams);
         this.frameLayout.addView(this.imageView, layoutParams);
-        this.frameLayout.addView(this.imageFabricView, layoutParams);
         this.frameLayout.addView(this.drawFabricView, layoutParams);
+        this.frameLayout.addView(this.imageFabricView, layoutParams);
         this.addView(this.frameLayout, paramInt);
 
 
@@ -84,16 +79,14 @@ public final class WhiteDrawView extends FrameLayout {
 
     }
 
-    public final void init(int paramInt, boolean paramBoolean) {
-//        if (paramInt == imageFabricView.imageFabricView) {
-//            this.pageWhite = null;
-//            this.g = new com.talkfun.sdk.whiteboard.presenter.imageView.imageView(this);
-//            return;
-//        }
-//        if (paramInt == imageFabricView.imageView) {
-//            this.g = null;
-        this.pageWhite = new PageWhite(paramBoolean, this);
 
+    /**
+     * 初始化
+     *
+     * @param isClient
+     */
+    public final void init(boolean isClient) {
+        this.pageWhite = new PageWhite(isClient, this);
         //要设置原始ppt 大小以便进行缩放控制
         this.pageWhite.setWidthHeight(934, 508);
 //        }
@@ -244,26 +237,6 @@ public final class WhiteDrawView extends FrameLayout {
         }
     }
 
-//    public final void setOnLoadImageErrorListener$3489a6d9(paging.whiteDrawView parama) {
-//    }
-
-//    public final void setOnCmdSendListener(imageFabricView paramb) {
-//        this.g.imageView(paramb);
-//    }
-
-//    public final int getCurrentPage() {
-//        if (this.g == null) {
-//            return -1;
-//        }
-//        return this.g.imageFabricView();
-//    }
-
-//    public final int getTotalPage() {
-//        if (this.g == null) {
-//            return -1;
-//        }
-//        return this.g.target();
-//    }
 
     public final boolean drawObj(int pageIndex) {
         return this.pageWhite.drawObjB(pageIndex);
@@ -293,30 +266,34 @@ public final class WhiteDrawView extends FrameLayout {
 
     /**
      * 410 打开草稿纸
+     *
      * @param currentPage
      */
     public void openDraftPaper(int currentPage) {
         webView.setVisibility(INVISIBLE);
-        jumpPage(currentPage,1);
+        this.pageWhite.ToPage(currentPage);
     }
 
     /**
      * 411 关闭草稿纸
+     *
      * @param currentPage
      */
     public void closeDraftPaper(int currentPage) {
         webView.setVisibility(VISIBLE);
-        jumpPage(currentPage,1);
+        jumpPage(currentPage, 1);
     }
 
     /**
      * 414 增加草稿纸
+     *
      * @param currentPage
      */
     public void addDraftPaper(int currentPage) {
         webView.setVisibility(INVISIBLE);
         this.pageWhite.ToPage(currentPage);
     }
+
     public void jumpPage(int currentPage, int currentAnimation) {
 
         webView.evaluateJavascript("javascript:JumpPage(" + currentPage + "," + currentAnimation + ",1)", new ValueCallback<String>() {
@@ -352,28 +329,17 @@ public final class WhiteDrawView extends FrameLayout {
 
     /**
      * 501指令,撤销
-     *
      */
     public void undo() {
         this.pageWhite.undo();
-
-        //imageFabricView.undo();
     }
 
     /**
      * 502指令,恢复
      */
-    public void redo(){
+    public void redo() {
         this.pageWhite.redo();
-
-        //imageFabricView.redo();
     }
-
-
-//    public static enum b {}
-
-
-
 
 
 }

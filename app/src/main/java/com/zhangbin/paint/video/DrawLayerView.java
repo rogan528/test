@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.zhangbin.paint.video.shape.BaseDraw;
@@ -37,7 +38,7 @@ public class DrawLayerView
     private List<BaseDraw> fabricViewDataList = new CopyOnWriteArrayList();
     private List<BaseDraw> undoDrawableList = new CopyOnWriteArrayList();
     private List<BaseDraw> redoDrawableList = new CopyOnWriteArrayList();
-    private ListInter t;
+    private CallBack t;
     private int layerId = 0;
 
     /**
@@ -73,6 +74,9 @@ public class DrawLayerView
         canvas.drawColor(Color.TRANSPARENT);
         canvas.translate(getWidth() >> 1, getHeight() >> 1);
 
+
+        Log.i("长度当前画板", "onDrawBack:" + this.fabricViewDataList.size());
+
         Iterator iterator = this.fabricViewDataList.iterator();
         while (iterator.hasNext()) {
             BaseDraw next = (BaseDraw) iterator.next();
@@ -83,7 +87,7 @@ public class DrawLayerView
         if (this.t != null) {
 
             if (this.isDrawAll) {
-                this.t.a(this.fabricViewDataList, this.undoDrawableList, this.redoDrawableList, null);
+                this.t.onDrawBack(this.fabricViewDataList, this.undoDrawableList, this.redoDrawableList, null);
                 this.isDrawAll = false;
             }
         }
@@ -299,7 +303,7 @@ public class DrawLayerView
         invalidate();
     }
 
-    public final void setOnDrawListener(ListInter paramc) {
+    public final void setOnDrawListener(CallBack paramc) {
         this.t = paramc;
     }
 
