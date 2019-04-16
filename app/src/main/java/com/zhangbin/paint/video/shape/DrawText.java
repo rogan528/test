@@ -78,7 +78,8 @@ public final class DrawText
         String ss = str.substring(subIndex);
         if (ss.length() > 0) {
 //            lineBreak(canvas, ss, heigth + this.size * this.scaleRatio);
-            lineBreak(canvas, ss, heigth + this.size * this.scaleRatio);
+            //行距 为高度0.2倍
+            lineBreak(canvas, ss, heigth + this.size * this.scaleRatio + this.size * this.scaleRatio * 0.2f);
         }
     }
 
