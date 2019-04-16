@@ -117,6 +117,35 @@
   "startTime": 1553152635217,
   "type": "411"
 },{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "414"
+},{
+    "endTime": 1553152554055,
+    "startTime": 1553152553145,
+    "type": "408",
+    "uuid": "{b34a8ccd-3698-4fe1-87e9-132c6b25f7c6}",
+    "x1": -50,
+    "x2": 250,
+    "y1": -39,
+    "y2": 110
+},{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "411"
+},{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "410"
+},{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "411"
+},{
   "endTime": 1553152554055,
   "startTime": 1553152553145,
   "type": "407",
@@ -4677,6 +4706,11 @@
     "endTime": 1553152636046,
     "startTime": 1553152635217,
     "type": "414"
+},{
+    "currentAnimation": 1,
+    "endTime": 1553152636046,
+    "startTime": 1553152635217,
+    "type": "411"
 },{
     "currentAnimation": 1,
     "currentPage": 4,

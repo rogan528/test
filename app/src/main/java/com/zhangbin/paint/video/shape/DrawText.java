@@ -3,7 +3,6 @@ package com.zhangbin.paint.video.shape;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
 import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.util.OperationUtils;
@@ -62,24 +61,21 @@ public final class DrawText
     /**
      * @param canvas
      * @param str
-     * @param heigth
+     * @param height
      */
-    private void lineBreak(Canvas canvas, String str, float heigth) {
-
-        Log.i("画矩形", "高度:" + heigth + "");
+    private void lineBreak(Canvas canvas, String str, float height) {
         //计算当前宽度(width)能显示多少个汉字
         //以主心为坐标系，取宽度除以2
         int subIndex = this.paint.breakText(str, 0, str.length(), true, (canvas.getWidth() >> 1) - this.x * this.scaleRatio, null);
         //截取可以显示的汉字
         String mytext = str.substring(0, subIndex);
-        canvas.drawText(mytext, this.x * this.scaleRatio, this.y * this.scaleRatio + this.size * this.scaleRatio + heigth, this.paint);
+        canvas.drawText(mytext, this.x * this.scaleRatio, this.y * this.scaleRatio + this.size * this.scaleRatio + height, this.paint);
 
         //计算剩下的汉字
         String ss = str.substring(subIndex);
         if (ss.length() > 0) {
-//            lineBreak(canvas, ss, heigth + this.size * this.scaleRatio);
             //行距 为高度0.2倍
-            lineBreak(canvas, ss, heigth + this.size * this.scaleRatio + this.size * this.scaleRatio * 0.2f);
+            lineBreak(canvas, ss, height + this.size * this.scaleRatio + this.size * this.scaleRatio * 0.2f);
         }
     }
 

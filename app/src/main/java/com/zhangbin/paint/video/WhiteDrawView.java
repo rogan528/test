@@ -31,11 +31,11 @@ public final class WhiteDrawView extends FrameLayout {
     private EditText editText;
     private int paintColor = 16711680;
     private FrameLayout frameLayout;
-    //    private com.talkfun.sdk.whiteboard.presenter.imageView.imageView g;
+
     private PageWhite pageWhite;
     private PptWebView webView;
     private int backColor = -1;
-//    private b j;
+
 
     public WhiteDrawView(Context context) {
         this(context, null);
@@ -45,7 +45,7 @@ public final class WhiteDrawView extends FrameLayout {
         this(context, null, 0);
     }
 
-    private WhiteDrawView(Context context, AttributeSet attributeSet, int paramInt) {
+    private WhiteDrawView(Context context, AttributeSet attributeSet, int index) {
         super(context, attributeSet, 0);
 
         super.setBackgroundColor(this.backColor);
@@ -63,7 +63,7 @@ public final class WhiteDrawView extends FrameLayout {
         this.frameLayout.addView(this.imageView, layoutParams);
         this.frameLayout.addView(this.drawFabricView, layoutParams);
         this.frameLayout.addView(this.imageFabricView, layoutParams);
-        this.addView(this.frameLayout, paramInt);
+        this.addView(this.frameLayout, index);
 
 
     }
@@ -72,7 +72,6 @@ public final class WhiteDrawView extends FrameLayout {
         String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        //mWebView.setWebViewClient(new WebChromeClient());
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebContentsDebuggingEnabled(true);
         webView.loadUrl(url);
@@ -183,9 +182,7 @@ public final class WhiteDrawView extends FrameLayout {
         if (this.pageWhite != null) {
             this.pageWhite.drawObjA();
         }
-//        if (this.g != null) {
-//            this.g.imageView();
-//        }
+
     }
 
     public final void init(float width, float height) {
@@ -194,11 +191,6 @@ public final class WhiteDrawView extends FrameLayout {
         }
     }
 
-//    public final void init(int pageIndex, BaseDraw baseDraw) {
-//        if (this.pageWhite != null) {
-//            this.pageWhite.drawObjA(pageIndex, baseDraw);
-//        }
-//    }
 
     public final void drawObj(int pageIndex, BaseDraw baseDraw) {
 
@@ -213,11 +205,6 @@ public final class WhiteDrawView extends FrameLayout {
         }
     }
 
-//    public final void init(int pageIndex, String tag, int color, int paramInt3, float paramFloat, paging parama) {
-//        if (this.pageWhite != null) {
-//            this.pageWhite.drawObjA(getContext(), pageIndex, tag, color, paramFloat, parama);
-//        }
-//    }
 
     public final void setPPTLoadFailDrawable(Drawable paramDrawable) {
         if (this.pageWhite != null) {
@@ -243,26 +230,17 @@ public final class WhiteDrawView extends FrameLayout {
     }
 
     public final void drawObj() {
-//        if (this.g != null) {
-//            this.g.editText();
-//        }
         if (this.pageWhite != null) {
             this.pageWhite.drawObjB();
         }
     }
 
     public final void clearAll() {
-//        if (this.g != null) {
-//            this.g.frameLayout();
-//        }
         if (this.pageWhite != null) {
             this.pageWhite.clearAll();
         }
     }
 
-//    public final void setOnWhiteBoardLogListener$6e575bbd(b paramb) {
-//        this.j = paramb;
-//    }
 
     /**
      * 410 打开草稿纸
@@ -291,7 +269,7 @@ public final class WhiteDrawView extends FrameLayout {
      */
     public void addDraftPaper(int currentPage) {
         webView.setVisibility(INVISIBLE);
-        this.pageWhite.ToPage(currentPage);
+        this.pageWhite.addDraftPage(currentPage);
     }
 
     public void jumpPage(int currentPage, int currentAnimation) {

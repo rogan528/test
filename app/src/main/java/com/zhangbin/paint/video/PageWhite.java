@@ -121,15 +121,11 @@ public final class PageWhite {
         }
 
         if ((this.historyOrder != null) && (this.isClient)) {
-            Log.i("长度类型", "onDrawBack:" + draw.getDrawType());
             if (draw.getDrawType() == 0) {
                 this.historyOrder.getDrawA(toPage, draw);
             } else {
                 this.historyOrder.getDrawB(toPage, draw);
             }
-
-            Log.i("长度画前", "onDrawBack:" + this.historyOrder.getDrawA(toPage).size() + "b:" + this.historyOrder.getDrawB(toPage).size());
-
         }
 
         if (this.page == toPage) {
@@ -140,9 +136,6 @@ public final class PageWhite {
             }
             undoDrawableList.add(draw.getDrawType());
         }
-
-
-        Log.i("长度画后", "onDrawBack:" + this.historyOrder.getDrawA(toPage).size() + "b:" + this.historyOrder.getDrawB(toPage).size());
     }
 
 
@@ -215,7 +208,14 @@ public final class PageWhite {
         this.drawable = paramDrawable;
     }
 
-
+    /**
+     * 增加草稿纸
+     *
+     * @param pageIndex
+     */
+    public final void addDraftPage(int pageIndex) {
+        ToPage(pageIndex);
+    }
     /**
      * 跑到到指定页面
      *
@@ -226,14 +226,11 @@ public final class PageWhite {
 
         boolean b = (this.page != pageIndex) || (!this.isClient);
         this.page = pageIndex;
-
         if (!this.isClient) {
             this.historyOrder.clear(pageIndex);
             this.undoDrawableList.clear();
             this.redoDrawableList.clear();
         }
-
-
         drawObjA(this.imageWidth, this.imageHeight);
         if (b) {
             drawObjB();
@@ -306,8 +303,6 @@ public final class PageWhite {
 //            imageViewlayout.gravity = 49;
             drawFabricViewLayout.gravity = 49;
         } else if (width < height) {
-            Log.i("宽度高度宽度小于高度", "宽度：" + width + ",高度：" + height);
-
             tWidth = 0.025F * this.layoutWidth;
             tWidth = this.mWidth - tWidth;
             this.scaleRatio = (tWidth / width);
@@ -319,7 +314,6 @@ public final class PageWhite {
         } else {
 
             if (this.mWidth < this.layoutWidth) {
-                Log.i("宽度高度新高度", "宽度：" + width + ",高度：" + height);
                 tWidth = (float) this.mWidth / (float) width * (float) height;
 
                 float localRatio = (float) this.layoutWidth / (float) this.mWidth;
@@ -349,12 +343,12 @@ public final class PageWhite {
 
         drawFabricViewLayout.width = outWidth;
         drawFabricViewLayout.height = height;
-        Log.i("宽度高度1", "输出宽度：" + outWidth + ",高度：" + height);
+
 
         this.bFabricView.setLayoutParams(drawFabricViewLayout);
         this.bFabricView.setScaleRatio(this.scaleRatio);
         this.aFabricView.setScaleRatio(this.scaleRatio);
-        Log.i("宽度高度比例", "输出比例：" + this.scaleRatio + "输出宽度：outWidth:" + outWidth);
+
 //        this.bFabricView.setScaleRatio( outWidth / 934f);
 //        this.aFabricView.setScaleRatio(outWidth / 934f);
 //        this.bFabricView.setScaleRatio(this.scaleRatio * outWidth / 934f);
@@ -373,8 +367,6 @@ public final class PageWhite {
             this.aFabricView.setScrollY(0);
         }
         drawObjA(0.0F);
-
-        Log.i("宽度高度3", "比率：" + this.scaleRatio);
     }
 
 
@@ -395,25 +387,25 @@ public final class PageWhite {
         this.historyOrder.clearAll();
         this.imageHeight = 0;
         this.imageWidth = 0;
-//        ViewGroup.LayoutParams localLayoutParams;
-//        (localLayoutParams = this.imageView.getLayoutParams()).width = -1;
-//        localLayoutParams.height = -1;
+
     }
 
     public void undo() {
         int size = undoDrawableList.size();
         if (size == 0) {
             return;
-        } else {
-            redoDrawableList.add(undoDrawableList.get(size - 1));
-            undoDrawableList.remove(size - 1);
-            int type = redoDrawableList.get(redoDrawableList.size() - 1);
-            if (type == 0) {
-                aFabricView.undo();
-            } else {
-                bFabricView.undo();
-            }
         }
+
+
+        redoDrawableList.add(undoDrawableList.get(size - 1));
+        undoDrawableList.remove(size - 1);
+        int type = redoDrawableList.get(redoDrawableList.size() - 1);
+        if (type == 0) {
+            aFabricView.undo();
+        } else {
+            bFabricView.undo();
+        }
+
 
     }
 
@@ -421,35 +413,18 @@ public final class PageWhite {
         int size = redoDrawableList.size();
         if (size == 0) {
             return;
+        }
+        undoDrawableList.add(redoDrawableList.get(size - 1));
+        redoDrawableList.remove(size - 1);
+        int type = undoDrawableList.get(undoDrawableList.size() - 1);
+        if (type == 0) {
+            aFabricView.redo();
         } else {
-            undoDrawableList.add(redoDrawableList.get(size - 1));
-            redoDrawableList.remove(size - 1);
-            int type = undoDrawableList.get(undoDrawableList.size() - 1);
-            if (type == 0) {
-                aFabricView.redo();
-            } else {
-                bFabricView.redo();
-            }
+            bFabricView.redo();
         }
+
     }
 
-
-    final class RunnableScroll implements Runnable {
-        private float a;
-        private int b;
-        private PageWhite c;
-
-        RunnableScroll(final PageWhite pageWhite, final float x, final int y) {
-            this.c = pageWhite;
-            this.a = x;
-            this.b = y;
-        }
-
-        @Override
-        public final void run() {
-            this.c.whitedrawView.scrollTo((int) this.a, this.b);
-        }
-    }
 
     final class ToRun
             implements Runnable {

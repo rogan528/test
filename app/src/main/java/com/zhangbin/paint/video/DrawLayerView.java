@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.zhangbin.paint.video.shape.BaseDraw;
@@ -73,10 +72,6 @@ public class DrawLayerView
     protected final void onDraw(Canvas canvas) {
         canvas.drawColor(Color.TRANSPARENT);
         canvas.translate(getWidth() >> 1, getHeight() >> 1);
-
-
-        Log.i("长度当前画板", "onDrawBack:" + this.fabricViewDataList.size());
-
         Iterator iterator = this.fabricViewDataList.iterator();
         while (iterator.hasNext()) {
             BaseDraw next = (BaseDraw) iterator.next();

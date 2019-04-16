@@ -33,7 +33,7 @@ public final class DrawDotLine
         DashPathEffect localDashPathEffect = new DashPathEffect(new float[]{f1, f2}, 1.0F);
         if (this.paint != null) {
             this.paint.setStyle(Paint.Style.STROKE);
-            this.paint.setARGB(255, 0, 0, 0);
+//            this.paint.setARGB(255, 0, 0, 0);
 
             this.paint.setPathEffect(localDashPathEffect);
         }
