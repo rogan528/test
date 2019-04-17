@@ -12,8 +12,8 @@
     </FrameLayout>
     <com.zhangbin.paint.whiteboard.DragVideoView
         android:id="@+id/drag_videoView"
-        android:layout_width="150dp"
-        android:layout_height="130dp"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="185dp"
         android:layout_gravity="center|bottom"
         android:clickable="false"
@@ -21,8 +21,8 @@
         android:visibility="gone"/>
     <tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView
         android:id="@+id/ijk_videoView"
-        android:layout_width="150dp"
-        android:layout_height="130dp"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="185dp"
         android:clickable="false"
