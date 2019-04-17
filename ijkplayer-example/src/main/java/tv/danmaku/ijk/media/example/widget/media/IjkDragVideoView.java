@@ -164,8 +164,14 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = getMeasuredWidth();
-        height = getMeasuredHeight();
+        /*width = getMeasuredWidth();
+        height = getMeasuredHeight();*/
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        screenWidth = dm.widthPixels;
+        //screenHeight = dm.heightPixels - getStatusHeight(context) -dp2px(context, 102);
+        screenHeight = dm.heightPixels;
+        width = screenWidth;
+        height = screenHeight;
     }
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {

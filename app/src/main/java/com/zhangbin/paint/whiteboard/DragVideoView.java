@@ -30,6 +30,7 @@ public class DragVideoView extends VideoView {
         screenWidth = dm.widthPixels;
         //screenHeight = dm.heightPixels - getStatusHeight(context) -dp2px(context, 102);
         screenHeight = dm.heightPixels;
+        Log.e("DragVideoView","screenWidth:"+screenWidth+"screenHeight:"+screenHeight);
     }
 
     public DragVideoView(Context context, AttributeSet attrs) {
@@ -45,8 +46,14 @@ public class DragVideoView extends VideoView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = getMeasuredWidth();
-        height = getMeasuredHeight();
+        /*width = getMeasuredWidth();
+        height = getMeasuredHeight();*/
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        screenWidth = dm.widthPixels;
+        //screenHeight = dm.heightPixels - getStatusHeight(context) -dp2px(context, 102);
+        screenHeight = dm.heightPixels;
+        width = screenWidth;
+        height = screenHeight;
     }
 
     @Override
@@ -85,15 +92,10 @@ public class DragVideoView extends VideoView {
                     right = screenWidth;
                     left = right - getWidth();
                 }
-
                 if (top < 0) {
                     top = 0;
                     bottom = top + getHeight();
                 }
-                if (top > screenHeight) {
-                    top = screenHeight;
-                }
-
                 if (bottom > screenHeight) {
                     bottom = screenHeight;
                     top = bottom - getHeight();

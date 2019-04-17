@@ -123,6 +123,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mMediaController = new AndroidMediaController(this, false);
         IjkMediaPlayer.loadLibrariesOnce(null);
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+        mMediaController.setVisibility(View.VISIBLE);
         mDragIjkVideoView.setMediaController(mMediaController);
         mDragIjkVideoView.setHudView(mHudView);
         if (TextUtils.isEmpty(ijkVideoUrl)) {
@@ -133,12 +134,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
             mDragIjkVideoView.setVideoURI(uri);
             mDragIjkVideoView.start();
         }
-        mDragIjkVideoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
         mDragIjkVideoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -155,7 +150,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         Uri uri = Uri.parse(dragVideoUrl);
         MediaController mediaController = new MediaController(this);
         mDragVideoView.setMediaController(mediaController);
-        mediaController.setVisibility(View.VISIBLE);
+        mediaController.setVisibility(View.INVISIBLE);
         mDragVideoView.setVideoURI(uri);
         mDragVideoView.start();
         mDragVideoView.setOnClickListener(new View.OnClickListener() {
