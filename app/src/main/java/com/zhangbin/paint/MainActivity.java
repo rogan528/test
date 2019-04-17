@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,12 +27,18 @@ import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
 import com.zhangbin.paint.util.Util;
-import com.zhangbin.paint.video.presenter.WhiteboardPresenter;
+import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
+import com.zhangbin.paint.whiteboard.DragVideoView;
+import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
 import java.util.ArrayList;
 
+import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
+import tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class MainActivity extends Activity implements View.OnClickListener, MediaPlayer.OnPreparedListener {
+
+public class MainActivity extends Activity implements View.OnClickListener{
 
     //private String url = "https://www.baidu.com/";
     private String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
@@ -42,9 +50,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Medi
     private int screenWidth;
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
-    private DragVideoView mVideoView;
-    private DragTextView mTextView;
-    private String videoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    private DragVideoView mDragVideoView;
+    private String dragVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    private IjkDragVideoView mDragIjkVideoView;
+    //private String ijkVideoUrl = "rtmp://192.168.1.207/live/sanhaieduLive";
+    private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    private AndroidMediaController mMediaController;
+    private TableLayout mHudView;
     private Context mContext;
     private ArrayList<OrderBean> listOrderBean;
 //    private DrawManger drawManger;
@@ -61,8 +73,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Medi
         initView();
         //initWebSetting();
         initData();
-        setupVideo();
-        initDragView();
+        playDragVideo();
+        playiJKVideo();
 
     }
 
@@ -76,7 +88,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Medi
         // realHeight = (int) (screenHeight - getResources().getDimension(R.dimen.DIMEN_100PX) - getResources().getDimension(R.dimen.DIMEN_100PX));
         realHeight = screenHeight;
         orderDrawManger = new OrderDrawManger(whiteboardPresenter);
-        mVideoView.setOnPreparedListener(this);
         String input = Util.readFileFromAssets(this, "LiveClient.json");
  //     String input = Util.readFileFromAssets(this, "LiveClient2.json");
         Gson gson = new Gson();
@@ -96,56 +107,67 @@ public class MainActivity extends Activity implements View.OnClickListener, Medi
         pptLayout = (FrameLayout) findViewById(R.id.pptLayout);
         whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
         //videoLayout = (RelativeLayout) findViewById(R.id.videoLayout);
-
-        mVideoView = findViewById(R.id.videoView);
-        mTextView = findViewById(R.id.textView);
         mJxNext = findViewById(R.id.jx_next);
         mJxNext.setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
         findViewById(R.id.clear).setOnClickListener(this);
     }
-
     /**
-     * 播放视频
+     * 播放IJK视频
      */
-    private void setupVideo() {
-        Uri uri = Uri.parse(videoUrl);
-        MediaController mediaController = new MediaController(this);
-        mVideoView.setMediaController(mediaController);
-        mediaController.setVisibility(View.GONE);
-        mVideoView.setVideoURI(uri);
-        mVideoView.start();
-    }
-
-    /**
-     * 拖动视频
-     */
-    private void initDragView() {
-
-        mVideoView.setOnClickListener(new View.OnClickListener() {
+    private void playiJKVideo() {
+        mDragIjkVideoView = findViewById(R.id.ijk_videoView);
+        mHudView = findViewById(R.id.hud_view);
+        Uri uri = Uri.parse(ijkVideoUrl);
+        mMediaController = new AndroidMediaController(this, false);
+        IjkMediaPlayer.loadLibrariesOnce(null);
+        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+        mDragIjkVideoView.setMediaController(mMediaController);
+        mDragIjkVideoView.setHudView(mHudView);
+        if (TextUtils.isEmpty(ijkVideoUrl)) {
+            Toast.makeText(this,
+                    "没有发现视频，请退出！",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            mDragIjkVideoView.setVideoURI(uri);
+            mDragIjkVideoView.start();
+        }
+        mDragIjkVideoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
-        mVideoView.setOnLongClickListener(new View.OnLongClickListener() {
+        mDragIjkVideoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
                 return false;
             }
         });
-        mTextView.setTextColor(Color.parseColor("#0000CD"));
-        mTextView.setOnClickListener(new View.OnClickListener() {
+    }
+    /**
+     * 播放拖拽视频
+     */
+    private void playDragVideo() {
+        mDragVideoView = findViewById(R.id.drag_videoView);
+        Uri uri = Uri.parse(dragVideoUrl);
+        MediaController mediaController = new MediaController(this);
+        mDragVideoView.setMediaController(mediaController);
+        mediaController.setVisibility(View.VISIBLE);
+        mDragVideoView.setVideoURI(uri);
+        mDragVideoView.start();
+        mDragVideoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
-        mTextView.setOnLongClickListener(new View.OnLongClickListener() {
+        mDragVideoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+
                 return false;
             }
         });
@@ -216,16 +238,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Medi
            // whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
 
         }
-    }
-
-    /**
-     * 轮询播放
-     *
-     * @param mp
-     */
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        mp.setLooping(true);
     }
 
     @Override
