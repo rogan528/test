@@ -16,7 +16,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
@@ -27,7 +26,6 @@ import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
 import com.zhangbin.paint.util.Util;
-import com.zhangbin.paint.video.presenter.VideoPresenter;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
 import com.zhangbin.paint.whiteboard.DragVideoView;
 import com.zhangbin.paint.whiteboard.OrderDrawManger;
@@ -45,10 +43,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
     //  private String url = "file:///android_asset/javascript.html";
     private FrameLayout pptLayout;
-    private FrameLayout videoLayout;
     private Button mJxNext;//解析
     private WhiteboardPresenter whiteboardPresenter;
-    private VideoPresenter videoPresenter;
     private int screenWidth;
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
@@ -83,9 +79,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 初始化数据
      */
     private void initData() {
-        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
-        videoPresenter = new VideoPresenter(mContext,videoLayout);
-        Display defaultDisplay = getWindowManager().getDefaultDisplay();
+        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);       Display defaultDisplay = getWindowManager().getDefaultDisplay();
         screenWidth = defaultDisplay.getWidth();
         screenHeight = defaultDisplay.getHeight();
         // realHeight = (int) (screenHeight - getResources().getDimension(R.dimen.DIMEN_100PX) - getResources().getDimension(R.dimen.DIMEN_100PX));
@@ -105,9 +99,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 初始化控件
      */
     private void initView() {
-        pptLayout = (FrameLayout) findViewById(R.id.pptLayout);
-        videoLayout = (FrameLayout) findViewById(R.id.video_container);
-        //videoLayout = (RelativeLayout) findViewById(R.id.videoLayout);
+        pptLayout =  findViewById(R.id.pptLayout);
         mJxNext = findViewById(R.id.jx_next);
         mJxNext.setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
