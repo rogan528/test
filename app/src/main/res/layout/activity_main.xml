@@ -25,6 +25,12 @@
         android:layout_width="160dp"
         android:layout_height="120dp"
         android:visibility="gone"/>
+    <com.zhangbin.paint.video.DragFrameLayout
+        android:id="@+id/dragFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="bottom|center">
     <tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView
         android:id="@+id/ijk_videoView"
         android:layout_width="150dp"
@@ -34,8 +40,8 @@
         android:clickable="false"
         android:longClickable="false"
         android:visibility="visible"/>
+    </com.zhangbin.paint.video.DragFrameLayout>
     <com.zhangbin.paint.video.DragFrameLayout
-        android:id="@+id/dragFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp"
