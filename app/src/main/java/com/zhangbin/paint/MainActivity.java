@@ -27,6 +27,7 @@ import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
 import com.zhangbin.paint.util.Util;
+import com.zhangbin.paint.video.presenter.VideoPresenter;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
 import com.zhangbin.paint.whiteboard.DragVideoView;
 import com.zhangbin.paint.whiteboard.OrderDrawManger;
@@ -44,17 +45,18 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
     //  private String url = "file:///android_asset/javascript.html";
     private FrameLayout pptLayout;
-    private RelativeLayout videoLayout;
+    private FrameLayout videoLayout;
     private Button mJxNext;//解析
     private WhiteboardPresenter whiteboardPresenter;
+    private VideoPresenter videoPresenter;
     private int screenWidth;
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
     private DragVideoView mDragVideoView;
     private String dragVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private IjkDragVideoView mDragIjkVideoView;
-    //private String ijkVideoUrl = "rtmp://192.168.1.207/live/sanhaieduLive";
-    private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    private String ijkVideoUrl = "rtmp://192.168.1.207/live/sanhaieduLive";
+   // private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
     private TableLayout mHudView;
     private Context mContext;
@@ -71,10 +73,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mContext = this;
         setContentView(R.layout.activity_main);
         initView();
-        //initWebSetting();
-        initData();
         playDragVideo();
         playiJKVideo();
+        initData();
 
     }
 
@@ -82,6 +83,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 初始化数据
      */
     private void initData() {
+        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
+        videoPresenter = new VideoPresenter(mContext,videoLayout);
         Display defaultDisplay = getWindowManager().getDefaultDisplay();
         screenWidth = defaultDisplay.getWidth();
         screenHeight = defaultDisplay.getHeight();
@@ -102,10 +105,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 初始化控件
      */
     private void initView() {
-
-
         pptLayout = (FrameLayout) findViewById(R.id.pptLayout);
-        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
+        videoLayout = (FrameLayout) findViewById(R.id.video_container);
         //videoLayout = (RelativeLayout) findViewById(R.id.videoLayout);
         mJxNext = findViewById(R.id.jx_next);
         mJxNext.setOnClickListener(this);
@@ -252,5 +253,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 break;
         }
     }
+
 
 }

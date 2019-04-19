@@ -13,21 +13,44 @@
     <com.zhangbin.paint.whiteboard.DragVideoView
         android:id="@+id/drag_videoView"
         android:layout_width="180dp"
-        android:layout_height="wrap_content"
+        android:layout_height="85dp"
         android:layout_marginBottom="185dp"
         android:layout_gravity="center|bottom"
         android:clickable="false"
         android:longClickable="false"
         android:visibility="gone"/>
+    <FrameLayout
+        android:id="@+id/video_container"
+        android:layout_gravity="right|bottom"
+        android:layout_width="160dp"
+        android:layout_height="120dp"
+        android:visibility="gone"/>
     <tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView
         android:id="@+id/ijk_videoView"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_gravity="center|bottom"
         android:layout_marginBottom="185dp"
         android:clickable="false"
         android:longClickable="false"
         android:visibility="visible"/>
+    <com.zhangbin.paint.video.DragFrameLayout
+        android:id="@+id/dragFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="bottom|center">
+        <ImageView
+            android:id="@+id/qiu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="20dp"
+            android:src="@mipmap/feitian"
+            android:visibility="visible" />
+    </com.zhangbin.paint.video.DragFrameLayout>
     <TableLayout
         android:id="@+id/hud_view"
         android:layout_width="180dp"
@@ -35,7 +58,8 @@
         android:layout_marginBottom="10dp"
         android:layout_gravity="bottom|center"
         android:background="@color/ijk_transparent_dark"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:visibility="gone"/>
     <Button
         android:id="@+id/jx_next"
         android:layout_width="wrap_content"
@@ -55,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_marginRight="150dp"
+        android:layout_marginRight="120dp"
         android:text="恢复" />
     <Button
         android:id="@+id/clear"
