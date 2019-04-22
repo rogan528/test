@@ -26,14 +26,16 @@ import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
 import com.zhangbin.paint.util.Util;
+import com.zhangbin.paint.video.DragFrameLayout;
+import com.zhangbin.paint.video.DragVideoView;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
-import com.zhangbin.paint.whiteboard.DragVideoView;
 import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
 import java.util.ArrayList;
 
 import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
 import tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 
@@ -43,7 +45,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
     //  private String url = "file:///android_asset/javascript.html";
     private FrameLayout pptLayout;
-    private Button mJxNext;//解析
+    private DragFrameLayout dragFrameLayout;
+    private Button isVisiable;
     private WhiteboardPresenter whiteboardPresenter;
     private int screenWidth;
     private int screenHeight;
@@ -100,11 +103,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
      */
     private void initView() {
         pptLayout =  findViewById(R.id.pptLayout);
-        mJxNext = findViewById(R.id.jx_next);
-        mJxNext.setOnClickListener(this);
+        dragFrameLayout =  findViewById(R.id.dragframeLayout);
+        isVisiable = findViewById(R.id.is_visiable);
+        findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
         findViewById(R.id.clear).setOnClickListener(this);
+        findViewById(R.id.is_visiable).setOnClickListener(this);
     }
     /**
      * 播放IJK视频
@@ -242,6 +247,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 break;
             case R.id.clear:
                 whiteboardPresenter.orderClear();
+                break;
+            case R.id.is_visiable:
+                if (dragFrameLayout.getVisibility() == View.VISIBLE){
+                    dragFrameLayout.setVisibility(View.GONE);
+                    isVisiable.setText("可见");
+                }else {
+                    dragFrameLayout.setVisibility(View.VISIBLE);
+                    isVisiable.setText("不可见");
+                }
+
                 break;
         }
     }

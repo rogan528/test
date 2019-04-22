@@ -9,23 +9,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import com.zhangbin.paint.R;
 
 public class DragFrameLayout extends FrameLayout {
 
-    private String TAG = "DragFrameLayout";
+    private String TAG = "--DragFrameLayout--";
     private ViewDragHelper dragHelper;
-    private int screenWidth;
+    private int screenWidth,screenHeight;
     private int statusType = 0;//0无 随便移动   1靠左  2靠右 0靠左右
     private float showPercent = 1;
-
+    private int leftBound, rightBound, topBound, bottomBound;
+    private int curLeft,curTop;
+    private int width, height;
     private int finalLeft = -1;
     private int finalTop = -1;
-
+    private TypedArray typedArray;
+    private  int viewWidth,viewHeight;
     public DragFrameLayout(@NonNull Context context) {
         this(context, null);
     }
@@ -33,19 +37,17 @@ public class DragFrameLayout extends FrameLayout {
     public DragFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
     public DragFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DraggableFrameLayout);
-        statusType = typedArray.getInt(R.styleable.DraggableFrameLayout_direction, 0);
-        showPercent = typedArray.getFloat(R.styleable.DraggableFrameLayout_showPercent, 1);
+        typedArray = context.obtainStyledAttributes(attrs, R.styleable.DraggableFrameLayout);
+        statusType = typedArray.getInt(R.styleable.DraggableFrameLayout_direction, 0);//0
+        showPercent = typedArray.getFloat(R.styleable.DraggableFrameLayout_showPercent, 1);//1.0
+        getScreenInformation(context);
         init();
     }
 
     private void init() {
-        screenWidth = getScreenWidth(getContext());
         dragHelper = ViewDragHelper.create(this, new ViewDragHelper.Callback() {
-
             @Override
             public boolean tryCaptureView(View child, int pointerId) {
                 return true;
@@ -58,40 +60,41 @@ public class DragFrameLayout extends FrameLayout {
 
             @Override
             public int clampViewPositionHorizontal(View child, int left, int dx) {
-                return left;
+                return Math.min(Math.max(left, leftBound), width);
             }
 
             @Override
             public int clampViewPositionVertical(View child, int top, int dy) {
-                return top;
+                return Math.min(Math.max(top, topBound), height);
             }
 
             @Override
             public int getViewHorizontalDragRange(View child) {
-                return getMeasuredWidth() - child.getMeasuredWidth();
+                return width;
             }
 
             @Override
             public int getViewVerticalDragRange(View child) {
-                return getMeasuredHeight() - child.getMeasuredHeight();
+                return height;
             }
 
             @Override
             public void onViewReleased(View releasedChild, float xvel, float yvel) {
                 super.onViewReleased(releasedChild, xvel, yvel);
-                int viewWidth = releasedChild.getWidth();
-                int viewHeight = releasedChild.getHeight();
-                int curLeft = releasedChild.getLeft();
-                int curTop = releasedChild.getTop();
-
+                viewWidth = releasedChild.getWidth();
+                viewHeight = releasedChild.getHeight();
+                curLeft = releasedChild.getLeft();
+                curTop = releasedChild.getTop();
+                Log.e(TAG,"viewWidth:"+viewWidth+" viewHeight"+viewHeight+" curLeft:"
+                        +curLeft+" curTop:"+curTop);
                 finalTop = curTop < 0 ? 0 : curTop;
                 finalLeft = curLeft < 0 ? 0 : curLeft;
-                if ((finalTop + viewHeight) > getHeight()) {
-                    finalTop = getHeight() - viewHeight;
+                if ((finalTop + viewHeight) > height) {
+                    finalTop = height - viewHeight;
                 }
 
-                if ((finalLeft + viewWidth) > getWidth()) {
-                    finalLeft = getWidth() - viewWidth;
+                if ((finalLeft + viewWidth) > width) {
+                    finalLeft = width - viewWidth;
                 }
                 switch (statusType) {
                     case 0://无
@@ -100,12 +103,12 @@ public class DragFrameLayout extends FrameLayout {
                         finalLeft = -(int) (viewWidth * (1 - showPercent));
                         break;
                     case 2://右
-                        finalLeft = screenWidth - (int) (viewWidth * showPercent);
+                        finalLeft = width - (int) (viewWidth * showPercent);
                         break;
                     case 3://左右
                         finalLeft = -(int) (viewWidth * (1 - showPercent));
-                        if ((curLeft + viewWidth / 2) > screenWidth / 2) {
-                            finalLeft = screenWidth - (int) (viewWidth * showPercent);
+                        if ((curLeft + viewWidth / 2) > width / 2) {
+                            finalLeft = width - (int) (viewWidth * showPercent);
                         }
                         break;
                 }
@@ -117,9 +120,10 @@ public class DragFrameLayout extends FrameLayout {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if (finalLeft == -1 && finalTop == -1) {
+        super.onLayout(changed, left, top, right, bottom);
+/*        if (finalLeft == -1 && finalTop == -1) {
             super.onLayout(changed, left, top, right, bottom);
-        }
+        }*/
     }
 
     @Override
@@ -153,16 +157,20 @@ public class DragFrameLayout extends FrameLayout {
         return false;
     }
 
-    /**
-     * 获得屏幕宽度
-     *
-     * @param context
-     * @return
-     */
-    public int getScreenWidth(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(outMetrics);
-        return outMetrics.widthPixels;
+    private void getScreenInformation(Context context) {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        screenWidth = dm.widthPixels;
+        screenHeight = dm.heightPixels;
+    }
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        screenWidth = dm.widthPixels;
+        screenHeight = dm.heightPixels;
+        width = screenWidth;
+        height = screenHeight;
+        Log.e(TAG,"onMeasure width:"+width+"   height:"+height
+        +" curLeft:"+curLeft+"curTop:"+curTop);
     }
 }
