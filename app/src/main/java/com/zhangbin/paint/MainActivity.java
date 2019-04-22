@@ -31,6 +31,7 @@ import com.zhangbin.paint.video.DragVideoView;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
 import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
@@ -62,6 +63,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private ArrayList<OrderBean> listOrderBean;
 //    private DrawManger drawManger;
     private OrderDrawManger orderDrawManger;
+    private String TAG = "--IjkDragVideoView--";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -133,6 +135,15 @@ public class MainActivity extends Activity implements View.OnClickListener{
             mDragIjkVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(IMediaPlayer mp) {
+                    DecimalFormat df = new DecimalFormat("0.00");//格式化小数
+                    float ratio = Float.parseFloat(df.format((float)mp.getVideoWidth()/mp.getVideoHeight()));
+                    //float ratio = mp.getVideoWidth() / mp.getVideoHeight();
+                    Log.e(TAG,"--ratio-"+ratio);
+                    ViewGroup.LayoutParams lp;
+                    lp = mDragIjkVideoView.getLayoutParams();
+                    lp.width = mDragIjkVideoView.getWidth();
+                    lp.height =  Math.round(mDragIjkVideoView.getWidth()/ratio);
+                    mDragIjkVideoView.setLayoutParams(lp);
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     mDragIjkVideoView.start();
                 }
