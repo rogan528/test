@@ -130,7 +130,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     Toast.LENGTH_LONG).show();
         } else {
             mDragIjkVideoView.setVideoURI(uri);
-            mDragIjkVideoView.start();
+            mDragIjkVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(IMediaPlayer mp) {
+                    mDragIjkVideoView.setVisibility(View.VISIBLE);
+                    mDragIjkVideoView.start();
+                }
+            });
+
         }
         mDragIjkVideoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
