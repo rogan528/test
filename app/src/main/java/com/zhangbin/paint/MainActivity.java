@@ -80,6 +80,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private boolean mIsFullScreen = false; //全屏
     private Handler handler = new Handler();
     private boolean isClick;
+    private long preClickTime = 0L;
+    protected boolean isTitleBarShow = false;
+    protected boolean isLongShowTitleBar = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -133,6 +136,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         findViewById(R.id.iv_go_back).setOnClickListener(this);
         findViewById(R.id.fullScreen_iv).setOnClickListener(this);
         findViewById(R.id.is_fullscreen).setOnClickListener(this);
+        findViewById(R.id.pptLayout).setOnClickListener(this);
     }
     /**
      * 播放IJK视频
@@ -309,7 +313,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 break;
             case R.id.is_fullscreen: //全屏
                 switchFullScreen();
-                isClick = true;
+                break;
+            case R.id.pptLayout: //双击切换屏幕
+                if (System.currentTimeMillis() - preClickTime < 300) {  //双击全屏
+                    switchFullScreen();
+                    return;
+                }
+                preClickTime = System.currentTimeMillis();
+                if (isTitleBarShow) {
+                    isLongShowTitleBar = false;
+                   // hideTitleBar();
+                } else {
+                    //showTitleBar();
+                }
                 break;
         }
     }
@@ -354,9 +370,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (isClick){
-                            ScreenSwitchUtils.getInstance(MainActivity.this).stop();
-                        }
+                         ScreenSwitchUtils.getInstance(MainActivity.this).stop();
                         finish();
                     }
                 });
