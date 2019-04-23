@@ -79,13 +79,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     boolean mIsOpenSwitchAuto = false;  //是否开启自动重力切换
     private boolean mIsFullScreen = false; //全屏
     private Handler handler = new Handler();
-    private SensorManager sm;
-    private SensorManager sm1;
-    private OrientationSensorListener listener;
-    private Sensor sensor;
-    private Sensor sensor1;
-    private ScreenSwitchUtils.OrientationSensorListener1 listener1;
-    private  InputMethodManager imm;
+    private boolean isClick;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -110,6 +104,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         Display defaultDisplay = getWindowManager().getDefaultDisplay();
         screenWidth = defaultDisplay.getWidth();
         screenHeight = defaultDisplay.getHeight();
+        ScreenSwitchUtils.getInstance(MainActivity.this).start(MainActivity.this);
         // realHeight = (int) (screenHeight - getResources().getDimension(R.dimen.DIMEN_100PX) - getResources().getDimension(R.dimen.DIMEN_100PX));
         realHeight = screenHeight;
         orderDrawManger = new OrderDrawManger(whiteboardPresenter);
@@ -314,6 +309,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 break;
             case R.id.is_fullscreen: //全屏
                 switchFullScreen();
+                isClick = true;
                 break;
         }
     }
@@ -358,7 +354,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sm1.unregisterListener(listener1);
+                        if (isClick){
+                            ScreenSwitchUtils.getInstance(MainActivity.this).stop();
+                        }
                         finish();
                     }
                 });
