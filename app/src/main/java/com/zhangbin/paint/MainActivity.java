@@ -1,11 +1,18 @@
 package com.zhangbin.paint;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -13,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
@@ -25,6 +33,7 @@ import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
+import com.zhangbin.paint.util.ScreenSwitchUtils.OrientationSensorListener;
 import com.zhangbin.paint.util.Util;
 import com.zhangbin.paint.video.DragFrameLayout;
 import com.zhangbin.paint.video.DragVideoView;
@@ -64,6 +73,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
 //    private DrawManger drawManger;
     private OrderDrawManger orderDrawManger;
     private String TAG = "--IjkDragVideoView--";
+    // 是否是竖屏
+    private boolean isPortrait = true;
+    private boolean mIsSensorSwitch = false;
+    boolean mIsOpenSwitchAuto = false;  //是否开启自动重力切换
+    private boolean mIsFullScreen = false; //全屏
+    private Handler handler = new Handler();
+    private SensorManager sm;
+    private SensorManager sm1;
+    private OrientationSensorListener listener;
+    private Sensor sensor;
+    private Sensor sensor1;
+    private ScreenSwitchUtils.OrientationSensorListener1 listener1;
+    private  InputMethodManager imm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -84,7 +106,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
      * 初始化数据
      */
     private void initData() {
-        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);       Display defaultDisplay = getWindowManager().getDefaultDisplay();
+        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
+        Display defaultDisplay = getWindowManager().getDefaultDisplay();
         screenWidth = defaultDisplay.getWidth();
         screenHeight = defaultDisplay.getHeight();
         // realHeight = (int) (screenHeight - getResources().getDimension(R.dimen.DIMEN_100PX) - getResources().getDimension(R.dimen.DIMEN_100PX));
@@ -112,6 +135,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         findViewById(R.id.redo).setOnClickListener(this);
         findViewById(R.id.clear).setOnClickListener(this);
         findViewById(R.id.is_visiable).setOnClickListener(this);
+        findViewById(R.id.iv_go_back).setOnClickListener(this);
+        findViewById(R.id.fullScreen_iv).setOnClickListener(this);
+        findViewById(R.id.is_fullscreen).setOnClickListener(this);
     }
     /**
      * 播放IJK视频
@@ -137,14 +163,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 public void onPrepared(IMediaPlayer mp) {
                     DecimalFormat df = new DecimalFormat("0.00");//格式化小数
                     float ratio = Float.parseFloat(df.format((float)mp.getVideoWidth()/mp.getVideoHeight()));
-                    //float ratio = mp.getVideoWidth() / mp.getVideoHeight();
-                    Log.e(TAG,"--ratio-"+ratio);
                     ViewGroup.LayoutParams lp;
                     lp = mDragIjkVideoView.getLayoutParams();
                     lp.width = mDragIjkVideoView.getWidth();
                     lp.height =  Math.round(mDragIjkVideoView.getWidth()/ratio);
                     mDragIjkVideoView.setLayoutParams(lp);
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
+                    isVisiable.setVisibility(View.VISIBLE);
                     mDragIjkVideoView.start();
                 }
             });
@@ -250,10 +275,21 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         }
     }
-
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    };
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_go_back:
+                gobackAction();
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    showInputLayout();
+                }
+                break;
             case R.id.jx_next:
                 orderDrawManger.NextOrder().ExecuteOrder();
                 break;
@@ -267,6 +303,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 whiteboardPresenter.orderClear();
                 break;
             case R.id.is_visiable:
+
                 if (dragFrameLayout.getVisibility() == View.VISIBLE){
                     dragFrameLayout.setVisibility(View.GONE);
                     isVisiable.setText("可见");
@@ -274,10 +311,89 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     dragFrameLayout.setVisibility(View.VISIBLE);
                     isVisiable.setText("不可见");
                 }
-
+                break;
+            case R.id.is_fullscreen: //全屏
+                switchFullScreen();
                 break;
         }
     }
+    /**
+     * 全屏。非全屏切换
+     */
+    public void switchFullScreen() {
+        onFullScreenChange();
+        showInputLayout();
 
+    }
+    /**
+     * 全屏和非全屏切换
+     */
+    public void onFullScreenChange() {
+        ScreenSwitchUtils.getInstance(this).setIsFullScreen(!ScreenSwitchUtils.getInstance(this).isFullScreen());
+        if (ScreenSwitchUtils.getInstance(this).isSensorSwitchLandScreen()) {  //重力切换的横屏的话
+            updateLayout();
+        } else {
+            ScreenSwitchUtils.getInstance(this).toggleScreen();
+        }
+    }
+    /**
+     * 返回
+     *
+     * @return
+     */
+    public void gobackAction() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ScreenSwitchUtils.getInstance(MainActivity.this).toggleScreen(false);
+        } else {
+            showExitDialog();
+        }
+    }
+    private void showExitDialog(){
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(MainActivity.this);
+        normalDialog.setTitle("提示");
+        normalDialog.setMessage("是否确认退出?");
 
+        normalDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sm1.unregisterListener(listener1);
+                        finish();
+                    }
+                });
+        normalDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        normalDialog.show();
+    }
+    private void showInputLayout() {
+        if (handler == null) {
+            return;
+        }
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!DimensionUtils.isPad(MainActivity.this) && ScreenSwitchUtils.getInstance(MainActivity.this).isFullScreen()) {
+                    //输入框的隐藏
+                    /*if (vgInputLayout != null) {
+                        vgInputLayout.setVisibility(View.GONE);
+                    }*/
+                } else {
+                   /* if (mLiveMessageView != null) {
+                        if (mLiveMessageView.getCurrentItem() != 2) {
+                            if (vgInputLayout != null) {
+                                vgInputLayout.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }*/
+
+                }
+            }
+        }, 100);
+    }
 }

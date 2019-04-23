@@ -19,6 +19,13 @@
         android:clickable="false"
         android:longClickable="false"
         android:visibility="gone"/>
+    <include
+        layout="@layout/playback_menu_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        />
     <com.zhangbin.paint.video.DragFrameLayout
         android:id="@+id/dragframeLayout"
         android:layout_width="match_parent"
@@ -31,7 +38,7 @@
             android:layout_height="120dp"
             android:background="@color/colorAccent"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="248dp"
+            android:layout_marginBottom="240dp"
             android:clickable="false"
             android:longClickable="false"
             android:visibility="invisible"/>
@@ -44,11 +51,18 @@
         android:layout_gravity="bottom|center"
         android:background="@color/ijk_transparent_dark"
         android:padding="8dp"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <Button
+            android:id="@+id/iv_go_back"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="返回"
+            android:visibility="visible"/>
         <Button
             android:id="@+id/jx_next"
             android:layout_width="wrap_content"
@@ -78,6 +92,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:visibility="gone"
             android:text="不可见" />
+        <Button
+            android:id="@+id/is_fullscreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="全屏" />
     </LinearLayout>
 </FrameLayout>

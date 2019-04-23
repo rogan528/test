@@ -25,16 +25,16 @@ public class ScreenSwitchUtils {
     private Activity mActivity;
 
     // 是否是竖屏
-    private boolean isPortrait = true;
+    private  boolean isPortrait = true;
     private boolean mIsSensorSwitch = false;
     boolean mIsOpenSwitchAuto = false;  //是否开启自动重力切换
-    private SensorManager sm;
-    private OrientationSensorListener listener;
-    private Sensor sensor;
+    private  SensorManager sm;
+    private  OrientationSensorListener listener;
+    private  Sensor sensor;
 
-    private SensorManager sm1;
-    private Sensor sensor1;
-    private OrientationSensorListener1 listener1;
+    private  SensorManager sm1;
+    private  Sensor sensor1;
+    private  OrientationSensorListener1 listener1;
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -46,7 +46,7 @@ public class ScreenSwitchUtils {
                     } else if (orientation > 135 && orientation < 225) {
 
                     } else if (orientation > 225 && orientation < 315) {
-                        if (isPortrait && DimensionUtils.isPad(mActivity) && mIsOpenSwitchAuto) {
+                        if (isPortrait  && mIsOpenSwitchAuto) {
                             //  Log.e(test, 切换成横屏);
                             isPortrait = false;
                             mIsSensorSwitch = true;
@@ -109,7 +109,8 @@ public class ScreenSwitchUtils {
     private ScreenSwitchUtils(Context contet) {
         Context applicationContext = contet.getApplicationContext();
 //        WeakReference<Context> contextWeak = nxew WeakReference<>(context);
-        // Log.scaleRatio(TAG, init orientation listener.);
+        // Log.d(TAG, init orientation listener.);
+        mActivity = (Activity) contet;
         // 注册重力感应器,监听屏幕旋转
         sm = (SensorManager) applicationContext.getSystemService(Context.SENSOR_SERVICE);
         sensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -129,7 +130,7 @@ public class ScreenSwitchUtils {
      * 开始监听
      */
     public void start(Activity activity) {
-        // Log.scaleRatio(TAG, start orientation listener.);
+        // Log.d(TAG, start orientation listener.);
         if (!isStart) {
             mActivity = activity;
             sm.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_UI);
@@ -141,7 +142,7 @@ public class ScreenSwitchUtils {
      */
     public void stop() {
         if (isStart) {
-            //Log.scaleRatio(TAG, stop orientation listener.);
+            //Log.d(TAG, stop orientation listener.);
             sm.unregisterListener(listener);
             sm1.unregisterListener(listener1);
             mActivity = null;
@@ -166,13 +167,14 @@ public class ScreenSwitchUtils {
         if (isPortrait) {
             isPortrait = false;
             // 切换成横屏
-            if (mActivity.getCurrentFocus() != null) {
+            if (mActivity != null && mActivity.getCurrentFocus() != null) {
                 imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
             }
 
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (mActivity != null)
                     mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 }
             }, 100);
@@ -227,7 +229,7 @@ public class ScreenSwitchUtils {
     /**
      * 重力感应监听者
      */
-    public class OrientationSensorListener implements SensorEventListener {
+    public  class OrientationSensorListener implements SensorEventListener {
         private static final int _DATA_X = 0;
         private static final int _DATA_Y = 1;
         private static final int _DATA_Z = 2;
@@ -271,7 +273,7 @@ public class ScreenSwitchUtils {
         }
     }
 
-    public class OrientationSensorListener1 implements SensorEventListener {
+    public  class OrientationSensorListener1 implements SensorEventListener {
         private static final int _DATA_X = 0;
         private static final int _DATA_Y = 1;
         private static final int _DATA_Z = 2;

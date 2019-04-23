@@ -194,6 +194,7 @@ public final class PageWhite {
         }
         if (this.page == pageIndex) {
             this.aFabricView.DrawLayerView();
+            this.bFabricView.DrawLayerView();
         }
     }
 

@@ -17,10 +17,12 @@
         <activity
             android:name="com.zhangbin.paint.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize">
-
+        </activity>
+        <activity
+            android:name="com.zhangbin.paint.FirstActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
