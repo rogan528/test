@@ -394,4 +394,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         }, 100);
     }
+    @Override
+    public void onBackPressed() {
+        gobackAction();
+    }
 }
