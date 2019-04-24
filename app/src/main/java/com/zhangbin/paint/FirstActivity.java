@@ -16,10 +16,20 @@ public class FirstActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
+        findViewById(R.id.btn_vip_look_video).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FirstActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.IS_VIP,true);
+                startActivity(intent);
+            }
+        });
         findViewById(R.id.btn_look_video).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FirstActivity.this,MainActivity.class));
+                Intent intent = new Intent(FirstActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.IS_VIP,false);
+                startActivity(intent);
             }
         });
     }

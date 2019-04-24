@@ -5,9 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
         <Button
+            android:id="@+id/btn_vip_look_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="VIP看讲解" />
+        <Button
             android:id="@+id/btn_look_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="看讲解" />
+            android:text="非VIP看讲解" />
 </LinearLayout>

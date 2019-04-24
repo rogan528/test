@@ -23,7 +23,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
@@ -42,6 +44,9 @@ import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
 import tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView;
@@ -83,6 +88,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private long preClickTime = 0L;
     protected boolean isTitleBarShow = false;
     protected boolean isLongShowTitleBar = false;
+    public static String IS_VIP = "isVip";
+    private boolean isVip;
+    private LinearLayout tryWatch;
+    private ScheduledExecutorService lance;
+    private LinearLayout titlebarContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -92,11 +102,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(R.layout.activity_main);
+        isVip = getIntent().getBooleanExtra(IS_VIP, false);
         initView();
         playDragVideo();
         playiJKVideo();
         initData();
-
+        showTitleBar();
     }
 
     /**
@@ -118,7 +129,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }.getType());
         orderDrawManger.setListorderBean(listOrderBean);
         updateLayout();
-
+        if (!isVip){
+            tryWatch.setVisibility(View.VISIBLE);
+        }else {
+            tryWatch.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -128,6 +143,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         pptLayout =  findViewById(R.id.pptLayout);
         dragFrameLayout =  findViewById(R.id.dragframeLayout);
         isVisiable = findViewById(R.id.is_visiable);
+        tryWatch = findViewById(R.id.ll_trywatch);
+        titlebarContainer = findViewById(R.id.title_bar);
         findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
@@ -170,6 +187,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     isVisiable.setVisibility(View.VISIBLE);
                     mDragIjkVideoView.start();
+
                 }
             });
 
@@ -314,7 +332,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             case R.id.is_fullscreen: //全屏
                 switchFullScreen();
                 break;
-            case R.id.pptLayout: //双击切换屏幕
+            case R.id.pptLayout:
                 if (System.currentTimeMillis() - preClickTime < 300) {  //双击全屏
                     switchFullScreen();
                     return;
@@ -322,12 +340,85 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 preClickTime = System.currentTimeMillis();
                 if (isTitleBarShow) {
                     isLongShowTitleBar = false;
-                   // hideTitleBar();
+                    hideTitleBar();
                 } else {
-                    //showTitleBar();
+                    //刚进来显示，三秒之后自动隐藏
+                    isTitleBarShow = true;
+                    showTitleBar();
                 }
                 break;
         }
+    }
+    /**
+     * 显示标题栏和操作按钮
+     */
+    protected final void showTitleBar() {
+        if (lance != null && !lance.isShutdown())
+            lance.shutdown();
+        showController();
+        isTitleBarShow = true;
+        autoDismissTitleBar();
+    }
+    private void showController() {
+        titlebarContainer.setVisibility(View.VISIBLE);
+        //operationContainer.setVisibility(View.VISIBLE);
+    }
+
+    //标题栏计时器. 3秒后自动隐藏
+    protected void autoDismissTitleBar() {
+        stopDismissTitleBar();
+        Runnable sendBeatRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isTitleBarShow) {
+                    if (lance != null && !lance.isShutdown() && !isLongShowTitleBar) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isTitleBarShow) {
+                                    hideTitleBar();
+                                } else {
+                                    stopDismissTitleBar();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        };
+
+        lance = Executors.newSingleThreadScheduledExecutor();
+        lance.scheduleAtFixedRate(sendBeatRunnable, 5, 5, TimeUnit.SECONDS);
+    }
+
+    protected void stopDismissTitleBar() {
+        if (lance != null) {
+            if (!lance.isShutdown()) {
+                lance.shutdown();
+            }
+            lance = null;
+        }
+    }
+
+    /**
+     * 隐藏标题栏和操作按钮
+     */
+    protected final void hideTitleBar() {
+        if (isLongShowTitleBar)
+            return;
+        stopDismissTitleBar();
+        hideController();
+        isTitleBarShow = false;
+    }
+   private void hideController() {
+        if (titlebarContainer == null)
+            return;
+        titlebarContainer.setVisibility(View.GONE);
+        /*operationContainer.setVisibility(View.GONE);
+        fullScreenInputBarView.hideSoftInput();
+        if (mNetCheckHelper != null) {
+            mNetCheckHelper.dismissPop();
+        }*/
     }
     /**
      * 全屏。非全屏切换
