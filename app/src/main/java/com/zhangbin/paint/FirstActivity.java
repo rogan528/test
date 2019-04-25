@@ -32,5 +32,13 @@ public class FirstActivity extends Activity {
                 startActivity(intent);
             }
         });
+        findViewById(R.id.btn_look_video_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FirstActivity.this, TestActivity.class);
+                intent.putExtra(TestActivity.IS_VIP,false);
+                startActivity(intent);
+            }
+        });
     }
 }

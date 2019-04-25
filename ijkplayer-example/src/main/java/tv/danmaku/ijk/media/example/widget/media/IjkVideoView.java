@@ -1102,7 +1102,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     private void initBackground() {
         mEnableBackgroundPlay = mSettings.getEnableBackgroundPlay();
-        Log.e("IjkVideoView","--------initBackground:"+mEnableBackgroundPlay);
         if (mEnableBackgroundPlay) {
             MediaPlayerService.intentToStart(getContext());
             mMediaPlayer = MediaPlayerService.getMediaPlayer();

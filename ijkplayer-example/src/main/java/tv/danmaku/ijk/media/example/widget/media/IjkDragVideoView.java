@@ -62,7 +62,7 @@ import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 import tv.danmaku.ijk.media.player.misc.IjkMediaFormat;
 
 public class IjkDragVideoView extends FrameLayout implements MediaController.MediaPlayerControl {
-    private String TAG = "IjkDragVideoView";
+    private String TAG = "--IjkDragVideoView--";
     // settable by the client
     private Uri mUri;
     private Map<String, String> mHeaders;
@@ -134,110 +134,16 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     public IjkDragVideoView(Context context) {
         super(context);
         initVideoView(context);
-        getScreenInformation(context);
     }
 
     public IjkDragVideoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initVideoView(context);
-        getScreenInformation(context);
     }
 
     public IjkDragVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initVideoView(context);
-        getScreenInformation(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public IjkDragVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        initVideoView(context);
-        getScreenInformation(context);
-    }
-    private void getScreenInformation(Context context) {
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        screenWidth = dm.widthPixels;
-        //screenHeight = dm.heightPixels - getStatusHeight(context) -dp2px(context, 102);
-        screenHeight = dm.heightPixels;
-    }
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        /*width = getMeasuredWidth();
-        height = getMeasuredHeight();*/
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        screenWidth = dm.widthPixels;
-        //screenHeight = dm.heightPixels - getStatusHeight(context) -dp2px(context, 102);
-        screenHeight = dm.heightPixels;
-        width = screenWidth;
-        height = screenHeight;
-    }
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-        }
-        return super.dispatchTouchEvent(event);
-    }
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                lastX = (int) event.getRawX();
-                lastY = (int) event.getRawY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int dx = (int) event.getRawX() - lastX;
-                int dy = (int) event.getRawY() - lastY;
-                left = getLeft() + dx;
-                top = getTop() + dy;
-                right = getRight() + dx;
-                bottom = getBottom() + dy;
-                if (left < 0) {
-                    left = 0;
-                    right = left + getWidth();
-                }
-
-                if (right > screenWidth) {
-                    right = screenWidth;
-                    left = right - getWidth();
-                }
-
-                if (top < 0) {
-                    top = 0;
-                    bottom = top + getHeight();
-                }
-                if (top > screenHeight) {
-                    top = screenHeight;
-                }
-
-                if (bottom > screenHeight) {
-                    bottom = screenHeight;
-                    top = bottom - getHeight();
-                }
-                if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
-                    layout(left, top, right, bottom);
-                }
-                lastX = (int) event.getRawX();
-                lastY = (int) event.getRawY();
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.e("TAG", "ACTION_UP    ");
-                break;
-        }
-        /*
-        //之前的处理
-        if (isInPlaybackState() && mMediaController != null) {
-            toggleMediaControlsVisiblity();
-        }
-        return false;*/
-        return super.onTouchEvent(event);
     }
     // REMOVED: onMeasure
     // REMOVED: onInitializeAccessibilityEvent
@@ -497,6 +403,8 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                     mVideoHeight = mp.getVideoHeight();
                     mVideoSarNum = mp.getVideoSarNum();
                     mVideoSarDen = mp.getVideoSarDen();
+                    Log.e(TAG,"onVideoSizeChanged mVideoWidth:"+mVideoWidth+" mVideoHeight: "+mVideoHeight
+                    +" mVideoSarNum: "+mVideoSarNum+"  mVideoSarDen:"+mVideoSarDen);
                     if (mVideoWidth != 0 && mVideoHeight != 0) {
                         if (mRenderView != null) {
                             mRenderView.setVideoSize(mVideoWidth, mVideoHeight);
@@ -1183,7 +1091,6 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
 
     private void initBackground() {
         mEnableBackgroundPlay = mSettings.getEnableBackgroundPlay();
-        Log.e(TAG,"--------initBackground:"+mEnableBackgroundPlay);
         if (mEnableBackgroundPlay) {
             MediaPlayerService.intentToStart(getContext());
             mMediaPlayer = MediaPlayerService.getMediaPlayer();

@@ -2,23 +2,19 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/play_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/room_new_skin_bg"
+        android:orientation="vertical">
     <FrameLayout
         android:id="@+id/pptLayout"
         android:layout_width="100dp"
         android:layout_height="100dp">
     </FrameLayout>
-    <com.zhangbin.paint.video.DragVideoView
-        android:id="@+id/drag_videoView"
-        android:layout_width="180dp"
-        android:layout_height="85dp"
-        android:layout_marginBottom="185dp"
-        android:layout_gravity="center|bottom"
-        android:clickable="false"
-        android:longClickable="false"
-        android:visibility="gone"/>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_trywatch"
         android:layout_width="wrap_content"
@@ -51,7 +47,7 @@
         layout="@layout/playback_menu_bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="bottom"
         android:visibility="gone"
         />
     <com.zhangbin.paint.video.DragFrameLayout

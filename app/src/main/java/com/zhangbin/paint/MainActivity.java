@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,25 +17,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import com.example.lijian.sf_im_sdk.IM_SDK;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
-import com.zhangbin.paint.util.ScreenSwitchUtils.OrientationSensorListener;
 import com.zhangbin.paint.util.Util;
 import com.zhangbin.paint.video.DragFrameLayout;
-import com.zhangbin.paint.video.DragVideoView;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
 import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
@@ -66,7 +60,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private int screenWidth;
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
-    private DragVideoView mDragVideoView;
     private String dragVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private IjkDragVideoView mDragIjkVideoView;
     private String ijkVideoUrl = "rtmp://192.168.1.207/live/sanhaieduLive";
@@ -93,6 +86,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private LinearLayout tryWatch;
     private ScheduledExecutorService lance;
     private LinearLayout titlebarContainer;
+    private IM_SDK im_sdk;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -104,10 +98,23 @@ public class MainActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
         isVip = getIntent().getBooleanExtra(IS_VIP, false);
         initView();
-        playDragVideo();
         playiJKVideo();
         initData();
         showTitleBar();
+        initIM();
+    }
+    /**
+     * 初始化数据
+     */
+    private void initIM() {
+        im_sdk = new IM_SDK();
+        int rescode = im_sdk.InitSDK(1, "11", "222", "2222", "",
+                "192.168.1.206", "", 8084
+        );
+        im_sdk.OnGetLoginState(rescode);
+        im_sdk.ConnectMsgServer();
+        String msg = "我要发测试消息了";
+        im_sdk.SendMsg(msg,msg.length());
     }
 
     /**
@@ -199,32 +206,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 return false;
             }
         });
-    }
-    /**
-     * 播放拖拽视频
-     */
-    private void playDragVideo() {
-        mDragVideoView = findViewById(R.id.drag_videoView);
-        Uri uri = Uri.parse(dragVideoUrl);
-        MediaController mediaController = new MediaController(this);
-        mDragVideoView.setMediaController(mediaController);
-        mediaController.setVisibility(View.INVISIBLE);
-        mDragVideoView.setVideoURI(uri);
-        mDragVideoView.start();
-        mDragVideoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        mDragVideoView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                return false;
-            }
-        });
-
     }
 
 

@@ -15,5 +15,6 @@
     <color name="ijk_color_blue_900">#0D47A1</color>
 
     <color name="ijk_transparent_dark">#77000000</color>
-
+    <color name="progress_bg_color">#333333</color>
+    <color name="progress_color">#F12C26</color>
 </resources>

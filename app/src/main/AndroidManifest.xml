@@ -19,6 +19,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         <activity
+            android:name="com.zhangbin.paint.TestActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
+        <activity
             android:name="com.zhangbin.paint.FirstActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
