@@ -198,6 +198,11 @@ public final class WhiteDrawView extends FrameLayout {
     public final void drawObj(int pageIndex, BaseDraw baseDraw) {
 
         if (this.pageWhite != null) {
+            if (pageIndex<=0){
+                pageIndex=1;
+                this.pageWhite.ToPage(pageIndex);
+            }
+
             this.pageWhite.drawObjB(pageIndex, baseDraw);
         }
     }

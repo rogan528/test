@@ -31,10 +31,10 @@ public class DrawFactory {
                 var3 = new DrawDotLine();
                 break;
             case 407:
-                var3 = new DrawCircle();
+                var3 = new DrawRectangle();
                 break;
             case 408:
-                var3 = new DrawRectangle();
+                var3 = new DrawCircle();
                 break;
 //            case 19:
 //                var3 = new DrawArrow();

@@ -17,7 +17,7 @@ public class TimeUtil {
         if (duration < 0) {
             return "";
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         return sdf.format(new Date(duration * 1000));
     }
 
@@ -31,7 +31,7 @@ public class TimeUtil {
         if (duration < 0) {
             return "";
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         return sdf.format(new Date(duration * 1000));
     }
 

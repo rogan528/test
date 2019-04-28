@@ -16,7 +16,8 @@
         >
         <activity
             android:name="com.zhangbin.paint.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan|stateHidden">
         </activity>
         <activity
             android:name="com.zhangbin.paint.TestActivity"

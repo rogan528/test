@@ -58,7 +58,7 @@ public class DrawLine
         this.x1 = orderBean.getX1();
         this.y1 = orderBean.getY1();
         this.x2 = orderBean.getX2();
-        this.y2 = orderBean.getY1();
+        this.y2 = orderBean.getY2();
         this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
         this.paint.setColor(OperationUtils.getInstance().mCurrentPenColor);
         this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);

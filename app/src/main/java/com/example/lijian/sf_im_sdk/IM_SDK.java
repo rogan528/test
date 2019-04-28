@@ -6,57 +6,43 @@ public class IM_SDK {
 
     static {
         System.loadLibrary("Android_IM_SDK");
-        System.loadLibrary("SF_IM_SDK");
     }
 
     public IM_SDK(){
     }
-
+    OnGetInterface m_callback = null;
+    public void setCalReCallBackListenner(OnGetInterface callback){
+        this.m_callback = callback;
+        return;
+    }
     //登录状态回调LOGIN_RESCODE rescode
     public void OnGetLoginState(int rescode){
-        switch (rescode){
-            case -1: {
-                Log.e("Login","直播互动              连互动服务失败");
-                break;
-            }
-            case 0:{
-                Log.e("Login","直播互动              已连上互动服务");
-                break;
-            }
-            case 1:{
-                Log.e("Login","直播互动         检测到断开互动服务，正在重连");
-                break;
-            }
-            case 2:{
-                Log.e("","直播互动              已重连到互动服务");
-                break;
-            }
-            case 3:{
-                Log.e("Login","直播互动              网络异常，重连到互动服务失败");
-                break;
-            }
-        }
+        this.m_callback.GetLoginStaete(rescode);
     }
 
     //接收消息
-    public void onGetMsgData(int resCode,int fromUserRole,String userID,String	fromUsernam,String fromUserHead,String  fromUerGroupID,String  fromGroup,String   msgTime,String   msgcontent)
+    public void onGetMsgData(int resCode,int fromUserRole,String userID,String fromUsernam,String fromUserHead,String fromUerGroupID,String fromGroup,String msgTime,String msgcontent)
     {
-        System.out.println("消息内容： " + msgcontent + "名字： " + userID + "时间 " + msgTime );
-        //MsgContent item = new MsgContent(fromUsernam,msgTime,msgcontent);
-
+        Log.e("Login","接收消息内容： " + msgcontent + "名字： " + userID + "时间 " + msgTime );
+        MsgContent item = new MsgContent(fromUsernam,msgTime,msgcontent);
+        m_callback.AddItem(item);
     }
 
     //发消息回调
     public void onSendMsgData(int resCode,String userID)
     {
-        System.out.println("消息内容： " + resCode + "名字： " + userID);
-        return;
+        Log.e("Login","发消息内容:" + resCode + " 名字:" + userID);
+        this.m_callback.GetSendMsgData(resCode,userID);
+        //return;
     }
 
     //接收禁言消息
     public void onGetDisableSend(int sendType, int resCode ,int forbidType, String userId, String username, String time){
-
-        System.out.println("用户名： " + username + "时间 " + time );
+        if (sendType ==1) {
+            Log.e("Login", "禁言的用户名:" + username + "  时间:" + time);
+        }else {
+            Log.e("Login", "解除禁言的用户名:" + username);
+        }
     }
 
     public native int InitSDK(int type, String userID ,String userName, String groupID,

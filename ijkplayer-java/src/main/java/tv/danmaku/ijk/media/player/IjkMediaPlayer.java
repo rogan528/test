@@ -1036,8 +1036,14 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                 if (msg.obj == null) {
                     player.notifyOnTimedText(null);
                 } else {
-                    IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String)msg.obj);
-                    player.notifyOnTimedText(text);
+                   /* IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String)msg.obj);
+                    player.notifyOnTimedText(text);*/
+                   Log.e("test","------msg.obj----"+msg.obj);
+                    if (2019 == msg.arg1 && 996 == msg.arg2){//自定义数据，json字符串
+                        DebugLog.e(TAG, "arg1 = " + msg.arg1 + ", arg2 = " + msg.arg2 + ", obj = " + msg.obj);
+                        IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String)msg.obj);
+                        player.notifyOnTimedText(text);
+                    }
                 }
                 return;
             case MEDIA_NOP: // interface test message - ignore

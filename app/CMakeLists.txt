@@ -28,7 +28,7 @@ set_target_properties(
         PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libAndroid_IM_SDK.so
 )
-add_library(
+#[[add_library(
         libSF
         STATIC
         IMPORTED
@@ -37,7 +37,7 @@ set_target_properties(
         libSF
         PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libSF_IM_SDK.so
-)
+)]]
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -58,7 +58,7 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
          native-lib
                        libAndroid
-                       libSF
+        #  libSF
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )

@@ -17,14 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
+import android.widget.ListView;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lijian.sf_im_sdk.IM_SDK;
+import com.example.lijian.sf_im_sdk.MsgContent;
+import com.example.lijian.sf_im_sdk.OnGetInterface;
+import com.example.lijian.sf_im_sdk.OnUpdateUiInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zhangbin.paint.beans.OrderBean;
@@ -38,6 +44,7 @@ import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +55,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener, OnUpdateUiInterface {
 
     //private String url = "https://www.baidu.com/";
     private String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
@@ -62,7 +69,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private int realHeight;//控件真实高度，去除头部标题后的
     private String dragVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private IjkDragVideoView mDragIjkVideoView;
-    private String ijkVideoUrl = "rtmp://192.168.1.207/live/sanhaieduLive";
+    private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
    // private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
     private TableLayout mHudView;
@@ -71,22 +78,33 @@ public class MainActivity extends Activity implements View.OnClickListener{
 //    private DrawManger drawManger;
     private OrderDrawManger orderDrawManger;
     private String TAG = "--IjkDragVideoView--";
-    // 是否是竖屏
-    private boolean isPortrait = true;
-    private boolean mIsSensorSwitch = false;
-    boolean mIsOpenSwitchAuto = false;  //是否开启自动重力切换
-    private boolean mIsFullScreen = false; //全屏
     private Handler handler = new Handler();
-    private boolean isClick;
-    private long preClickTime = 0L;
     protected boolean isTitleBarShow = false;
     protected boolean isLongShowTitleBar = false;
     public static String IS_VIP = "isVip";
+    public static String USER_ID = "userId";
+    public static String USER_NAME = "userName";
     private boolean isVip;
     private LinearLayout tryWatch;
     private ScheduledExecutorService lance;
     private LinearLayout titlebarContainer;
     private IM_SDK im_sdk;
+    private ListView lvMsg;
+    private TextView loginStateView;
+    List<MsgContent> list = new ArrayList<>();
+    MsgItemAdapter itemAdapter;
+    private Button forbidPerson;
+    private Toast mToast;
+    private long preClickTime = 0L;
+    private long endClickTime = 0L;
+    private int initType =1,ipPort=8084;
+    private String serverIP = "192.168.1.206";
+    private String groupID = "2";
+    private String userId,userName;
+    private LinearLayout inputLayout;
+    private int state = -6;
+    private  int resCode = -8;
+    private InputMethodManager imm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -97,24 +115,60 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mContext = this;
         setContentView(R.layout.activity_main);
         isVip = getIntent().getBooleanExtra(IS_VIP, false);
+        userId = getIntent().getStringExtra(USER_ID);
+        userName = getIntent().getStringExtra(USER_NAME);
+        mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG);
+        initIM();
         initView();
         playiJKVideo();
         initData();
+       // initAssetsData();
+        initOrderData();
         showTitleBar();
-        initIM();
     }
+
+    private void initAssetsData() {
+        String input = Util.readFileFromAssets(this, "LiveClientNew2.json");
+        Gson gson = new Gson();
+        listOrderBean = gson.fromJson(input, new TypeToken<ArrayList<OrderBean>>() {
+        }.getType());
+        orderDrawManger.setListorderBean(listOrderBean);
+    }
+
+    private void initOrderData() {
+        String jsonMsg = mDragIjkVideoView.getJsonMsg();
+        String input = jsonMsg;
+        if (input != null && !"".equals(input)) {
+            Gson gson = new Gson();
+            OrderBean orderBean = gson.fromJson(input, OrderBean.class);
+            orderDrawManger.SetOrder(orderBean).ExecuteOrder();
+        }
+    }
+
     /**
      * 初始化数据
      */
     private void initIM() {
         im_sdk = new IM_SDK();
-        int rescode = im_sdk.InitSDK(1, "11", "222", "2222", "",
-                "192.168.1.206", "", 8084
+
+        im_sdk.InitSDK(initType, userId, userName, groupID, "",
+                serverIP, "", ipPort
         );
-        im_sdk.OnGetLoginState(rescode);
         im_sdk.ConnectMsgServer();
-        String msg = "我要发测试消息了";
-        im_sdk.SendMsg(msg,msg.length());
+        im_sdk.setCalReCallBackListenner(new OnGetInterface() {
+            @Override
+            public void AddItem(MsgContent item) {
+                UpdateUIInterface(item);
+            }
+            public void GetLoginStaete(int state){
+                UpdateLoginInterface(state);
+            }
+
+            @Override
+            public void GetSendMsgData(int resCode, String userID) {
+                UpdateSendMsgDataStateInterface(resCode,userID);
+            }
+        });
     }
 
     /**
@@ -126,21 +180,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
         screenWidth = defaultDisplay.getWidth();
         screenHeight = defaultDisplay.getHeight();
         ScreenSwitchUtils.getInstance(MainActivity.this).start(MainActivity.this);
-        // realHeight = (int) (screenHeight - getResources().getDimension(R.dimen.DIMEN_100PX) - getResources().getDimension(R.dimen.DIMEN_100PX));
         realHeight = screenHeight;
         orderDrawManger = new OrderDrawManger(whiteboardPresenter);
-        String input = Util.readFileFromAssets(this, "LiveClient.json");
- //     String input = Util.readFileFromAssets(this, "LiveClient2.json");
-        Gson gson = new Gson();
-        listOrderBean = gson.fromJson(input, new TypeToken<ArrayList<OrderBean>>() {
-        }.getType());
-        orderDrawManger.setListorderBean(listOrderBean);
         updateLayout();
         if (!isVip){
             tryWatch.setVisibility(View.VISIBLE);
         }else {
             tryWatch.setVisibility(View.GONE);
         }
+        itemAdapter = new MsgItemAdapter(MainActivity.this ,R.layout.item , list);
+        lvMsg.setAdapter(itemAdapter);
+        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     /**
@@ -152,6 +202,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         isVisiable = findViewById(R.id.is_visiable);
         tryWatch = findViewById(R.id.ll_trywatch);
         titlebarContainer = findViewById(R.id.title_bar);
+        loginStateView = findViewById(R.id.sample_text);
+        lvMsg = findViewById(R.id.listview);
+        inputLayout = findViewById(R.id.ll_InputLayout);
+        forbidPerson = findViewById(R.id.btn_forbid);
         findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
@@ -161,6 +215,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         findViewById(R.id.fullScreen_iv).setOnClickListener(this);
         findViewById(R.id.is_fullscreen).setOnClickListener(this);
         findViewById(R.id.pptLayout).setOnClickListener(this);
+        findViewById(R.id.btn_send_msg).setOnClickListener(this);
+        findViewById(R.id.btn_forbid).setOnClickListener(this);
     }
     /**
      * 播放IJK视频
@@ -194,6 +250,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     isVisiable.setVisibility(View.VISIBLE);
                     mDragIjkVideoView.start();
+                    if (mp != null) {
+                        mHandler.sendEmptyMessageDelayed(MSG_UPDATE_BOARD, 100);
+                    } else {
+                        mHandler.removeMessages(MSG_UPDATE_BOARD);
+                    }
 
                 }
             });
@@ -207,76 +268,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
             }
         });
     }
-
-
-
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        boolean isPortrait = ScreenSwitchUtils.getInstance(this).isPortrait();
-        boolean isFullScreen = ScreenSwitchUtils.getInstance(this).isFullScreen();
-        if (!isPortrait && isFullScreen) {
-            ActivityUtil.setFullScreen(this, true);
-        } else if (isPortrait && !isFullScreen) {
-            ActivityUtil.setFullScreen(this, true);
-        }
-        updateLayout();
-        super.onConfigurationChanged(newConfig);
-    }
-
-    public void updateLayout() {
-        int width = DimensionUtils.getScreenWidth(this);
-        int height = DimensionUtils.getScreenHeight(this);
-        Log.i("ppt宽高1", "宽：" + width + "  高：" + height);
-        Boolean isPortrait = height > width;
-        if (!ActivityUtil.isFullScreen(this) && isPortrait) {
-//            height -= DimensionUtils.getStatusBarHeight(this);
-        }
-
-        screenHeight = height;
-        //获取宽高
-        int pptLayoutWidth = 0;
-
-        if (pptLayout != null) {
-            ViewGroup.LayoutParams pptParams = pptLayout.getLayoutParams();
-            pptLayout.setBackgroundColor(Color.TRANSPARENT);
-            if (isPortrait) {   //竖屏
-
-                pptLayoutWidth = width;
-                height = 3 * width / 4;
-
-
-            } else {  //横屏
-
-                if (DimensionUtils.isPad(this)) {
-                    pptLayoutWidth = (int) (width * 0.72);
-                    height = pptLayoutWidth * 3 / 4;
-                    pptLayout.setBackgroundColor(Color.BLACK);
-
-                } else {
-                    pptLayoutWidth = width;
-                }
-
-            }
-
-            pptParams.width = pptLayoutWidth;
-            pptParams.height = height;
-            Log.i("ppt宽高", "宽：" + pptParams.width + "  高：" + height);
-            //FrameLayout.LayoutParams videoP = (FrameLayout.LayoutParams) videoLayout.getLayoutParams();
-            //videoP.leftMargin = DimensionUtils.getScreenWidth(this) - 300;
-            //videoP.topMargin = DimensionUtils.getScreenHeight(this) - 300;
-            //videoLayout.setLayoutParams(videoP);
-
-
-            pptLayout.setLayoutParams(pptParams);
-           // whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
-
-        }
-    }
+    private static final int MSG_UPDATE_BOARD = 1;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_UPDATE_BOARD: {
+                    initOrderData();
+                    mHandler.removeMessages(MSG_UPDATE_BOARD);
+                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_BOARD, 500);
+                }
+            }
         }
     };
     @Override
@@ -328,8 +330,66 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     showTitleBar();
                 }
                 break;
+            case R.id.btn_send_msg:
+                if (state ==0 || state ==2) {
+                    sendMsg();
+                }else {
+                    mToast.setText("连接互动服务失败");
+                    mToast.show();
+                }
+                break;
+            case R.id.btn_forbid:
+                if (state ==0 || state ==2) {
+                    forbidPerson();
+                }else {
+                    mToast.setText("连接互动服务失败");
+                    mToast.show();
+                }
+                break;
         }
     }
+
+    /**
+     * 禁言和解除
+     */
+    private void forbidPerson() {
+        preClickTime = System.currentTimeMillis();
+        if (forbidPerson.getText().toString().trim().equals("解除禁言")){
+            im_sdk.ForbidSendMsg(2, 4, "02", "02", "600");
+            mToast.setText("用户02被解除禁言");
+            mToast.show();
+            forbidPerson.setText("禁言");
+        }else if(forbidPerson.getText().toString().trim().equals("禁言")){
+            im_sdk.ForbidSendMsg(1, 4, "02", "02", "600");
+            mToast.setText("用户02被禁言!");
+            mToast.show();
+            forbidPerson.setText("解除禁言");
+        }
+        endClickTime = System.currentTimeMillis();
+    }
+
+    /**
+     * 发送消息
+     */
+    private void sendMsg() {
+        EditText m_edit = findViewById(R.id.et);
+        String msgData = m_edit.getText().toString();
+
+        if(!msgData.isEmpty()) {
+            im_sdk.SendMsg(msgData,msgData.length());
+            m_edit.setText("");
+            imm.hideSoftInputFromWindow(m_edit.getWindowToken(), 0);
+            int serverTime = im_sdk.GetServerTime();
+            String timeStr =Long.toString(serverTime);
+            MsgContent item = new MsgContent(userName ,timeStr,msgData);
+            list.add(item);
+            itemAdapter.notifyDataSetChanged();
+        }else {
+            mToast.setText("发送消息不允许为空!");
+            mToast.show();
+        }
+    }
+
     /**
      * 显示标题栏和操作按钮
      */
@@ -444,6 +504,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     public void onClick(DialogInterface dialog, int which) {
                          ScreenSwitchUtils.getInstance(MainActivity.this).stop();
                         finish();
+                        im_sdk.DisConnServer();
                     }
                 });
         normalDialog.setNegativeButton("取消",
@@ -464,10 +525,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
             public void run() {
                 if (!DimensionUtils.isPad(MainActivity.this) && ScreenSwitchUtils.getInstance(MainActivity.this).isFullScreen()) {
                     //输入框的隐藏
-                    /*if (vgInputLayout != null) {
-                        vgInputLayout.setVisibility(View.GONE);
-                    }*/
+                    if (inputLayout != null && lvMsg != null) {
+                        inputLayout.setVisibility(View.GONE);
+                        lvMsg.setVisibility(View.GONE);
+                    }
                 } else {
+                    //输入框的显示
+                    if (inputLayout != null && lvMsg != null) {
+                        inputLayout.setVisibility(View.VISIBLE);
+                        lvMsg.setVisibility(View.VISIBLE);
+                    }
                    /* if (mLiveMessageView != null) {
                         if (mLiveMessageView.getCurrentItem() != 2) {
                             if (vgInputLayout != null) {
@@ -481,7 +548,148 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }, 100);
     }
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        boolean isPortrait = ScreenSwitchUtils.getInstance(this).isPortrait();
+        boolean isFullScreen = ScreenSwitchUtils.getInstance(this).isFullScreen();
+        if (!isPortrait && isFullScreen) {
+            ActivityUtil.setFullScreen(this, true);
+        } else if (isPortrait && !isFullScreen) {
+            ActivityUtil.setFullScreen(this, true);
+        }
+        updateLayout();
+        super.onConfigurationChanged(newConfig);
+    }
+
+    public void updateLayout() {
+        int width = DimensionUtils.getScreenWidth(this);
+        int height = DimensionUtils.getScreenHeight(this);
+        Log.i("ppt宽高1", "宽：" + width + "  高：" + height);
+        Boolean isPortrait = height > width;
+        if (!ActivityUtil.isFullScreen(this) && isPortrait) {
+//            height -= DimensionUtils.getStatusBarHeight(this);
+        }
+        screenHeight = height;
+        //获取宽高
+        int pptLayoutWidth = 0;
+        if (pptLayout != null) {
+            ViewGroup.LayoutParams pptParams = pptLayout.getLayoutParams();
+            pptLayout.setBackgroundColor(Color.TRANSPARENT);
+            if (isPortrait) {   //竖屏
+                pptLayoutWidth = width;
+                height = 3 * width / 4;
+                lvMsg.setVisibility(View.VISIBLE);
+                inputLayout.setVisibility(View.VISIBLE);
+            } else {  //横屏
+                if (DimensionUtils.isPad(this)) {
+                    pptLayoutWidth = (int) (width * 0.72);
+                    height = pptLayoutWidth * 3 / 4;
+                    pptLayout.setBackgroundColor(Color.BLACK);
+
+                } else {
+                    pptLayoutWidth = width;
+                }
+                lvMsg.setVisibility(View.GONE);
+                inputLayout.setVisibility(View.GONE);
+            }
+            pptParams.width = pptLayoutWidth;
+            pptParams.height = height;
+            Log.i("ppt宽高", "宽：" + pptParams.width + "  高：" + height);
+            pptLayout.setLayoutParams(pptParams);
+
+        }
+    }
+    @Override
     public void onBackPressed() {
         gobackAction();
+    }
+    private Handler mHandlerUI = new Handler(){
+        public void handleMessage(Message msg) {
+            Bundle dataBundle = msg.getData();
+            MsgContent m_Item = new MsgContent();
+            if (dataBundle == null)
+                return;
+            int Type = dataBundle.getInt("type");
+
+            switch (Type){
+                case 0:
+                    state = dataBundle.getInt("state");
+                    switch (state){
+                        case -1: {
+                            loginStateView.setText("连接互动服务失败");
+                            break;
+                        }
+                        case 0:{
+                            loginStateView.setText("已连上互动服务");
+                            break;
+                        }
+                        case 1:{
+                            loginStateView.setText("检测到断开互动服务，正在重连");
+                            break;
+                        }
+                        case 2:{
+                            loginStateView.setText("已重连到互动服务");
+                            break;
+                        }
+                        case 3:{
+                            loginStateView.setText("网络异常，重连到互动服务失败");
+                            break;
+                        }
+                    }
+                    break;
+                case 1:
+                    resCode = dataBundle.getInt("resCode");
+                    Log.e("Login","resCode:"+resCode);
+                    if (resCode == 1 || resCode ==2){
+
+                    }else{
+
+                    }
+                    break;
+                case 3:
+                    if (resCode != 1 && resCode != 2) {
+                        m_Item.setName(dataBundle.getString("name"));
+                        m_Item.setMsgtime(dataBundle.getString("msgTime"));
+                        m_Item.setMsgData(dataBundle.getString("msgData"));
+                        list.add(m_Item);
+                        itemAdapter.notifyDataSetChanged();
+                    }
+                    break;
+            }
+        }
+    };
+    @Override
+    public void UpdateUIInterface(MsgContent msgContent) {
+        Message msg = new Message();
+        Bundle dataBundle = new Bundle();
+        dataBundle.putInt("type",3);
+        dataBundle.putString("name",msgContent.getName());
+        dataBundle.putString("msgTime",msgContent.getMsgtime());
+        dataBundle.putString("msgData",msgContent.getMsgData());
+        msg.setData(dataBundle);
+        mHandlerUI.sendMessage(msg);
+        return;
+    }
+
+    @Override
+    public void UpdateLoginInterface(int state) {
+        Message msg = new Message();
+        Bundle dataBundle = new Bundle();
+        dataBundle.putInt("type",0);
+        dataBundle.putInt("state",state);
+        msg.setData(dataBundle);
+        mHandlerUI.sendMessage(msg);
+        return;
+    }
+
+    @Override
+    public void UpdateSendMsgDataStateInterface(int resCode, String userID) {
+        Message msg = new Message();
+        Bundle dataBundle = new Bundle();
+        dataBundle.putInt("type",1);
+        dataBundle.putInt("resCode",resCode);
+        dataBundle.putString("userID",userID);
+        msg.setData(dataBundle);
+        mHandlerUI.sendMessage(msg);
+        return;
     }
 }

@@ -21,7 +21,7 @@ public class OrderDrawManger {
 
     private WhiteboardPresenter whiteboardPresenter;
     private Gson gson = new Gson();
-    private int cur;
+    private int cur=-1;
 
     private OrderBean orderBean;
     private ArrayList listorderBean = new ArrayList<OrderBean>();
@@ -46,6 +46,7 @@ public class OrderDrawManger {
         }
         cur = cur + 1;
         this.orderBean = (OrderBean) listorderBean.get(cur);
+
         return this;
 
     }
@@ -68,11 +69,11 @@ public class OrderDrawManger {
             return;
         }
 
-        Log.i("orderorder", gson.toJson(orderBean));
-
+        Log.i("orderorder", "--orderorder--"+gson.toJson(orderBean));
+        Log.e("orderorder","toString--"+orderBean.toString());
         if (!orderBean.getType().equals("")) {
             int type = Util.toInteger(orderBean.getType());
-            Log.i("itemorderorder", orderBean.getType());
+            Log.i("itemorderorder", "--type--"+type);
             List<OrderBean.DataBean> lst = this.orderBean.getData();
             switch (type) {
                 case 300:
@@ -153,8 +154,6 @@ public class OrderDrawManger {
 
 
         }
-
-
     }
 
 

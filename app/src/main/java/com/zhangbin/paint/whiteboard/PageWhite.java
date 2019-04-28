@@ -106,7 +106,7 @@ public final class PageWhite {
     public final void drawObjB(int toPage, BaseDraw draw) {
 
         //如果初始为-1，并要进行绘画就跳到第一页
-        if (this.page == -1) {
+        if (this.page <=0) {
             ToPage(1);
         }
 

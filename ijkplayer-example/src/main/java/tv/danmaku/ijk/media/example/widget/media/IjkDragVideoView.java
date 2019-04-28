@@ -103,7 +103,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     private boolean mCanPause = true;
     private boolean mCanSeekBack = true;
     private boolean mCanSeekForward = true;
-
+    private String jsonText;
     /** Subtitle rendering widget overlaid on top of the video. */
     // private RenderingWidget mSubtitleWidget;
 
@@ -608,11 +608,19 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     private IMediaPlayer.OnTimedTextListener mOnTimedTextListener = new IMediaPlayer.OnTimedTextListener() {
         @Override
         public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
-            if (text != null) {
+           if (text != null) {
+                setJsonMsg(text.getText());
                 subtitleDisplay.setText(text.getText());
             }
         }
     };
+    public void setJsonMsg(String text) {
+        this.jsonText = text;
+    }
+
+    public String getJsonMsg() {
+        return this.jsonText;
+    }
 
     /**
      * Register a callback to be invoked when the media file
