@@ -122,8 +122,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         initView();
         playiJKVideo();
         initData();
-       // initAssetsData();
-        initOrderData();
+        initAssetsData();
+      //  initOrderData();
         showTitleBar();
     }
 

@@ -23,6 +23,8 @@ public class FirstActivity extends Activity{
         final Toast mToast = Toast.makeText(FirstActivity.this, "", Toast.LENGTH_LONG);
         final EditText userId = findViewById(R.id.et_id);
         final EditText userName = findViewById(R.id.et_name);
+        userId.setText("001");
+        userName.setText("测试1");
         findViewById(R.id.btn_vip_look_video).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

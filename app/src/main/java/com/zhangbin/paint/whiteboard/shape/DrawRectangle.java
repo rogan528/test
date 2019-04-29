@@ -1,6 +1,7 @@
 package com.zhangbin.paint.whiteboard.shape;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.util.OperationUtils;
@@ -35,8 +36,6 @@ public final class DrawRectangle
         this.top = this.top + this.offsetY;
         this.right = this.right + this.offsetX;
         this.bottom = this.bottom + this.offsetY;
-
-
     }
 
     public final void add(float left, float top, float right, float bottom) {

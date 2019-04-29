@@ -35,7 +35,7 @@ public abstract class BaseShape
         }
         //没有id 给个时间戳
         if (orderBean.getUuid() == null || orderBean.getUuid().equals("")) {
-            orderBean.setUuid(System.currentTimeMillis() + "");
+            orderBean.setUuid(java.util.UUID.randomUUID().toString());
         }
 
 

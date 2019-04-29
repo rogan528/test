@@ -29,7 +29,7 @@ public class DrawBrush
             this.path.reset();
             OrderBean.DataBean start = this.dataList.get(0);
             this.path.moveTo(start.getX() * this.scaleRatio, start.getY() * this.scaleRatio);
-            for (int i = 1; i < this.dataList.size() - 1; i++) {
+            for (int i = 0; i <= this.dataList.size() - 1; i++) {
                 OrderBean.DataBean end = this.dataList.get(i);
                 this.path.lineTo(end.getX() * this.scaleRatio, end.getY() * this.scaleRatio);
             }

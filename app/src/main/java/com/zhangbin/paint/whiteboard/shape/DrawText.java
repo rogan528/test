@@ -118,7 +118,6 @@ public final class DrawText
         x = orderBean.getX();
         y = orderBean.getY();
         this.size = OperationUtils.getInstance().mCurrentTextSize;
-        this.paint.setTextSize(OperationUtils.getInstance().mCurrentTextSize);
         this.paint.setColor(OperationUtils.getInstance().mCurrentTextColor);
 
     }
