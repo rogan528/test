@@ -13,8 +13,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.zhangbin.paint.R;
+
+import tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView;
 
 public class DragFrameLayout extends FrameLayout {
 
@@ -30,6 +33,7 @@ public class DragFrameLayout extends FrameLayout {
     private int finalTop = -1;
     private TypedArray typedArray;
     private  int viewWidth,viewHeight;
+    private boolean isDrag = false;
     public DragFrameLayout(@NonNull Context context) {
         this(context, null);
     }
@@ -45,12 +49,17 @@ public class DragFrameLayout extends FrameLayout {
         getScreenInformation(context);
         init();
     }
-
+    public void setIsDrag(boolean isDrag){
+        this.isDrag = isDrag;
+    }
+    public boolean getIsDrag(){
+        return this.isDrag;
+    }
     private void init() {
         dragHelper = ViewDragHelper.create(this, new ViewDragHelper.Callback() {
             @Override
             public boolean tryCaptureView(View child, int pointerId) {
-                return true;
+                return getIsDrag();
             }
 
             @Override
@@ -121,9 +130,6 @@ public class DragFrameLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-/*        if (finalLeft == -1 && finalTop == -1) {
-            super.onLayout(changed, left, top, right, bottom);
-        }*/
     }
 
     @Override

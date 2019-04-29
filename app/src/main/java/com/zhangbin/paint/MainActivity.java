@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
@@ -105,6 +106,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private int state = -6;
     private  int resCode = -8;
     private InputMethodManager imm;
+    private ImageView mImageVideoView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -206,6 +208,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         lvMsg = findViewById(R.id.listview);
         inputLayout = findViewById(R.id.ll_InputLayout);
         forbidPerson = findViewById(R.id.btn_forbid);
+        mImageVideoView = findViewById(R.id.iv_videoView);
         findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
@@ -247,11 +250,13 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     lp.width = mDragIjkVideoView.getWidth();
                     lp.height =  Math.round(mDragIjkVideoView.getWidth()/ratio);
                     mDragIjkVideoView.setLayoutParams(lp);
+                    mDragIjkVideoView.start();
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     isVisiable.setVisibility(View.VISIBLE);
-                    mDragIjkVideoView.start();
+                    mImageVideoView.setVisibility(View.GONE);
+                    dragFrameLayout.setIsDrag(true);
                     if (mp != null) {
-                        mHandler.sendEmptyMessageDelayed(MSG_UPDATE_BOARD, 100);
+                        mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
                     } else {
                         mHandler.removeMessages(MSG_UPDATE_BOARD);
                     }
@@ -276,7 +281,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                 case MSG_UPDATE_BOARD: {
                     initOrderData();
                     mHandler.removeMessages(MSG_UPDATE_BOARD);
-                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_BOARD, 500);
+                    mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
                 }
             }
         }
