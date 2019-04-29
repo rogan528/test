@@ -125,12 +125,12 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         playiJKVideo();
         initData();
         initAssetsData();
-      //  initOrderData();
+        initOrderData();
         showTitleBar();
     }
 
     private void initAssetsData() {
-        String input = Util.readFileFromAssets(this, "LiveClientNew2.json");
+        String input = Util.readFileFromAssets(this, "LiveClientNew.json");
         Gson gson = new Gson();
         listOrderBean = gson.fromJson(input, new TypeToken<ArrayList<OrderBean>>() {
         }.getType());
@@ -144,6 +144,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             Gson gson = new Gson();
             OrderBean orderBean = gson.fromJson(input, OrderBean.class);
             orderDrawManger.SetOrder(orderBean).ExecuteOrder();
+            jsonMsg = "";
         }
     }
 
@@ -240,6 +241,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     Toast.LENGTH_LONG).show();
         } else {
             mDragIjkVideoView.setVideoURI(uri);
+            dragFrameLayout.setVisibility(View.VISIBLE);
             mDragIjkVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(IMediaPlayer mp) {
@@ -253,13 +255,12 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     mDragIjkVideoView.start();
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     isVisiable.setVisibility(View.VISIBLE);
-                    mImageVideoView.setVisibility(View.GONE);
-                    dragFrameLayout.setIsDrag(true);
                     if (mp != null) {
                         mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
                     } else {
                         mHandler.removeMessages(MSG_UPDATE_BOARD);
                     }
+                    mHandler.sendEmptyMessageDelayed(DRAG_SHOW,1500);
 
                 }
             });
@@ -274,6 +275,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         });
     }
     private static final int MSG_UPDATE_BOARD = 1;
+    private static final int DRAG_SHOW = 2;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -282,6 +284,11 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     initOrderData();
                     mHandler.removeMessages(MSG_UPDATE_BOARD);
                     mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
+                }
+                case DRAG_SHOW: {
+                    mImageVideoView.setVisibility(View.GONE);
+                    dragFrameLayout.setIsDrag(true);
+                    mHandler.removeMessages(DRAG_SHOW);
                 }
             }
         }
@@ -507,9 +514,9 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                         ScreenSwitchUtils.getInstance(MainActivity.this).stop();
                         finish();
-                        im_sdk.DisConnServer();
+                        ScreenSwitchUtils.getInstance(MainActivity.this).stop();
+                        exitActivity();
                     }
                 });
         normalDialog.setNegativeButton("取消",
@@ -520,6 +527,18 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     }
                 });
         normalDialog.show();
+    }
+
+    private void exitActivity() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                IjkMediaPlayer.native_profileEnd();
+                handler.removeCallbacksAndMessages(null);
+                mDragIjkVideoView.stopBackgroundPlay();
+                im_sdk.DisConnServer();
+            }
+        }).start();
     }
     private void showInputLayout() {
         if (handler == null) {
@@ -696,5 +715,19 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         msg.setData(dataBundle);
         mHandlerUI.sendMessage(msg);
         return;
+    }
+
+    @Override
+    protected void onStop() {
+        im_sdk.DisConnServer();
+        IjkMediaPlayer.native_profileEnd();
+        handler.removeCallbacksAndMessages(null);
+        mDragIjkVideoView.stopBackgroundPlay();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
