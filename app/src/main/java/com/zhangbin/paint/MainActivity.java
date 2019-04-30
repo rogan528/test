@@ -50,6 +50,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import tv.danmaku.ijk.media.example.callback.OnGetMediaPlayInterface;
 import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
 import tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -140,7 +141,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private void initOrderData() {
         String text = mDragIjkVideoView.getJsonMsg();
         executeOrder(text);
-        mDragIjkVideoView.setCalReCallBackListenner(new tv.danmaku.ijk.media.example.callback.OnGetInterface() {
+        mDragIjkVideoView.setCalReCallBackListenner(new OnGetMediaPlayInterface() {
             @Override
             public void GetMediaPlayerText(String text) {
                     executeOrder(text);

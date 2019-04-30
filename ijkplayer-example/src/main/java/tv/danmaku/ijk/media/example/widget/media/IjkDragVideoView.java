@@ -48,7 +48,7 @@ import java.util.Map;
 
 import tv.danmaku.ijk.media.example.R;
 import tv.danmaku.ijk.media.example.application.Settings;
-import tv.danmaku.ijk.media.example.callback.OnGetInterface;
+import tv.danmaku.ijk.media.example.callback.OnGetMediaPlayInterface;
 import tv.danmaku.ijk.media.example.services.MediaPlayerService;
 import tv.danmaku.ijk.media.exo.IjkExoMediaPlayer;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
@@ -604,7 +604,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
             mHudViewHolder.updateSeekCost(mSeekEndTime - mSeekStartTime);
         }
     };
-    OnGetInterface m_callback = null;
+    OnGetMediaPlayInterface m_callback = null;
     private IMediaPlayer.OnTimedTextListener mOnTimedTextListener = new IMediaPlayer.OnTimedTextListener() {
         @Override
         public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
@@ -621,7 +621,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     public String getJsonMsg() {
        return this.jsonText;
     }
-    public void setCalReCallBackListenner(OnGetInterface callback){
+    public void setCalReCallBackListenner(OnGetMediaPlayInterface callback){
         this.m_callback = callback;
         return;
     }
