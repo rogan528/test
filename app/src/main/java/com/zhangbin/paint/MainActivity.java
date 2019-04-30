@@ -138,16 +138,27 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     }
 
     private void initOrderData() {
-        String jsonMsg = mDragIjkVideoView.getJsonMsg();
-        String input = jsonMsg;
-        if (input != null && !"".equals(input)) {
-            Gson gson = new Gson();
-            OrderBean orderBean = gson.fromJson(input, OrderBean.class);
-            orderDrawManger.SetOrder(orderBean).ExecuteOrder();
-            jsonMsg = "";
-        }
+        String text = mDragIjkVideoView.getJsonMsg();
+        executeOrder(text);
+        mDragIjkVideoView.setCalReCallBackListenner(new tv.danmaku.ijk.media.example.callback.OnGetInterface() {
+            @Override
+            public void GetMediaPlayerText(String text) {
+                    executeOrder(text);
+            }
+        });
     }
 
+    /**
+     * 处理指令的方法
+     * @param text 传递过来的内容
+     */
+    private void executeOrder(String text){
+        if (text != null && !"".equals(text)) {
+            Gson gson = new Gson();
+            OrderBean orderBean = gson.fromJson(text, OrderBean.class);
+            orderDrawManger.SetOrder(orderBean).ExecuteOrder();
+        }
+    }
     /**
      * 初始化数据
      */
@@ -255,11 +266,11 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     mDragIjkVideoView.start();
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     isVisiable.setVisibility(View.VISIBLE);
-                    if (mp != null) {
+                    /*if (mp != null) {
                         mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
                     } else {
                         mHandler.removeMessages(MSG_UPDATE_BOARD);
-                    }
+                    }*/
                     mHandler.sendEmptyMessageDelayed(DRAG_SHOW,1500);
 
                 }
@@ -389,13 +400,13 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
 
         if(!msgData.isEmpty()) {
             im_sdk.SendMsg(msgData,msgData.length());
-            m_edit.setText("");
             imm.hideSoftInputFromWindow(m_edit.getWindowToken(), 0);
             int serverTime = im_sdk.GetServerTime();
             String timeStr =Long.toString(serverTime);
             MsgContent item = new MsgContent(userName ,timeStr,msgData);
             list.add(item);
             itemAdapter.notifyDataSetChanged();
+            m_edit.setText("");
         }else {
             mToast.setText("发送消息不允许为空!");
             mToast.show();

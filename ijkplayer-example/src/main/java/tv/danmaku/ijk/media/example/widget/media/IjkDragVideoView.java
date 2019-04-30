@@ -29,7 +29,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -49,6 +48,7 @@ import java.util.Map;
 
 import tv.danmaku.ijk.media.example.R;
 import tv.danmaku.ijk.media.example.application.Settings;
+import tv.danmaku.ijk.media.example.callback.OnGetInterface;
 import tv.danmaku.ijk.media.example.services.MediaPlayerService;
 import tv.danmaku.ijk.media.exo.IjkExoMediaPlayer;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
@@ -604,22 +604,26 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
             mHudViewHolder.updateSeekCost(mSeekEndTime - mSeekStartTime);
         }
     };
-
+    OnGetInterface m_callback = null;
     private IMediaPlayer.OnTimedTextListener mOnTimedTextListener = new IMediaPlayer.OnTimedTextListener() {
         @Override
         public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
            if (text != null) {
                 setJsonMsg(text.getText());
                 subtitleDisplay.setText(text.getText());
+                m_callback.GetMediaPlayerText(text.getText());
             }
         }
     };
     public void setJsonMsg(String text) {
         this.jsonText = text;
     }
-
     public String getJsonMsg() {
-        return this.jsonText;
+       return this.jsonText;
+    }
+    public void setCalReCallBackListenner(OnGetInterface callback){
+        this.m_callback = callback;
+        return;
     }
 
     /**
@@ -1116,6 +1120,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     }
 
     public void stopBackgroundPlay() {
+        mMediaPlayer.stop();
         MediaPlayerService.setMediaPlayer(null);
     }
 

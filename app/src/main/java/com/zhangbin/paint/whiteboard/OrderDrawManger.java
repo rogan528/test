@@ -68,8 +68,6 @@ public class OrderDrawManger {
         if (orderBean == null) {
             return;
         }
-
-        Log.i("orderorder", "--orderorder--"+gson.toJson(orderBean));
         Log.e("orderorder","toString--"+orderBean.toString());
         if (!orderBean.getType().equals("")) {
             int type = Util.toInteger(orderBean.getType());
