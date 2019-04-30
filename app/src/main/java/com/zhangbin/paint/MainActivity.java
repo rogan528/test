@@ -228,7 +228,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         findViewById(R.id.clear).setOnClickListener(this);
         findViewById(R.id.is_visiable).setOnClickListener(this);
         findViewById(R.id.iv_go_back).setOnClickListener(this);
-        findViewById(R.id.fullScreen_iv).setOnClickListener(this);
         findViewById(R.id.is_fullscreen).setOnClickListener(this);
         findViewById(R.id.pptLayout).setOnClickListener(this);
         findViewById(R.id.btn_send_msg).setOnClickListener(this);

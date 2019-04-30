@@ -36,13 +36,6 @@
             android:textSize="10sp" />
 
     </LinearLayout>
-    <include
-        layout="@layout/playback_menu_bottom_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:visibility="gone"
-        />
     <LinearLayout
         android:id="@+id/ll_InputLayout"
         android:layout_width="match_parent"
@@ -110,7 +103,7 @@
         android:layout_height="85dp"
         android:layout_marginBottom="10dp"
         android:layout_gravity="bottom|center"
-        android:background="@color/ijk_transparent_dark"
+        android:background="@color/aqua"
         android:padding="8dp"
         android:visibility="gone"/>
     <TextView
