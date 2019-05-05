@@ -1,7 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">绘制图像</string>
 
-
+    <string name="shutUp_input_tip">目前是锁屏模式,暂时不能发言哦...</string>
+    <string name="input_your_text">输入你的文字...</string>
     <string name="app_debug_name">云直播ForDebug</string>
     <string name="app_release_name">欢拓云课堂</string>
     <string name="version_tip">©欢拓云直播 V</string>

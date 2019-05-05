@@ -16,13 +16,13 @@
         >
         <activity
             android:name="com.zhangbin.paint.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="adjustPan|stateHidden">
+            android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
         <activity
             android:name="com.zhangbin.paint.FirstActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

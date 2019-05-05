@@ -17,9 +17,6 @@ import java.util.List;
 public class MsgItemAdapter extends  ArrayAdapter<MsgContent> {
 
     private int layoutId;
-
-
-
     public MsgItemAdapter(Context context, int layoutId, List<MsgContent> list) {
         super(context, layoutId, list);
         this.layoutId = layoutId;

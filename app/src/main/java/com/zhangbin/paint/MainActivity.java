@@ -38,6 +38,7 @@ import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
+import com.zhangbin.paint.util.SoftKeyboardStateWatcher;
 import com.zhangbin.paint.util.Util;
 import com.zhangbin.paint.video.DragFrameLayout;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
@@ -69,7 +70,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private int screenWidth;
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
-    private String dragVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private IjkDragVideoView mDragIjkVideoView;
     private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
    // private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
@@ -108,6 +108,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private  int resCode = -8;
     private InputMethodManager imm;
     private ImageView mImageVideoView;
+    private EditText mEdit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -128,8 +129,40 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         initAssetsData();
         initOrderData();
         showTitleBar();
+        initSoftKeyboard();
     }
 
+    /**
+     * 输入框的初始化
+     */
+    private void initSoftKeyboard() {
+        SoftKeyboardStateWatcher stateWatcher = new SoftKeyboardStateWatcher(mEdit);
+        stateWatcher.addSoftKeyboardStateListener(new SoftKeyboardStateWatcher.SoftKeyboardStateListener() {
+            @Override
+            public void onSoftKeyboardOpened(int keyboardHeightInPx) {
+                Log.e("---initSoftKeyboard---","--onSoftKeyboardOpened--");
+                /*dragFrameLayout.layout(-24,-9,25,11);
+                dragFrameLayout.invalidate();*/
+                if (!ScreenSwitchUtils.getInstance(MainActivity.this).isPortrait()) {
+                    Log.e("---initSoftKeyboard---","--onSoftKeyboardOpened-isPortrait-");
+                    //switchInputAreaLength(true);
+                }
+
+            }
+
+            @Override
+            public void onSoftKeyboardClosed() {
+                ScreenSwitchUtils screenSwitchUtils = ScreenSwitchUtils.getInstance(MainActivity.this);
+                Log.e("---initSoftKeyboard---","--onSoftKeyboardClosed--");
+                if (!screenSwitchUtils.isPortrait()) {
+                    //switchInputAreaLength(false);
+                    /*if (popupWindow != null && popupWindow.isShowing()) {
+                        popupWindow.dismiss();
+                    }*/
+                }
+            }
+        });
+    }
     private void initAssetsData() {
         String input = Util.readFileFromAssets(this, "LiveClientNew.json");
         Gson gson = new Gson();
@@ -222,6 +255,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         inputLayout = findViewById(R.id.ll_InputLayout);
         forbidPerson = findViewById(R.id.btn_forbid);
         mImageVideoView = findViewById(R.id.iv_videoView);
+        mEdit = findViewById(R.id.et);
         findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
@@ -253,6 +287,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         } else {
             mDragIjkVideoView.setVideoURI(uri);
             dragFrameLayout.setVisibility(View.VISIBLE);
+            //调试输入法导致位置时候打开,其他关闭
+            dragFrameLayout.setIsDrag(true);
             mDragIjkVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(IMediaPlayer mp) {
@@ -395,18 +431,16 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
      * 发送消息
      */
     private void sendMsg() {
-        EditText m_edit = findViewById(R.id.et);
-        String msgData = m_edit.getText().toString();
-
+        String msgData = mEdit.getText().toString();
         if(!msgData.isEmpty()) {
             im_sdk.SendMsg(msgData,msgData.length());
-            imm.hideSoftInputFromWindow(m_edit.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(mEdit.getWindowToken(), 0);
             int serverTime = im_sdk.GetServerTime();
             String timeStr =Long.toString(serverTime);
             MsgContent item = new MsgContent(userName ,timeStr,msgData);
             list.add(item);
             itemAdapter.notifyDataSetChanged();
-            m_edit.setText("");
+            mEdit.setText("");
         }else {
             mToast.setText("发送消息不允许为空!");
             mToast.show();
