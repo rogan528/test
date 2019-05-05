@@ -287,7 +287,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         } else {
             mDragIjkVideoView.setVideoURI(uri);
             dragFrameLayout.setVisibility(View.VISIBLE);
-            dragFrameLayout.setIsDrag(true);
             mDragIjkVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(IMediaPlayer mp) {
