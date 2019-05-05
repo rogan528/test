@@ -93,7 +93,7 @@
             android:layout_marginBottom="166dp"
             android:clickable="false"
             android:longClickable="false"
-            android:visibility="visible"/>
+            android:visibility="invisible"/>
         <ImageView
             android:id="@+id/iv_videoView"
             android:layout_width="160dp"
@@ -101,7 +101,7 @@
             android:layout_gravity="right|bottom"
             android:layout_marginBottom="166dp"
             android:background="@drawable/bg"
-            android:visibility="invisible"/>
+            android:visibility="visible"/>
     </com.zhangbin.paint.video.DragFrameLayout>
     <TableLayout
         android:id="@+id/hud_view"

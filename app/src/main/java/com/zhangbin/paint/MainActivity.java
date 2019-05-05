@@ -287,7 +287,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         } else {
             mDragIjkVideoView.setVideoURI(uri);
             dragFrameLayout.setVisibility(View.VISIBLE);
-            //调试输入法导致位置时候打开,其他关闭
             dragFrameLayout.setIsDrag(true);
             mDragIjkVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
                 @Override
