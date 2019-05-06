@@ -30,7 +30,7 @@ public class FirstActivity extends Activity{
             public void onClick(View v) {
                 String Id = userId.getText().toString().trim();
                 String Name = userName.getText().toString().trim();
-                if(Id.length() == 0 && Name.length() == 0) {
+                if(Id.length() == 0 || Name.length() == 0) {
                     mToast.setText("请输入用户ID和用户名称");
                     mToast.show();
                 }else {

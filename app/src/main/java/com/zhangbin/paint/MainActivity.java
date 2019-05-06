@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,13 +33,13 @@ import com.example.lijian.sf_im_sdk.OnGetInterface;
 import com.example.lijian.sf_im_sdk.OnUpdateUiInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.zhangbin.paint.adapter.MsgItemAdapter;
 import com.zhangbin.paint.beans.OrderBean;
 import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
-import com.zhangbin.paint.util.SoftKeyboardStateWatcher;
 import com.zhangbin.paint.util.Util;
-import com.zhangbin.paint.video.DragFrameLayout;
+import com.zhangbin.paint.video.view.DragFrameLayout;
 import com.zhangbin.paint.whiteboard.presenter.WhiteboardPresenter;
 import com.zhangbin.paint.whiteboard.OrderDrawManger;
 
@@ -59,35 +58,33 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 
 public class MainActivity extends Activity implements View.OnClickListener, OnUpdateUiInterface {
-
-    //private String url = "https://www.baidu.com/";
-    private String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
-    //  private String url = "file:///android_asset/javascript.html";
     private FrameLayout pptLayout;
     private DragFrameLayout dragFrameLayout;
-    private Button isVisiable;
     private WhiteboardPresenter whiteboardPresenter;
     private int screenWidth;
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
     private IjkDragVideoView mDragIjkVideoView;
-    private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
-   // private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    //private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
+    private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
     private TableLayout mHudView;
     private Context mContext;
     private ArrayList<OrderBean> listOrderBean;
-//    private DrawManger drawManger;
     private OrderDrawManger orderDrawManger;
-    private String TAG = "--IjkDragVideoView--";
     private Handler handler = new Handler();
     protected boolean isTitleBarShow = false;
     protected boolean isLongShowTitleBar = false;
+    //是否是VIP
     public static String IS_VIP = "isVip";
+    private boolean isVip;
+    //用户id和用户名
     public static String USER_ID = "userId";
     public static String USER_NAME = "userName";
-    private boolean isVip;
+    private String userId,userName;
     private LinearLayout tryWatch;
+    //是否可见按钮
+    private Button isVisiable;
     private ScheduledExecutorService lance;
     private LinearLayout titlebarContainer;
     private IM_SDK im_sdk;
@@ -102,13 +99,17 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private int initType =1,ipPort=8084;
     private String serverIP = "192.168.1.206";
     private String groupID = "2";
-    private String userId,userName;
     private LinearLayout inputLayout;
+    //连接互联服务状态码
     private int state = -6;
+    //发消息错误回调码
     private  int resCode = -8;
     private InputMethodManager imm;
     private ImageView mImageVideoView;
+    //输入框
     private EditText mEdit;
+    private int sendType = 0,forbidType = 0;
+    private String forbidUserId,forbidUserName,forbidTime;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -121,7 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         isVip = getIntent().getBooleanExtra(IS_VIP, false);
         userId = getIntent().getStringExtra(USER_ID);
         userName = getIntent().getStringExtra(USER_NAME);
-        mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG);
+        mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
         initIM();
         initView();
         playiJKVideo();
@@ -129,76 +130,12 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         initAssetsData();
         initOrderData();
         showTitleBar();
-        initSoftKeyboard();
-    }
-
-    /**
-     * 输入框的初始化
-     */
-    private void initSoftKeyboard() {
-        SoftKeyboardStateWatcher stateWatcher = new SoftKeyboardStateWatcher(mEdit);
-        stateWatcher.addSoftKeyboardStateListener(new SoftKeyboardStateWatcher.SoftKeyboardStateListener() {
-            @Override
-            public void onSoftKeyboardOpened(int keyboardHeightInPx) {
-                Log.e("---initSoftKeyboard---","--onSoftKeyboardOpened--");
-                /*dragFrameLayout.layout(-24,-9,25,11);
-                dragFrameLayout.invalidate();*/
-                if (!ScreenSwitchUtils.getInstance(MainActivity.this).isPortrait()) {
-                    Log.e("---initSoftKeyboard---","--onSoftKeyboardOpened-isPortrait-");
-                    //switchInputAreaLength(true);
-                }
-
-            }
-
-            @Override
-            public void onSoftKeyboardClosed() {
-                ScreenSwitchUtils screenSwitchUtils = ScreenSwitchUtils.getInstance(MainActivity.this);
-                Log.e("---initSoftKeyboard---","--onSoftKeyboardClosed--");
-                if (!screenSwitchUtils.isPortrait()) {
-                    //switchInputAreaLength(false);
-                    /*if (popupWindow != null && popupWindow.isShowing()) {
-                        popupWindow.dismiss();
-                    }*/
-                }
-            }
-        });
-    }
-    private void initAssetsData() {
-        String input = Util.readFileFromAssets(this, "LiveClientNew.json");
-        Gson gson = new Gson();
-        listOrderBean = gson.fromJson(input, new TypeToken<ArrayList<OrderBean>>() {
-        }.getType());
-        orderDrawManger.setListorderBean(listOrderBean);
-    }
-
-    private void initOrderData() {
-        String text = mDragIjkVideoView.getJsonMsg();
-        executeOrder(text);
-        mDragIjkVideoView.setCalReCallBackListenner(new OnGetMediaPlayInterface() {
-            @Override
-            public void GetMediaPlayerText(String text) {
-                    executeOrder(text);
-            }
-        });
-    }
-
-    /**
-     * 处理指令的方法
-     * @param text 传递过来的内容
-     */
-    private void executeOrder(String text){
-        if (text != null && !"".equals(text)) {
-            Gson gson = new Gson();
-            OrderBean orderBean = gson.fromJson(text, OrderBean.class);
-            orderDrawManger.SetOrder(orderBean).ExecuteOrder();
-        }
     }
     /**
-     * 初始化数据
+     * 连接IM服务初始化操作
      */
     private void initIM() {
         im_sdk = new IM_SDK();
-
         im_sdk.InitSDK(initType, userId, userName, groupID, "",
                 serverIP, "", ipPort
         );
@@ -211,36 +148,16 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             public void GetLoginStaete(int state){
                 UpdateLoginInterface(state);
             }
-
             @Override
             public void GetSendMsgData(int resCode, String userID) {
                 UpdateSendMsgDataStateInterface(resCode,userID);
             }
+            @Override
+            public void GetDisableSend(int sendType, int resCode, int forbidType, String userId, String username, String time) {
+                UpdateDisableSendStateInterface(sendType, resCode ,forbidType, userId, username,time);
+            }
         });
     }
-
-    /**
-     * 初始化数据
-     */
-    private void initData() {
-        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
-        Display defaultDisplay = getWindowManager().getDefaultDisplay();
-        screenWidth = defaultDisplay.getWidth();
-        screenHeight = defaultDisplay.getHeight();
-        ScreenSwitchUtils.getInstance(MainActivity.this).start(MainActivity.this);
-        realHeight = screenHeight;
-        orderDrawManger = new OrderDrawManger(whiteboardPresenter);
-        updateLayout();
-        if (!isVip){
-            tryWatch.setVisibility(View.VISIBLE);
-        }else {
-            tryWatch.setVisibility(View.GONE);
-        }
-        itemAdapter = new MsgItemAdapter(MainActivity.this ,R.layout.item , list);
-        lvMsg.setAdapter(itemAdapter);
-        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-    }
-
     /**
      * 初始化控件
      */
@@ -281,9 +198,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         mDragIjkVideoView.setMediaController(mMediaController);
         mDragIjkVideoView.setHudView(mHudView);
         if (TextUtils.isEmpty(ijkVideoUrl)) {
-            Toast.makeText(this,
-                    "没有发现视频，请退出！",
-                    Toast.LENGTH_LONG).show();
+            mToast.setText("没有发现视频，请退出！");
+            mToast.show();
         } else {
             mDragIjkVideoView.setVideoURI(uri);
             dragFrameLayout.setVisibility(View.VISIBLE);
@@ -297,19 +213,13 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     lp.width = mDragIjkVideoView.getWidth();
                     lp.height =  Math.round(mDragIjkVideoView.getWidth()/ratio);
                     mDragIjkVideoView.setLayoutParams(lp);
-                    mDragIjkVideoView.start();
                     mDragIjkVideoView.setVisibility(View.VISIBLE);
                     isVisiable.setVisibility(View.VISIBLE);
-                    /*if (mp != null) {
-                        mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
-                    } else {
-                        mHandler.removeMessages(MSG_UPDATE_BOARD);
-                    }*/
+                    mDragIjkVideoView.start();
                     mHandler.sendEmptyMessageDelayed(DRAG_SHOW,1500);
 
                 }
             });
-
         }
         mDragIjkVideoView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -319,17 +229,69 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             }
         });
     }
+    /**
+     * 初始化数据
+     */
+    private void initData() {
+        whiteboardPresenter = new WhiteboardPresenter(mContext,pptLayout);
+        Display defaultDisplay = getWindowManager().getDefaultDisplay();
+        screenWidth = defaultDisplay.getWidth();
+        screenHeight = defaultDisplay.getHeight();
+        ScreenSwitchUtils.getInstance(MainActivity.this).start(MainActivity.this);
+        realHeight = screenHeight;
+        orderDrawManger = new OrderDrawManger(whiteboardPresenter);
+        updateLayout();
+        if (!isVip){
+            tryWatch.setVisibility(View.VISIBLE);
+        }else {
+            tryWatch.setVisibility(View.GONE);
+        }
+        itemAdapter = new MsgItemAdapter(MainActivity.this ,R.layout.item , list);
+        lvMsg.setAdapter(itemAdapter);
+        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
+    /**
+     * 使用本地json数据解析
+     */
+    private void initAssetsData() {
+        String input = Util.readFileFromAssets(this, "LiveClientNew.json");
+        Gson gson = new Gson();
+        listOrderBean = gson.fromJson(input, new TypeToken<ArrayList<OrderBean>>() {
+        }.getType());
+        orderDrawManger.setListorderBean(listOrderBean);
+    }
+
+    /**
+     * 回调白板指令
+     */
+    private void initOrderData() {
+        String text = mDragIjkVideoView.getJsonMsg();
+        executeOrder(text);
+        mDragIjkVideoView.setCalReCallBackListenner(new OnGetMediaPlayInterface() {
+            @Override
+            public void GetMediaPlayerText(String text) {
+                    executeOrder(text);
+            }
+        });
+    }
+
+    /**
+     * 处理指令的方法
+     * @param text 传递过来的内容
+     */
+    private void executeOrder(String text){
+        if (text != null && !"".equals(text)) {
+            Gson gson = new Gson();
+            OrderBean orderBean = gson.fromJson(text, OrderBean.class);
+            orderDrawManger.SetOrder(orderBean).ExecuteOrder();
+        }
+    }
     private static final int MSG_UPDATE_BOARD = 1;
     private static final int DRAG_SHOW = 2;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_UPDATE_BOARD: {
-                    initOrderData();
-                    mHandler.removeMessages(MSG_UPDATE_BOARD);
-                    mHandler.sendEmptyMessage(MSG_UPDATE_BOARD);
-                }
                 case DRAG_SHOW: {
                     mImageVideoView.setVisibility(View.GONE);
                     dragFrameLayout.setIsDrag(true);
@@ -411,12 +373,12 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
      */
     private void forbidPerson() {
         preClickTime = System.currentTimeMillis();
-        if (forbidPerson.getText().toString().trim().equals("解除禁言")){
+        if (forbidPerson.getText().toString().trim().equals("解除禁言")){//设置禁言
             im_sdk.ForbidSendMsg(2, 4, "02", "02", "600");
             mToast.setText("用户02被解除禁言");
             mToast.show();
             forbidPerson.setText("禁言");
-        }else if(forbidPerson.getText().toString().trim().equals("禁言")){
+        }else if(forbidPerson.getText().toString().trim().equals("禁言")){  //解除禁言操作
             im_sdk.ForbidSendMsg(1, 4, "02", "02", "600");
             mToast.setText("用户02被禁言!");
             mToast.show();
@@ -451,16 +413,14 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     protected final void showTitleBar() {
         if (lance != null && !lance.isShutdown())
             lance.shutdown();
-        showController();
+        titlebarContainer.setVisibility(View.VISIBLE);
         isTitleBarShow = true;
         autoDismissTitleBar();
     }
-    private void showController() {
-        titlebarContainer.setVisibility(View.VISIBLE);
-        //operationContainer.setVisibility(View.VISIBLE);
-    }
 
-    //标题栏计时器. 3秒后自动隐藏
+    /**
+     * 标题栏计时器. 3秒后自动隐藏
+     */
     protected void autoDismissTitleBar() {
         stopDismissTitleBar();
         Runnable sendBeatRunnable = new Runnable() {
@@ -503,18 +463,10 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         if (isLongShowTitleBar)
             return;
         stopDismissTitleBar();
-        hideController();
-        isTitleBarShow = false;
-    }
-   private void hideController() {
         if (titlebarContainer == null)
             return;
         titlebarContainer.setVisibility(View.GONE);
-        /*operationContainer.setVisibility(View.GONE);
-        fullScreenInputBarView.hideSoftInput();
-        if (mNetCheckHelper != null) {
-            mNetCheckHelper.dismissPop();
-        }*/
+        isTitleBarShow = false;
     }
     /**
      * 全屏。非全屏切换
@@ -537,7 +489,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     }
     /**
      * 返回
-     *
      * @return
      */
     public void gobackAction() {
@@ -547,6 +498,10 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             showExitDialog();
         }
     }
+
+    /**
+     * 退出的dialog
+     */
     private void showExitDialog(){
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(MainActivity.this);
@@ -572,6 +527,9 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         normalDialog.show();
     }
 
+    /**
+     * 退出并停止视频,停止IM服务
+     */
     private void exitActivity() {
         new Thread(new Runnable() {
             @Override
@@ -583,6 +541,10 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             }
         }).start();
     }
+
+    /**
+     * 输入框的控制
+     */
     private void showInputLayout() {
         if (handler == null) {
             return;
@@ -602,14 +564,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                         inputLayout.setVisibility(View.VISIBLE);
                         lvMsg.setVisibility(View.VISIBLE);
                     }
-                   /* if (mLiveMessageView != null) {
-                        if (mLiveMessageView.getCurrentItem() != 2) {
-                            if (vgInputLayout != null) {
-                                vgInputLayout.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    }*/
-
                 }
             }
         }, 100);
@@ -627,13 +581,15 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         super.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * 更新布局
+     */
     public void updateLayout() {
         int width = DimensionUtils.getScreenWidth(this);
         int height = DimensionUtils.getScreenHeight(this);
-        Log.i("ppt宽高1", "宽：" + width + "  高：" + height);
         Boolean isPortrait = height > width;
         if (!ActivityUtil.isFullScreen(this) && isPortrait) {
-//            height -= DimensionUtils.getStatusBarHeight(this);
+
         }
         screenHeight = height;
         //获取宽高
@@ -651,7 +607,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     pptLayoutWidth = (int) (width * 0.72);
                     height = pptLayoutWidth * 3 / 4;
                     pptLayout.setBackgroundColor(Color.BLACK);
-
                 } else {
                     pptLayoutWidth = width;
                 }
@@ -660,7 +615,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             }
             pptParams.width = pptLayoutWidth;
             pptParams.height = height;
-            Log.i("ppt宽高", "宽：" + pptParams.width + "  高：" + height);
             pptLayout.setLayoutParams(pptParams);
 
         }
@@ -669,6 +623,10 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     public void onBackPressed() {
         gobackAction();
     }
+
+    /**
+     * IM服务的处理
+     */
     private Handler mHandlerUI = new Handler(){
         public void handleMessage(Message msg) {
             Bundle dataBundle = msg.getData();
@@ -682,10 +640,13 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     state = dataBundle.getInt("state");
                     switch (state){
                         case -1: {
+                            mEdit.setEnabled(false);
+                            mEdit.setText("连接互动服务失败");
                             loginStateView.setText("连接互动服务失败");
                             break;
                         }
                         case 0:{
+                            mEdit.setEnabled(true);
                             loginStateView.setText("已连上互动服务");
                             break;
                         }
@@ -694,6 +655,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                             break;
                         }
                         case 2:{
+                            mEdit.setEnabled(true);
                             loginStateView.setText("已重连到互动服务");
                             break;
                         }
@@ -705,14 +667,16 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     break;
                 case 1:
                     resCode = dataBundle.getInt("resCode");
-                    Log.e("Login","resCode:"+resCode);
-                    if (resCode == 1 || resCode ==2){
-
-                    }else{
-
-                    }
+                    if(resCode == 1){
+                        mToast.setText("你发送信息太快了,请慢些");
+                        mToast.show();
+                    }else if(resCode == 2){
+                        mToast.setText("发送消息失败,请重发");
+                        mToast.show();
+                     }
                     break;
                 case 3:
+                    //发消息回调
                     if (resCode != 1 && resCode != 2) {
                         m_Item.setName(dataBundle.getString("name"));
                         m_Item.setMsgtime(dataBundle.getString("msgTime"));
@@ -724,6 +688,11 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
             }
         }
     };
+
+    /**
+     * 更新数据
+     * @param msgContent
+     */
     @Override
     public void UpdateUIInterface(MsgContent msgContent) {
         Message msg = new Message();
@@ -737,6 +706,10 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         return;
     }
 
+    /**
+     * 更新登陆状态
+     * @param state
+     */
     @Override
     public void UpdateLoginInterface(int state) {
         Message msg = new Message();
@@ -748,6 +721,11 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         return;
     }
 
+    /**
+     * 更新发送消息的状态
+     * @param resCode
+     * @param userID
+     */
     @Override
     public void UpdateSendMsgDataStateInterface(int resCode, String userID) {
         Message msg = new Message();
@@ -758,6 +736,22 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         msg.setData(dataBundle);
         mHandlerUI.sendMessage(msg);
         return;
+    }
+
+    /**
+     * 禁言回调接口
+     * @param sendType
+     * @param resCode
+     * @param forbidType
+     * @param userId
+     * @param username
+     * @param time
+     */
+    @Override
+    public void UpdateDisableSendStateInterface(int sendType, int resCode, int forbidType, String userId, String username, String time) {
+        forbidUserId = userId;
+        forbidUserName = userName;
+        this.forbidType = forbidType;
     }
 
     @Override

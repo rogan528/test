@@ -38,6 +38,7 @@ public class IM_SDK {
 
     //接收禁言消息
     public void onGetDisableSend(int sendType, int resCode ,int forbidType, String userId, String username, String time){
+        this.m_callback.GetDisableSend(sendType,resCode,forbidType,userId,username,time);
         if (sendType ==1) {
             Log.e("Login", "禁言的用户名:" + username + "  时间:" + time);
         }else {

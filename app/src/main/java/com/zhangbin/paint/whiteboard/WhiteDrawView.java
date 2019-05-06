@@ -10,6 +10,7 @@ package com.zhangbin.paint.whiteboard;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -76,9 +77,7 @@ public final class WhiteDrawView extends FrameLayout {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         webView.setWebChromeClient(new WebChromeClient());
-        webView.setWebContentsDebuggingEnabled(true);
         webView.loadUrl(url);
-
     }
 
 
@@ -207,12 +206,6 @@ public final class WhiteDrawView extends FrameLayout {
         }
     }
 
-    public final void init(String paramString) {
-        if ((!TextUtils.isEmpty(paramString)) && (getContext() != null) && (this.pageWhite != null)) {
-            getContext();
-        }
-    }
-
 
     public final void setPPTLoadFailDrawable(Drawable paramDrawable) {
         if (this.pageWhite != null) {
@@ -220,9 +213,13 @@ public final class WhiteDrawView extends FrameLayout {
         }
     }
 
-    public final void init(int pageIndex) {
+    /**
+     * 指定页数清除
+     * @param pageIndex
+     */
+    public final void clearPageIndex(int pageIndex) {
         if (this.pageWhite != null) {
-            this.pageWhite.drawObjA(pageIndex);
+            this.pageWhite.clearPageIndex(pageIndex);
         }
     }
 
@@ -280,35 +277,50 @@ public final class WhiteDrawView extends FrameLayout {
         this.pageWhite.addDraftPage(currentPage);
     }
 
+    /**
+     * 跳转指定页面
+     * @param currentPage
+     * @param currentAnimation
+     */
     public void jumpPage(int currentPage, int currentAnimation) {
-
-        webView.evaluateJavascript("javascript:JumpPage(" + currentPage + "," + currentAnimation + ",1)", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-
-            }
-        });
+        String js = "javascript:JumpPage(" + currentPage + "," + currentAnimation + ",1)";
+        webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
 
     }
 
+    /**
+     * 针对不同版本调用不同的API
+     * @param js
+     */
+    private void webViewLoad(String js) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(js, null);
+        } else {
+            webView.loadUrl(js);
+        }
+    }
+
+
+    /**
+     * 上一页
+     * @param currentPage
+     * @param currentAnimation
+     */
     public void lastSlideS(int currentPage, int currentAnimation) {
-        webView.evaluateJavascript("javascript:lastSlideS(" + currentPage + "," + currentAnimation + ")", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-
-            }
-        });
+        String js = "javascript:lastSlideS(" + currentPage + "," + currentAnimation + ")";
+        webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
     }
 
+    /**
+     * 下一页
+     * @param currentPage
+     * @param currentAnimation
+     */
     public void nextSlideS(int currentPage, int currentAnimation) {
-        webView.evaluateJavascript("javascript:nextSlideS(" + currentPage + "," + currentAnimation + ")", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-
-            }
-        });
+        String js = "javascript:nextSlideS(" + currentPage + "," + currentAnimation + ")";
+        webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
     }
 

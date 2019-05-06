@@ -68,10 +68,8 @@ public class OrderDrawManger {
         if (orderBean == null) {
             return;
         }
-        Log.e("orderorder","toString--"+orderBean.toString());
         if (!orderBean.getType().equals("")) {
             int type = Util.toInteger(orderBean.getType());
-            Log.i("itemorderorder", "--type--"+type);
             List<OrderBean.DataBean> lst = this.orderBean.getData();
             switch (type) {
                 case 300:
@@ -85,12 +83,15 @@ public class OrderDrawManger {
                 case 304:
                     break;
                 case 305:
+                    //设置画笔大小
                     whiteboardPresenter.setPaintSize(Float.parseFloat(this.orderBean.getValue()));
                     break;
                 case 306:
+                    //设置画笔颜色
                     whiteboardPresenter.setPaintColor(Color.parseColor(this.orderBean.getValue()));
                     break;
                 case 307:
+                    //设置橡皮大小
                     whiteboardPresenter.setReaserSize(Float.parseFloat(this.orderBean.getValue()));
                     break;
                 case 308:
@@ -101,6 +102,8 @@ public class OrderDrawManger {
                     //文字颜色
                     whiteboardPresenter.setTextColor(Color.parseColor(this.orderBean.getValue()));
                     break;
+                //400画笔401橡皮402创建文字403编辑文字404移动文字
+                // 405画线406画虚线407画矩形408画圆409图形移动
                 case 400:
                 case 401:
                 case 402:
@@ -114,26 +117,33 @@ public class OrderDrawManger {
                     whiteboardPresenter.addDrawData(orderBean);
                     break;
                 case 410:
+                    //打开草稿纸
                     whiteboardPresenter.openDraftPaper();
                     break;
                 case 411:
+                    //关闭草稿纸
                     whiteboardPresenter.closeDraftPaper();
                     break;
                 case 412:
                     break;
                 case 413:
+                    //设置背景色
                     whiteboardPresenter.setBackgroundColor(this.orderBean.getValue());
                     break;
                 case 414:
+                    //新建草稿纸
                     whiteboardPresenter.addDraftPaper();
                     break;
                 case 500:
+                    //清空
                     whiteboardPresenter.orderClear();
                     break;
                 case 501:
+                    //撤销
                     whiteboardPresenter.undo();
                     break;
                 case 502:
+                    //回退
                     whiteboardPresenter.redo();
                     break;
                 case 503:
@@ -149,8 +159,6 @@ public class OrderDrawManger {
                     whiteboardPresenter.nextSlideS(this.orderBean.getCurrentPage(), this.orderBean.getCurrentAnimation());
                     break;
             }
-
-
         }
     }
 

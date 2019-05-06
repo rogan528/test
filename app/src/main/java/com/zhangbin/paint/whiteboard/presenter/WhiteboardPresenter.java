@@ -78,11 +78,14 @@ public class WhiteboardPresenter {
         }
     }
 
+    /**
+     * 设置PPT的背景色
+     * @param backgroundColor
+     */
     public void setWhiteboardBackgroundColor(final int backgroundColor) {
         if (this.whiteDrawView == null) {
             return;
         }
-        Log.i("video", "设置桌面颜色color:" + backgroundColor);
         this.whiteDrawView.setBackgroundColor(backgroundColor);
     }
 
@@ -94,11 +97,9 @@ public class WhiteboardPresenter {
 
     /**
      * 305指令  画笔大小
-     *
      * @param penSize
      */
     public void setPaintSize(float penSize) {
-        //this.whiteDrawView.setStrokeWidth(strokeWidth);
         OperationUtils.getInstance().mCurrentPenSize = penSize;
     }
 
@@ -108,7 +109,6 @@ public class WhiteboardPresenter {
      * @param paintColor
      */
     public void setPaintColor(int paintColor) {
-        //this.whiteDrawView.setPaintColor(paintColor);
         OperationUtils.getInstance().mCurrentPenColor = paintColor;
     }
 
@@ -265,47 +265,25 @@ public class WhiteboardPresenter {
         this.indexPage = currentPage;
     }
 
-//    public void preloadPage(final String s) {
-//        if (TextUtils.isEmpty((CharSequence) s) || this.whiteDrawView == null) {
-//            return;
-//        }
-//        Log.d("video", "\u9884\u52a0\u8f7d:" + s);
-//        this.whiteDrawView.init(s);
-//    }
 
-
+    /**
+     * 清除指定页涂鸦
+     * @param pageIndex
+     */
     public void clearPageDraw(int pageIndex) {
         if (this.whiteDrawView == null) {
             return;
         }
-//        pageIndex = this.indexPage;
-        Log.d("video", String.format("清除指定页涂鸦", pageIndex));
-        this.whiteDrawView.init(pageIndex);
+        this.whiteDrawView.clearPageIndex(pageIndex);
     }
-
-
+    /**
+     * 清除所有
+     */
     public void clearAllDraw() {
         if (this.whiteDrawView == null) {
             return;
         }
-        Log.d("video", "擦除全部涂鸦");
         this.whiteDrawView.init();
-    }
-
-
-    public void clearPage() {
-        if (this.whiteDrawView == null) {
-            return;
-        }
-        Log.d("video", "清除页面");
-        this.whiteDrawView.drawObj();
-    }
-
-    public void clearAll() {
-
-        if (this.whiteDrawView != null) {
-            this.whiteDrawView.clearAll();
-        }
     }
 
     public void setPageCommandCallback(final PageCommandCallback f) {

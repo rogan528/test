@@ -13,5 +13,7 @@ public interface OnGetInterface {
     public void GetLoginStaete(int state);
 
     public void GetSendMsgData(int resCode,String userID);
+
+    public void GetDisableSend(int sendType, int resCode ,int forbidType, String userId, String username, String time);
     //public ListView getListView();
 }
