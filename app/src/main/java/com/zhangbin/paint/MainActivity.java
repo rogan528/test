@@ -68,7 +68,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     //private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
     private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
-    private TableLayout mHudView;
     private Context mContext;
     private ArrayList<OrderBean> listOrderBean;
     private OrderDrawManger orderDrawManger;
@@ -189,14 +188,12 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
      */
     private void playiJKVideo() {
         mDragIjkVideoView = findViewById(R.id.ijk_videoView);
-        mHudView = findViewById(R.id.hud_view);
         Uri uri = Uri.parse(ijkVideoUrl);
         mMediaController = new AndroidMediaController(this, false);
         IjkMediaPlayer.loadLibrariesOnce(null);
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
         mMediaController.setVisibility(View.VISIBLE);
         mDragIjkVideoView.setMediaController(mMediaController);
-        mDragIjkVideoView.setHudView(mHudView);
         if (TextUtils.isEmpty(ijkVideoUrl)) {
             mToast.setText("没有发现视频，请退出！");
             mToast.show();
