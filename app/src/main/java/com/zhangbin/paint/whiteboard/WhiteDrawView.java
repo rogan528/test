@@ -73,7 +73,7 @@ public final class WhiteDrawView extends FrameLayout {
     }
 
     private void initWebSetting() {
-        String url = "http://www.baidu.com/";
+        String url = "http://192.168.8.37:8081/83461B08A0401FC68D9C2A7E036C4710/h5/h5.html?aaaa";
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         webView.setWebChromeClient(new WebChromeClient());

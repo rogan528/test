@@ -94,8 +94,8 @@
             android:layout_width="160dp"
             android:layout_height="120dp"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="166dp"
             android:background="@drawable/bg"
+            android:layout_marginBottom="166dp"
             android:visibility="visible"/>
     </com.zhangbin.paint.video.view.DragFrameLayout>
     <TextView
@@ -159,4 +159,10 @@
             android:layout_weight="1"
             android:text="全屏" />
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:text="暂停" />
 </FrameLayout>
