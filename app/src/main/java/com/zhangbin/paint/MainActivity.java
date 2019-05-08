@@ -27,6 +27,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.lijian.sf_im_sdk.IM_SDK;
 import com.example.lijian.sf_im_sdk.MsgContent;
 import com.example.lijian.sf_im_sdk.OnGetInterface;
@@ -65,8 +67,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
     private IjkDragVideoView mDragIjkVideoView;
-    //private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
-    private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
+    //private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
     private Context mContext;
     private ArrayList<OrderBean> listOrderBean;
@@ -109,6 +111,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private EditText mEdit;
     private int sendType = 0,forbidType = 0;
     private String forbidUserId,forbidUserName,forbidTime;
+    int mDefaultRes;
+    private Button mPlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -124,8 +128,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
         initIM();
         initView();
-        playiJKVideo();
         initData();
+        playiJKVideo();
         initAssetsData();
         initOrderData();
         showTitleBar();
@@ -172,6 +176,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         forbidPerson = findViewById(R.id.btn_forbid);
         mImageVideoView = findViewById(R.id.iv_videoView);
         mEdit = findViewById(R.id.et);
+        mPlay = findViewById(R.id.btn_play);
         findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
@@ -182,6 +187,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         findViewById(R.id.pptLayout).setOnClickListener(this);
         findViewById(R.id.btn_send_msg).setOnClickListener(this);
         findViewById(R.id.btn_forbid).setOnClickListener(this);
+        mPlay.setOnClickListener(this);
     }
     /**
      * 播放IJK视频
@@ -246,6 +252,15 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         itemAdapter = new MsgItemAdapter(MainActivity.this ,R.layout.item , list);
         lvMsg.setAdapter(itemAdapter);
         imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        Glide.with(MainActivity.this)
+                .setDefaultRequestOptions(
+                        new RequestOptions()
+                                .frame(1000000)
+                                .centerCrop()
+                                .error(mDefaultRes)
+                                .placeholder(mDefaultRes))
+                .load(ijkVideoUrl)
+                .into(mImageVideoView);
     }
     /**
      * 使用本地json数据解析
@@ -362,9 +377,23 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
                     mToast.show();
                 }
                 break;
+            case R.id.btn_play:
+                playAndPause();
+                break;
         }
     }
-
+    /**
+     * 播放或者暂停
+     */
+    private void playAndPause() {
+        if (mPlay.getText().toString().trim().equals("暂停")) {
+            mDragIjkVideoView.pause();
+            mPlay.setText("播放");
+        }else if(mPlay.getText().toString().trim().equals("播放")){
+            mDragIjkVideoView.start();
+            mPlay.setText("暂停");
+        }
+    }
     /**
      * 禁言和解除
      */
