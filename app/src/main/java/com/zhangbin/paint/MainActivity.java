@@ -509,11 +509,11 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
      */
     public void onFullScreenChange() {
         ScreenSwitchUtils.getInstance(this).setIsFullScreen(!ScreenSwitchUtils.getInstance(this).isFullScreen());
-        /*if (ScreenSwitchUtils.getInstance(this).isSensorSwitchLandScreen()) {  //重力切换的横屏的话
+        if (ScreenSwitchUtils.getInstance(this).isSensorSwitchLandScreen()) {  //重力切换的横屏的话
             updateLayout();
-        } else {*/
+        } else {
             ScreenSwitchUtils.getInstance(this).toggleScreen();
-        //}
+        }
     }
     /**
      * 返回
