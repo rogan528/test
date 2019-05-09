@@ -117,7 +117,9 @@ public final class DrawText
         text = orderBean.getText();
         x = orderBean.getX();
         y = orderBean.getY();
-        this.size = OperationUtils.getInstance().mCurrentTextSize;
+        //window转安卓字体系数2.22
+
+        this.size = 1.35f* OperationUtils.getInstance().mCurrentTextSize;
         this.paint.setColor(OperationUtils.getInstance().mCurrentTextColor);
 
     }

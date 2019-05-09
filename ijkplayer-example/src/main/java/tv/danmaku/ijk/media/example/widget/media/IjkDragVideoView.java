@@ -403,8 +403,8 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                     mVideoHeight = mp.getVideoHeight();
                     mVideoSarNum = mp.getVideoSarNum();
                     mVideoSarDen = mp.getVideoSarDen();
-                    Log.e(TAG,"onVideoSizeChanged mVideoWidth:"+mVideoWidth+" mVideoHeight: "+mVideoHeight
-                    +" mVideoSarNum: "+mVideoSarNum+"  mVideoSarDen:"+mVideoSarDen);
+                    //Log.e(TAG,"onVideoSizeChanged mVideoWidth:"+mVideoWidth+" mVideoHeight: "+mVideoHeight
+                   // +" mVideoSarNum: "+mVideoSarNum+"  mVideoSarDen:"+mVideoSarDen);
                     if (mVideoWidth != 0 && mVideoHeight != 0) {
                         if (mRenderView != null) {
                             mRenderView.setVideoSize(mVideoWidth, mVideoHeight);
@@ -423,7 +423,6 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                 mHudViewHolder.updateLoadCost(mPrepareEndTime - mPrepareStartTime);
             }
             mCurrentState = STATE_PREPARED;
-
             // Get the capabilities of the player for this stream
             // REMOVED: Metadata
 
@@ -603,7 +602,9 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
         @Override
         public void onSeekComplete(IMediaPlayer mp) {
             mSeekEndTime = System.currentTimeMillis();
-            mHudViewHolder.updateSeekCost(mSeekEndTime - mSeekStartTime);
+            if (mHudViewHolder != null) {
+                mHudViewHolder.updateSeekCost(mSeekEndTime - mSeekStartTime);
+            }
         }
     };
     OnGetMediaPlayInterface m_callback = null;
@@ -1031,7 +1032,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
 
     public IMediaPlayer createPlayer(int playerType) {
         IMediaPlayer mediaPlayer = null;
-
+        Log.e(TAG,"createPlayer playerType:"+playerType);
         switch (playerType) {
             case Settings.PV_PLAYER__IjkExoMediaPlayer: {
                 IjkExoMediaPlayer IjkExoMediaPlayer = new IjkExoMediaPlayer(mAppContext);
@@ -1080,10 +1081,9 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                     }
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
-
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
-
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
                 }
                 mediaPlayer = ijkMediaPlayer;
             }

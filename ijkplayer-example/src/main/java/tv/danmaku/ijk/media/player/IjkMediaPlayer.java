@@ -1038,9 +1038,9 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                 } else {
                    /* IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String)msg.obj);
                     player.notifyOnTimedText(text);*/
-                   Log.e("test","------msg.obj----"+msg.obj);
+                   //Log.e("test","------msg.obj----"+msg.obj);
                     if (2019 == msg.arg1 && 996 == msg.arg2){//自定义数据，json字符串
-                        DebugLog.e(TAG, "arg1 = " + msg.arg1 + ", arg2 = " + msg.arg2 + ", obj = " + msg.obj);
+                        Log.e(TAG, "arg1 = " + msg.arg1 + ", arg2 = " + msg.arg2 + ", obj = " + msg.obj);
                         IjkTimedText text = new IjkTimedText(new Rect(0, 0, 1, 1), (String)msg.obj);
                         player.notifyOnTimedText(text);
                     }

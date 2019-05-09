@@ -308,7 +308,7 @@ public final class WhiteDrawView extends FrameLayout {
      * @param currentAnimation
      */
     public void lastSlideS(int currentPage, int currentAnimation) {
-        String js = "javascript:lastSlideS(" + currentPage + "," + currentAnimation + ")";
+        String js = "javascript:LastSlideS(" + currentPage + "," + currentAnimation + ")";
         webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
     }
@@ -319,7 +319,7 @@ public final class WhiteDrawView extends FrameLayout {
      * @param currentAnimation
      */
     public void nextSlideS(int currentPage, int currentAnimation) {
-        String js = "javascript:nextSlideS(" + currentPage + "," + currentAnimation + ")";
+        String js = "javascript:NextSlideS(" + currentPage + "," + currentAnimation + ")";
         webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
     }

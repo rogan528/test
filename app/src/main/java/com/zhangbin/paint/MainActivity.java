@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,6 +127,9 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         userId = getIntent().getStringExtra(USER_ID);
         userName = getIntent().getStringExtra(USER_NAME);
         mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
+        float scale = getResources().getDisplayMetrics().density;
+        float fontScale = getResources().getDisplayMetrics().scaledDensity;
+        float v = (scale / 160) * 72;
         initIM();
         initView();
         initData();
@@ -252,15 +256,20 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         itemAdapter = new MsgItemAdapter(MainActivity.this ,R.layout.item , list);
         lvMsg.setAdapter(itemAdapter);
         imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        Glide.with(MainActivity.this)
-                .setDefaultRequestOptions(
-                        new RequestOptions()
-                                .frame(1000000)
-                                .centerCrop()
-                                .error(mDefaultRes)
-                                .placeholder(mDefaultRes))
-                .load(ijkVideoUrl)
-                .into(mImageVideoView);
+        try {
+            Glide.with(MainActivity.this)
+                    .setDefaultRequestOptions(
+                            new RequestOptions()
+                                    .frame(1000000)
+                                    .centerCrop()
+                                    .error(mDefaultRes)
+                                    .placeholder(mDefaultRes))
+                    .load(ijkVideoUrl)
+                    .into(mImageVideoView);
+        }catch (Exception e){
+           e.printStackTrace();
+        }
+
     }
     /**
      * 使用本地json数据解析
