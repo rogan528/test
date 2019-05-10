@@ -18,6 +18,7 @@ public final class DrawText
     private float y = 0;
     private float height = 10;
     private Context n;
+    private float sizeRatio = OperationUtils.getInstance().mCurrentTextSizeRatio;
 
     public DrawText() {
         setDrawType(5);
@@ -51,7 +52,7 @@ public final class DrawText
     }
 
     public final void draw(Canvas canvas) {
-        this.paint.setTextSize(this.size * this.scaleRatio);
+        this.paint.setTextSize(this.size * this.scaleRatio*sizeRatio);
         this.paint.setSubpixelText(true);
 //        canvas.drawText(this.text, this.x * this.scaleRatio, this.y * this.scaleRatio + this.size * this.scaleRatio, this.paint);
         this.lineBreak(canvas, this.text.trim(), 0);
@@ -69,7 +70,7 @@ public final class DrawText
         int subIndex = this.paint.breakText(str, 0, str.length(), true, (canvas.getWidth() >> 1) - this.x * this.scaleRatio, null);
         //截取可以显示的汉字
         String mytext = str.substring(0, subIndex);
-        canvas.drawText(mytext, this.x * this.scaleRatio, this.y * this.scaleRatio + this.size * this.scaleRatio + height, this.paint);
+        canvas.drawText(mytext, this.x * this.scaleRatio, this.y * this.scaleRatio + sizeRatio*this.size * this.scaleRatio + height, this.paint);
 
         //计算剩下的汉字
         String ss = str.substring(subIndex);
@@ -78,38 +79,6 @@ public final class DrawText
             lineBreak(canvas, ss, height + this.size * this.scaleRatio + this.size * this.scaleRatio * 0.2f);
         }
     }
-
-//    public void onDraw1(Canvas canvas)
-//    {
-//        int MARGIN = 1;
-//        int BORDER_WIDTH = 1;
-//
-//        Paint p = new Paint();
-//        p.setAntiAlias(true);
-//        p.setTextSize(12);
-//        p.setTypeface(Typeface.create(Typeface.SERIF, Typeface.NORMAL));
-//        p.setSubpixelText(true);
-//
-//        RectF rect = getRect();
-//
-//
-//        float maxWidth = rect.width() - MARGIN - BORDER_WIDTH * 2;
-//
-//        String str = getText();
-//        char[] chars = str.toCharArray();
-//        int nextPos = p.breakText(chars, 0, chars.length, maxWidth, null);
-//        str = str.substring(0, nextPos);
-//
-//        float textX = MARGIN + BORDER_WIDTH;
-//        float textY = (float) (Math.abs(p.getFontMetrics().ascent) + BORDER_WIDTH + MARGIN);
-//
-//        canvas.drawText(str, textX, textY, p);
-//
-//        p.setStrokeWidth(BORDER_WIDTH);
-//        p.setStyle(Paint.Style.STROKE);
-//
-//        canvas.drawRect(rect, p);
-//    }
 
 
     public final void explainOrder(OrderBean orderBean) {

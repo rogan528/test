@@ -37,6 +37,8 @@ public class OperationUtils {
     /**
      * 单例
      */
+
+    public float mCurrentTextSizeRatio = 1.0f;
     public static OperationUtils getInstance() {
         if (mOperationStack == null) {
             mOperationStack = new OperationUtils();

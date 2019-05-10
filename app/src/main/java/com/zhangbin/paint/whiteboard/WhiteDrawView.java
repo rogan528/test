@@ -89,7 +89,7 @@ public final class WhiteDrawView extends FrameLayout {
     public final void init(boolean isClient) {
         this.pageWhite = new PageWhite(isClient, this);
         //要设置原始ppt 大小以便进行缩放控制
-        this.pageWhite.setWidthHeight(934, 508);
+        this.pageWhite.setWidthHeight(930, 523);
 //        }
 
     }
@@ -308,7 +308,7 @@ public final class WhiteDrawView extends FrameLayout {
      * @param currentAnimation
      */
     public void lastSlideS(int currentPage, int currentAnimation) {
-        String js = "javascript:lastSlideS(" + currentPage + "," + currentAnimation + ")";
+        String js = "javascript:LastSlideS(" + currentPage + "," + currentAnimation + ")";
         webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
     }
@@ -319,7 +319,7 @@ public final class WhiteDrawView extends FrameLayout {
      * @param currentAnimation
      */
     public void nextSlideS(int currentPage, int currentAnimation) {
-        String js = "javascript:nextSlideS(" + currentPage + "," + currentAnimation + ")";
+        String js = "javascript:NextSlideS(" + currentPage + "," + currentAnimation + ")";
         webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
     }

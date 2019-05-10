@@ -38,6 +38,9 @@ public class WhiteboardPresenter {
     public WhiteboardPresenter(Context context, ViewGroup viewGroup) {
         this.viewGroup = viewGroup;
         this.context = context;
+        float scale = context.getResources().getDisplayMetrics().density;
+        float ratio = (scale / 160) * 72;
+        OperationUtils.getInstance().mCurrentTextSizeRatio = ratio;
         this.init();
 
     }

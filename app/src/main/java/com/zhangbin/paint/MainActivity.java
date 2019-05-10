@@ -67,8 +67,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private int screenHeight;
     private int realHeight;//控件真实高度，去除头部标题后的
     private IjkDragVideoView mDragIjkVideoView;
-    //private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
-    private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
+    //private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
     private Context mContext;
     private ArrayList<OrderBean> listOrderBean;
@@ -252,15 +252,19 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         itemAdapter = new MsgItemAdapter(MainActivity.this ,R.layout.item , list);
         lvMsg.setAdapter(itemAdapter);
         imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        Glide.with(MainActivity.this)
-                .setDefaultRequestOptions(
-                        new RequestOptions()
-                                .frame(1000000)
-                                .centerCrop()
-                                .error(mDefaultRes)
-                                .placeholder(mDefaultRes))
-                .load(ijkVideoUrl)
-                .into(mImageVideoView);
+        try {
+            Glide.with(MainActivity.this)
+                    .setDefaultRequestOptions(
+                            new RequestOptions()
+                                    .frame(1000000)
+                                    .centerCrop()
+                                    .error(mDefaultRes)
+                                    .placeholder(mDefaultRes))
+                    .load(ijkVideoUrl)
+                    .into(mImageVideoView);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     /**
      * 使用本地json数据解析
