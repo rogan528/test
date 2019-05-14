@@ -272,7 +272,15 @@ public final class WhiteDrawView extends FrameLayout {
     public void closeDraftPaper(int currentPage) {
         jumpPage(currentPage, 1);
     }
-
+    /**
+     * 412 草稿纸换页
+     *
+     * @param currentPage
+     */
+    public void changeDraftPaper(int currentPage) {
+        webView.setVisibility(INVISIBLE);
+        this.pageWhite.ToPage(currentPage);
+    }
     /**
      * 414 增加草稿纸
      *

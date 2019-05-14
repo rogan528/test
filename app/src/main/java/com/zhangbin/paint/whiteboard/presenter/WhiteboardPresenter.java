@@ -163,7 +163,6 @@ public class WhiteboardPresenter {
      */
     public void openDraftPaper(int addDraftPage) {
         OperationUtils.getInstance().mBackPage = this.indexPage;
-        Log.e("-------","openDraftPaper backPage:"+OperationUtils.getInstance().mBackPage);
         backpenSize = OperationUtils.getInstance().mCurrentPenSize;
         backPenColor = OperationUtils.getInstance().mCurrentPenColor;
         backEraserSize = OperationUtils.getInstance().mCurrentEraserSize;
@@ -183,7 +182,6 @@ public class WhiteboardPresenter {
         OperationUtils.getInstance().mCurrentEraserSize = backEraserSize;
         OperationUtils.getInstance().mCurrentTextSize = backTextSize;
         OperationUtils.getInstance().mCurrentTextColor = backTextColor;
-        Log.e("-------","closeDraftPaper backPage:"+OperationUtils.getInstance().mBackPage);
         this.whiteDrawView.closeDraftPaper(OperationUtils.getInstance().mBackPage);
         this.indexPage = OperationUtils.getInstance().mBackPage;
 
@@ -197,8 +195,8 @@ public class WhiteboardPresenter {
         backEraserSize = OperationUtils.getInstance().mCurrentEraserSize;
         backTextSize = OperationUtils.getInstance().mCurrentTextSize;
         backTextColor = OperationUtils.getInstance().mCurrentTextColor;
-        setWhiteboardBackgroundColor(Color.WHITE);
-        this.whiteDrawView.openDraftPaper(changeDraftPage);
+        setWhiteboardBackgroundColor(OperationUtils.getInstance().mWhiteboardBackgroundColor);
+        this.whiteDrawView.changeDraftPaper(changeDraftPage);
     }
     /**
      * 413 草稿纸背景切换
