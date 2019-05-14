@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.zhangbin.paint.util.OperationUtils;
 import com.zhangbin.paint.whiteboard.DrawLayerView;
 import com.zhangbin.paint.whiteboard.PageWhite;
 import com.zhangbin.paint.whiteboard.PptWebView;
@@ -89,7 +90,13 @@ public final class WhiteDrawView extends FrameLayout {
     public final void init(boolean isClient) {
         this.pageWhite = new PageWhite(isClient, this);
         //要设置原始ppt 大小以便进行缩放控制
-        this.pageWhite.setWidthHeight(930, 523);
+        int mBoardWidth = OperationUtils.getInstance().mBoardWidth;
+        int mBoardHeight = OperationUtils.getInstance().mBoardHeight;
+        if (mBoardWidth <= 0){
+            mBoardWidth =884;
+            mBoardHeight =497;
+        }
+        this.pageWhite.setWidthHeight(mBoardWidth, mBoardHeight);
 //        }
 
     }
@@ -263,7 +270,6 @@ public final class WhiteDrawView extends FrameLayout {
      * @param currentPage
      */
     public void closeDraftPaper(int currentPage) {
-        webView.setVisibility(VISIBLE);
         jumpPage(currentPage, 1);
     }
 
@@ -299,6 +305,7 @@ public final class WhiteDrawView extends FrameLayout {
         } else {
             webView.loadUrl(js);
         }
+        webView.setVisibility(VISIBLE);
     }
 
 

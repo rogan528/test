@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -45,4 +44,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     //implementation project(':ijkplayer-example')
     implementation(name:'ijkplayer-example-release', ext:'aar')
+    implementation 'com.qianwen:okhttp-utils:3.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
 }

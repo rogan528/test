@@ -23,7 +23,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +36,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zhangbin.paint.adapter.MsgItemAdapter;
 import com.zhangbin.paint.beans.OrderBean;
+import com.zhangbin.paint.constants.Constatans;
 import com.zhangbin.paint.util.ActivityUtil;
 import com.zhangbin.paint.util.DimensionUtils;
 import com.zhangbin.paint.util.ScreenSwitchUtils;
@@ -68,6 +68,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private int realHeight;//控件真实高度，去除头部标题后的
     private IjkDragVideoView mDragIjkVideoView;
     private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
+    //private String ijkVideoUrl = "rtmp://192.168.1.207/live/100120190330P6jUPHIs";
     //private String ijkVideoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
     private AndroidMediaController mMediaController;
     private Context mContext;
@@ -82,7 +83,9 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     //用户id和用户名
     public static String USER_ID = "userId";
     public static String USER_NAME = "userName";
-    private String userId,userName;
+    public static String ALL_IP_ADDRESS = "allIpAddress";
+    public static String START_BEAN = "startBean";
+    private String userId,userName,mIjkUrl;
     private LinearLayout tryWatch;
     //是否可见按钮
     private Button isVisiable;
@@ -98,7 +101,6 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private long preClickTime = 0L;
     private long endClickTime = 0L;
     private int initType =1,ipPort=8084;
-    private String serverIP = "192.168.1.206";
     private String groupID = "2";
     private LinearLayout inputLayout;
     //连接互联服务状态码
@@ -113,6 +115,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
     private String forbidUserId,forbidUserName,forbidTime;
     int mDefaultRes;
     private Button mPlay;
+    private TextView mShow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -125,6 +128,8 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         isVip = getIntent().getBooleanExtra(IS_VIP, false);
         userId = getIntent().getStringExtra(USER_ID);
         userName = getIntent().getStringExtra(USER_NAME);
+        mIjkUrl = getIntent().getStringExtra(ALL_IP_ADDRESS);
+        ijkVideoUrl = mIjkUrl.length()==0?ijkVideoUrl:mIjkUrl;
         mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
         initIM();
         initView();
@@ -133,14 +138,32 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         initAssetsData();
         initOrderData();
         showTitleBar();
+        initVideoStatus();
     }
+
+    /**
+     * 获取视频状态
+     */
+    private void initVideoStatus() {
+            mDragIjkVideoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(IMediaPlayer iMediaPlayer) {
+                    mToast.setText("老师已经下课");
+                    mToast.show();
+                    mImageVideoView.setVisibility(View.VISIBLE);
+                    dragFrameLayout.setIsDrag(false);
+                    showExitDialog("提示","老师已经下课,是否退出?");
+                }
+            });
+    }
+
     /**
      * 连接IM服务初始化操作
      */
     private void initIM() {
         im_sdk = new IM_SDK();
         im_sdk.InitSDK(initType, userId, userName, groupID, "",
-                serverIP, "", ipPort
+                Constatans.serverImIP, "", ipPort
         );
         im_sdk.ConnectMsgServer();
         im_sdk.setCalReCallBackListenner(new OnGetInterface() {
@@ -177,6 +200,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         mImageVideoView = findViewById(R.id.iv_videoView);
         mEdit = findViewById(R.id.et);
         mPlay = findViewById(R.id.btn_play);
+        mShow = findViewById(R.id.tv_show);
         findViewById(R.id.jx_next).setOnClickListener(this);
         findViewById(R.id.undo).setOnClickListener(this);
         findViewById(R.id.redo).setOnClickListener(this);
@@ -297,6 +321,7 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
      */
     private void executeOrder(String text){
         if (text != null && !"".equals(text)) {
+            mShow.setText(text);
             Gson gson = new Gson();
             OrderBean orderBean = gson.fromJson(text, OrderBean.class);
             orderDrawManger.SetOrder(orderBean).ExecuteOrder();
@@ -527,18 +552,18 @@ public class MainActivity extends Activity implements View.OnClickListener, OnUp
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             ScreenSwitchUtils.getInstance(MainActivity.this).toggleScreen(false);
         } else {
-            showExitDialog();
+            showExitDialog("提示","是否确认要退出?");
         }
     }
 
     /**
      * 退出的dialog
      */
-    private void showExitDialog(){
+    private void showExitDialog(String title,String msg){
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(MainActivity.this);
-        normalDialog.setTitle("提示");
-        normalDialog.setMessage("是否确认退出?");
+        normalDialog.setTitle(title);
+        normalDialog.setMessage(msg);
 
         normalDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {

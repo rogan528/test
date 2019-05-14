@@ -16,7 +16,9 @@ public final class DrawText
     private float size = 25;
     private float x = 0;
     private float y = 0;
-    private float height = 10;
+    private float height = 0;
+    //行高系数
+    private float lineDistanceHeightRatio = 0.3f;
     private Context n;
     private float sizeRatio = OperationUtils.getInstance().mCurrentTextSizeRatio;
 
@@ -52,33 +54,49 @@ public final class DrawText
     }
 
     public final void draw(Canvas canvas) {
-        this.paint.setTextSize(this.size * this.scaleRatio*sizeRatio);
+        height = 0;
+        this.paint.setTextSize(this.size * this.scaleRatio * sizeRatio);
         this.paint.setSubpixelText(true);
-//        canvas.drawText(this.text, this.x * this.scaleRatio, this.y * this.scaleRatio + this.size * this.scaleRatio, this.paint);
-        this.lineBreak(canvas, this.text.trim(), 0);
+        for (String line : this.text.split("\n")) {
+            this.lineBreak(canvas, line);
+            height = height + getLineHeight();
+        }
+
+
+    }
+
+    private float getLineHeight() {
+        return this.size * this.scaleRatio + this.size * this.scaleRatio * this.lineDistanceHeightRatio;
     }
 
 
     /**
      * @param canvas
      * @param str
-     * @param height
      */
-    private void lineBreak(Canvas canvas, String str, float height) {
+    private void lineBreak(Canvas canvas, String str) {
         //计算当前宽度(width)能显示多少个汉字
         //以主心为坐标系，取宽度除以2
-        int subIndex = this.paint.breakText(str, 0, str.length(), true, (canvas.getWidth() >> 1) - this.x * this.scaleRatio, null);
+        int subIndex;
+        if(width==0){
+            subIndex = this.paint.breakText(str, 0, str.length(), true, (canvas.getWidth() >> 1) - this.x * this.scaleRatio, null);
+        }else {
+            subIndex = this.paint.breakText(str, 0, str.length(), true, this.width* this.scaleRatio, null);
+        }
+
         //截取可以显示的汉字
         String mytext = str.substring(0, subIndex);
-        canvas.drawText(mytext, this.x * this.scaleRatio, this.y * this.scaleRatio + sizeRatio*this.size * this.scaleRatio + height, this.paint);
+        canvas.drawText(mytext, this.x * this.scaleRatio, this.y * this.scaleRatio + sizeRatio * this.size * this.scaleRatio + height, this.paint);
 
         //计算剩下的汉字
         String ss = str.substring(subIndex);
         if (ss.length() > 0) {
+            height = height + getLineHeight();
             //行距 为高度0.2倍
-            lineBreak(canvas, ss, height + this.size * this.scaleRatio + this.size * this.scaleRatio * 0.2f);
+            lineBreak(canvas, ss);
         }
     }
+
 
 
     public final void explainOrder(OrderBean orderBean) {
@@ -86,6 +104,8 @@ public final class DrawText
         text = orderBean.getText();
         x = orderBean.getX();
         y = orderBean.getY();
+        width=orderBean.getW();
+
         this.size = OperationUtils.getInstance().mCurrentTextSize;
         this.paint.setColor(OperationUtils.getInstance().mCurrentTextColor);
 
