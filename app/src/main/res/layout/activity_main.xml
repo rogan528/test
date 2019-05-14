@@ -83,7 +83,7 @@
             android:id="@+id/ijk_videoView"
             android:layout_width="160dp"
             android:layout_height="120dp"
-            android:background="@color/colorAccent"
+            android:background="@drawable/shape_red"
             android:layout_gravity="right|bottom"
             android:layout_marginBottom="166dp"
             android:clickable="false"

@@ -21,6 +21,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -126,7 +129,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     private long mSeekStartTime = 0;
     private long mSeekEndTime = 0;
 
-    private TextView subtitleDisplay;
+    //private TextView subtitleDisplay;
     private int screenWidth, screenHeight;
     private int width, height;
     private int left, right, top, bottom;
@@ -168,14 +171,14 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
         mCurrentState = STATE_IDLE;
         mTargetState = STATE_IDLE;
 
-        subtitleDisplay = new TextView(context);
+       /* subtitleDisplay = new TextView(context);
         subtitleDisplay.setTextSize(24);
         subtitleDisplay.setGravity(Gravity.CENTER);
         LayoutParams layoutParams_txt = new LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT,
                 Gravity.BOTTOM);
-        addView(subtitleDisplay, layoutParams_txt);
+        addView(subtitleDisplay, layoutParams_txt);*/
     }
 
     public void setRenderView(IRenderView renderView) {
@@ -613,7 +616,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
         public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
            if (text != null) {
                 setJsonMsg(text.getText());
-                subtitleDisplay.setText(text.getText());
+                //subtitleDisplay.setText(text.getText());
                 m_callback.GetMediaPlayerText(text.getText());
             }
         }
@@ -1088,13 +1091,20 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                     //是否开启预缓冲，一般直播项目会开启，达到秒开的效果，不过带来了播放丢帧卡顿的体验
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
                     //设置播放前的最大探测时间
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"analyzemaxduration",100);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"analyzemaxduration",1);
                     //设置播放前的探测时间 1,达到首屏秒开效果
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"analyzeduration",1);
                     //播放前的探测Size，默认是1M, 改小一点会出画面更快
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"probesize",1024*10);
                     // 通过立即清理数据包来减少等待时长 ,每处理一个packet之后刷新io上下文
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"flush_packets",1);
+                    //设置无线读
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 1);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 20*1000);
+                    //如果是rtsp协议，可以优先用tcp(默认是用udp)
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
+                    //播放重连次数
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"reconnect",5);
                 }
                 mediaPlayer = ijkMediaPlayer;
             }
