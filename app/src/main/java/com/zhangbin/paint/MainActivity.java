@@ -838,8 +838,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         //im_sdk = null;
         handler.removeCallbacksAndMessages(null);
         whiteboardPresenter.release();
-        mDragIjkVideoView.stopPlayback();
-        mDragIjkVideoView.release(true);
+        //mDragIjkVideoView.stopPlayback();
+        //mDragIjkVideoView.release(true);
         mDragIjkVideoView.stopBackgroundPlay();
         IjkMediaPlayer.native_profileEnd();
 
