@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.example.lijian.sf_im_sdk.MsgContent;
 import com.zhangbin.paint.R;
-import com.zhangbin.paint.util.TimeUtil;
+import com.sanhai.live.util.TimeUtil;
 
 import java.util.List;
 

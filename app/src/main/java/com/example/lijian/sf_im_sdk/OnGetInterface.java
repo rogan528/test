@@ -1,5 +1,7 @@
 package com.example.lijian.sf_im_sdk;
 
+import com.example.lijian.sf_im_sdk.MsgContent;
+
 public interface OnGetInterface {
 
     //public TextView getText();

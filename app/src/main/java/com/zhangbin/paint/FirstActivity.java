@@ -1,28 +1,22 @@
 package com.zhangbin.paint;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.zhangbin.paint.beans.StartBean;
-import com.zhangbin.paint.constants.Constatans;
-import com.zhangbin.paint.util.OperationUtils;
-import com.zhangbin.paint.util.Util;
+import com.zhangbin.paint.bugly.BaseActivity;
+import com.sanhai.live.module.StartBean;
+import com.sanhai.live.consts.Constatans;
+import com.sanhai.live.util.HttpCallBack;
+import com.sanhai.live.util.HttpUtil;
+import com.sanhai.live.util.OperationUtils;
+import com.sanhai.live.util.Util;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-public class FirstActivity extends Activity {
+public class FirstActivity extends BaseActivity {
     private String TAG = "--FirstActivity--";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,32 +48,24 @@ public class FirstActivity extends Activity {
                 }else {
                     //请求网络
                     String url = Constatans.liveIdUrl+"?liveId="+liveId+"&userType=1";
-                    OkHttpClient okHttpClient = new OkHttpClient();
-                    final Request request = new Request.Builder()
-                            .url(url)
-                            .get()//默认就是GET请求，可以不写
-                            .build();
-                    Call call = okHttpClient.newCall(request);
-                    call.enqueue(new Callback() {
+                    HttpUtil.get(url, new HttpCallBack<StartBean>() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
-                            Log.d(TAG, "onFailure: ");
+                        public void onFailure(String message) {
+                            Log.d(TAG, "onFailure: "+message);
                             mToast.setText("网络请求失败,请重试");
                             mToast.show();
                         }
 
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            String body = response.body().string();
-                            Gson gson = new Gson();
-                            StartBean startBean = gson.fromJson(body, StartBean.class);
-                            if (startBean.getMsg().equals("ok")){
-                                OperationUtils.getInstance().mBoardHeight = Util.toInteger(startBean.getLiveInfo().getBoardHeight());
-                                OperationUtils.getInstance().mBoardWidth = Util.toInteger(startBean.getLiveInfo().getBoardWidth());
+                        public <T> void onSuccess(T json) {
+                            StartBean startBean = (StartBean) json;
+                            if (startBean != null && startBean.getMsg().equals("ok")){
+                                updataData(startBean);
                                 Intent intent = new Intent(FirstActivity.this, MainActivity.class);
                                 intent.putExtra(MainActivity.IS_VIP, true);
                                 intent.putExtra(MainActivity.USER_ID,Id);
                                 intent.putExtra(MainActivity.USER_NAME,Name);
+                                saveLoginInfo(Id,Name);
                                 String allIpAddress = startBean.getLiveInfo().getPullUrl()+startBean.getLiveInfo().getLiveId();
                                 intent.putExtra(MainActivity.ALL_IP_ADDRESS,allIpAddress);
                                 startActivity(intent);
@@ -89,5 +75,27 @@ public class FirstActivity extends Activity {
                 }
             }
         });
+    }
+    private void saveLoginInfo(String userId, String userName) {
+        SharedPreferences share = getSharedPreferences("userInfo",MODE_PRIVATE);
+        SharedPreferences.Editor editor = share.edit();
+        editor.putString("userId",userId);
+        editor.putString("userName",userName);
+        editor.commit();
+
+    }
+    /**
+     * 更新数据
+     * @param startBean
+     */
+    private void updataData(StartBean startBean) {
+        OperationUtils.getInstance().mBoardHeight = Util.toInteger(startBean.getLiveInfo().getBoardHeight());
+        OperationUtils.getInstance().mBoardWidth = Util.toInteger(startBean.getLiveInfo().getBoardWidth());
+        int size = startBean.getPptInfo().size();
+        OperationUtils.getInstance().mCurrentSlide = Integer.parseInt(startBean.getPptInfo().get(size - 1).getCurrentSlide());
+        OperationUtils.getInstance().mCurrentPage = Integer.parseInt(startBean.getPptInfo().get(size - 1).getCurrentPage());
+        OperationUtils.getInstance().mDeployPath = startBean.getPptInfo().get(size - 1).getDeployPath();
+        OperationUtils.getInstance().mPptId = startBean.getPptInfo().get(size - 1).getPptId();
+        OperationUtils.getInstance().mLiveId  = startBean.getPptInfo().get(size - 1).getLiveId();
     }
 }

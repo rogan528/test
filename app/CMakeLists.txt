@@ -26,7 +26,7 @@ add_library(
 set_target_properties(
         libAndroid
         PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libAndroid_IM_SDK.so
+        ${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libSF_IM_SDK.so
 )
 #[[add_library(
         libSF

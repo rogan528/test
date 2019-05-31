@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.bugtags.library.plugin'
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -13,6 +14,10 @@ android {
                 cppFlags ""
             }
         }
+        ndk {
+            // 设置支持的 SO 库构架，一般而言，取你所有的库支持的构架的`交集`。
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
     }
     buildTypes {
         release {
@@ -25,6 +30,14 @@ android {
             path "CMakeLists.txt"
         }
     }
+}
+bugtags {
+    //自动上传符号表功能配置，如果需要根据 build varint 配置，请参考帮助中心->符号表->Android 符号表->配置自动上传符号表
+    appKey "2a63961cc73893b2b2709103505438d0"  //这里是你的 appKey
+    appSecret "27c4ab2b0d7d65e5ebefdb410d984300"    //这里是你的 appSecret，管理员在设置页可以查看
+    mappingUploadEnabled true
+    //网络跟踪功能配置(企业版)
+    trackingNetworkEnabled true
 }
 repositories  {
     flatDir {
@@ -42,8 +55,14 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    //线上使用，如果不需要使用手动提交 issue，可以选择 metrics 包
+    // implementation 'com.bugtags.metrics:bugtags-lib:latest.integration'
     //implementation project(':ijkplayer-example')
-    implementation(name:'ijkplayer-example-release', ext:'aar')
+    implementation(name: 'ijkplayer-example-release', ext: 'aar')
+    implementation('com.bugtags.library:bugtags-lib:latest.integration') {
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
     implementation 'com.qianwen:okhttp-utils:3.8.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    implementation project(':sanhai')
 }

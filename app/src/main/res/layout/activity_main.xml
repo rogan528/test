@@ -9,71 +9,39 @@
         android:layout_height="100dp">
     </FrameLayout>
     <LinearLayout
-        android:id="@+id/ll_trywatch"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_above="@+id/operation_btn_container"
-        android:layout_marginTop="45dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/shape_gray_30"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingLeft="10dp"
-        android:visibility="visible"
-        android:paddingRight="10dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_zz_try_see_head" />
-        <TextView
-            android:id="@+id/tv_trywatch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="可试看90s  开通周周会员免费看"
-            android:textColor="@color/white"
-            android:textSize="10sp" />
-
-    </LinearLayout>
-    <LinearLayout
         android:id="@+id/ll_InputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="280dp"
+        android:layout_marginBottom="330dp"
         android:layout_gravity="bottom"
-        android:orientation="vertical">
-        <EditText
-            android:id="@+id/et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="请输入内容"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-        <Button
-            android:id="@+id/btn_send_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="发送"/>
+        android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:hint="请输入内容"
+                />
+            <Button
+                android:id="@+id/btn_send_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="发送"/>
         <Button
             android:id="@+id/btn_forbid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="禁言"
             android:layout_weight="1"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
         </LinearLayout>
-    </LinearLayout>
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
-        android:layout_height="280dp"/>
-    <com.zhangbin.paint.video.view.DragFrameLayout
+        android:layout_height="330dp"/>
+    <com.sanhai.live.ijk.player.DragFrameLayout
         android:id="@+id/dragframeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -83,9 +51,9 @@
             android:id="@+id/ijk_videoView"
             android:layout_width="160dp"
             android:layout_height="120dp"
-            android:background="@color/colorAccent"
+            android:background="@color/black"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="166dp"
+            android:layout_marginBottom="220dp"
             android:clickable="false"
             android:longClickable="false"
             android:visibility="invisible"/>
@@ -95,9 +63,9 @@
             android:layout_height="120dp"
             android:layout_gravity="right|bottom"
             android:background="@drawable/bg"
-            android:layout_marginBottom="166dp"
+            android:layout_marginBottom="220dp"
             android:visibility="visible"/>
-    </com.zhangbin.paint.video.view.DragFrameLayout>
+    </com.sanhai.live.ijk.player.DragFrameLayout>
     <TextView
         android:id="@+id/sample_text"
         android:layout_width="match_parent"
@@ -126,7 +94,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="解析" />
+            android:text="解析"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/btn_exchange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="交换"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/undo"
             android:layout_width="wrap_content"
@@ -166,7 +142,7 @@
         android:layout_marginTop="200dp"
         android:layout_gravity="top"
         android:text="显示"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <Button
         android:id="@+id/btn_play"
         android:layout_width="wrap_content"
