@@ -3,27 +3,17 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.zhangbin.paint"
-        minSdkVersion 14
+        applicationId "com.github.isuperred.ijkplayerdemo"
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                cppFlags ""
-            }
-        }
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -35,6 +25,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.qianwen:okhttp-utils:3.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
     implementation 'com.yanzhenjie:permission:2.0.0-rc4'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.bumptech.glide:glide:4.5.0'

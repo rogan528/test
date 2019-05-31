@@ -19,7 +19,6 @@ package tv.danmaku.ijk.media.example.widget.media;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
@@ -74,8 +73,6 @@ public final class MeasureHelper {
     public void doMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //Log.i("@@@@", "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", "
         //        + MeasureSpec.toString(heightMeasureSpec) + ")");
-        Log.i("IjkDragVideoView", "onMeasure widthMeasureSpec:" + View.MeasureSpec.toString(widthMeasureSpec)+ "   heightMeasureSpec:"
-                + View.MeasureSpec.toString(heightMeasureSpec)+"-mVideoRotationDegree-"+mVideoRotationDegree);
         if (mVideoRotationDegree == 90 || mVideoRotationDegree == 270) {
             int tempSpec = widthMeasureSpec;
             widthMeasureSpec  = heightMeasureSpec;
@@ -84,8 +81,6 @@ public final class MeasureHelper {
 
         int width = View.getDefaultSize(mVideoWidth, widthMeasureSpec);
         int height = View.getDefaultSize(mVideoHeight, heightMeasureSpec);
-        Log.i("IjkDragVideoView", "onMeasure width:" + width+ "   height:" + height+
-                "mCurrentAspectRatio:"+mCurrentAspectRatio+"  mVideoWidth"+mVideoWidth);
         if (mCurrentAspectRatio == IRenderView.AR_MATCH_PARENT) {
             width = widthMeasureSpec;
             height = heightMeasureSpec;

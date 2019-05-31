@@ -406,8 +406,6 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                     mVideoHeight = mp.getVideoHeight();
                     mVideoSarNum = mp.getVideoSarNum();
                     mVideoSarDen = mp.getVideoSarDen();
-                    //Log.e(TAG,"onVideoSizeChanged mVideoWidth:"+mVideoWidth+" mVideoHeight: "+mVideoHeight
-                   // +" mVideoSarNum: "+mVideoSarNum+"  mVideoSarDen:"+mVideoSarDen);
                     if (mVideoWidth != 0 && mVideoHeight != 0) {
                         if (mRenderView != null) {
                             mRenderView.setVideoSize(mVideoWidth, mVideoHeight);
@@ -1035,7 +1033,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
 
     public IMediaPlayer createPlayer(int playerType) {
         IMediaPlayer mediaPlayer = null;
-        Log.e(TAG,"createPlayer playerType:"+playerType);
+
         switch (playerType) {
             case Settings.PV_PLAYER__IjkExoMediaPlayer: {
                 IjkExoMediaPlayer IjkExoMediaPlayer = new IjkExoMediaPlayer(mAppContext);
@@ -1143,7 +1141,6 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     }
 
     public void stopBackgroundPlay() {
-        mMediaPlayer.stop();
         MediaPlayerService.setMediaPlayer(null);
     }
 
