@@ -27,6 +27,9 @@ import com.zhangbin.paint.R;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class InputBarView extends LinearLayout implements View.OnClickListener, TextWatcher , OnExpressionListener {
     private EditText inputEdt;
     private TextView sendBtn;
@@ -193,7 +196,7 @@ public class InputBarView extends LinearLayout implements View.OnClickListener, 
         //添加表情
         String content = inputEdt.getText().toString();
         content += entity.character;
-        inputEdt.setText(ExpressionUtil.getExpressionString(getContext(), content, "mipmap"));
+        inputEdt.setText(ExpressionUtil.getExpressionString(getContext(),ExpressionView.map, content, "mipmap"));
         inputEdt.setSelection(content.length());
     }
 
@@ -203,7 +206,7 @@ public class InputBarView extends LinearLayout implements View.OnClickListener, 
         if (!TextUtils.isEmpty(content)) {//非全屏删除
             int selectionStart = inputEdt.getSelectionStart();
             content = inputEdt.getText().delete(selectionStart - ExpressionUtil.dealContent(getContext(), content, selectionStart), selectionStart).toString();
-            inputEdt.setText(ExpressionUtil.getExpressionString(getContext(), content, "mipmap"));
+            inputEdt.setText(ExpressionUtil.getExpressionString(getContext(), ExpressionView.map,content, "mipmap"));
             inputEdt.setSelection(content.length());
         }
     }

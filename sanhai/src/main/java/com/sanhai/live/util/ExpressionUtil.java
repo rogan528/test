@@ -9,6 +9,10 @@ import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import com.sanhai.live.R;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +54,7 @@ public class ExpressionUtil {
      * @param content
      * @return
      */
-    public static SpannableString getExpressionString(Context context, String content, String resType) {
+    public static SpannableString getExpressionString(Context context,Map<String,Integer> map,String content, String resType) {
         SpannableString spannableString = new SpannableString(content);
         // 正则表达式比配字符串里是否含有表情
         String pattenStr = "\\[[^\\]]+\\]";
@@ -58,14 +62,49 @@ public class ExpressionUtil {
         Pattern patten = Pattern.compile(pattenStr, Pattern.CASE_INSENSITIVE);
         try {
             spannableString = switchPattern(content, patten);
-            Log.e("--------","spannableString:"+spannableString);
-            dealExpression(context, resType, spannableString, patten, 0);
+            dealExpression(context, map,resType, spannableString, patten, 0);
         } catch (Exception e) {
-            Log.e("--------", "Exception:"+e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
         return spannableString;
     }
 
+    /**
+     * 得到表情的字符串名称
+     * @param context
+     * @param content  数组中的字符串
+     * @param resType 表情资源文件类型（drawable 或 mipmap)
+     * @return
+     */
+    public static String getIMEmotionString(Context context,String content, String resType) {
+        SpannableString spannableString = new SpannableString(content);
+        // 正则表达式比配字符串里是否含有表情
+        String pattenStr = "\\[[^\\]]+\\]";
+        // 通过传入的正则表达式来生成一个pattern
+        Pattern patten = Pattern.compile(pattenStr, Pattern.CASE_INSENSITIVE);
+        try {
+            spannableString = switchPattern(content, patten);
+            Matcher matcher = patten.matcher(spannableString);
+            while (matcher.find()) {
+                String key = matcher.group();
+                // 返回第一个字符的索引的文本匹配整个正则表达式,ture 则继续递归
+                if (matcher.start() < 0) {
+                    continue;
+                }
+                // String value = emojiMap.get(key);
+                if (TextUtils.isEmpty(key)) {
+                    continue;
+                }
+                String resName = key.substring(1, key.length() - 1);
+                return resName;
+
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        return content;
+    }
 
     /**
      * 将其它类型的图片正则转成已有图片的正则
@@ -159,13 +198,12 @@ public class ExpressionUtil {
      * @param start
      * @throws Exception
      */
-    private static void dealExpression(Context context, String resType,
+    private static void dealExpression(Context context,Map<String,Integer> map, String resType,
                                        SpannableString spannableString, Pattern patten, int start)
             throws Exception {
         Matcher matcher = patten.matcher(spannableString);
         while (matcher.find()) {
             String key = matcher.group();
-            Log.e("--------","key:"+key);
             // 返回第一个字符的索引的文本匹配整个正则表达式,ture 则继续递归
             if (matcher.start() < start) {
                 continue;
@@ -175,16 +213,12 @@ public class ExpressionUtil {
                 continue;
             }
             String resName = key.substring(1, key.length() - 1);
-            Log.e("--------","resName:"+resName);
-            int resId = context.getResources().getIdentifier(resName, resType,
-                    context.getPackageName());
+            int resId = getResId(map,resName);
+            //int resId = context.getResources().getIdentifier(resName, resType, context.getPackageName());
             // 通过上面匹配得到的字符串来生成图片资源id，下边的方法可用，但是你工程混淆的时候就有事了，你懂的。不是我介绍的重点
             // Field field=R.drawable.class.getDeclaredField(value);
             // int resId=Integer.parseInt(field.get(null).toString());
-
             if (resId != 0) {
-                Log.e("--------","resId:"+resId);
-
                 Bitmap bitmap = BitmapFactory.decodeResource(
                         context.getResources(), resId);
                 //  bitmap = Bitmap.createScaledBitmap(bitmap, edtImgWidth, edtImgHeight, true);
@@ -196,13 +230,26 @@ public class ExpressionUtil {
                 // 将该图片替换字符串中规定的位置中
                 spannableString.setSpan(imageSpan, matcher.start(), end,
                         Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-                if (end < spannableString.length()) {
-                    // 如果整个字符串还未验证完，则继续。。
-                    dealExpression(context, resType, spannableString, patten, end);
-                }
+                // 如果整个字符串还未验证完，则继续。。
+                if (end < spannableString.length())
+                    dealExpression(context, map, resType, spannableString, patten, end);
                 break;
             }
         }
+    }
+    /**
+     * @param map
+     * @param fromName
+     * @return
+     */
+    public static int getResId(Map<String, Integer> map,String fromName) {
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            if (entry.getKey().equals(fromName)){
+                return entry.getValue();
+
+            }
+        }
+        return 0;
     }
 
 

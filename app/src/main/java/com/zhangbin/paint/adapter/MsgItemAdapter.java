@@ -15,8 +15,11 @@ import com.example.lijian.sf_im_sdk.MsgContent;
 import com.sanhai.live.util.ExpressionUtil;
 import com.zhangbin.paint.R;
 import com.sanhai.live.util.TimeUtil;
+import com.zhangbin.paint.view.ExpressionView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MsgItemAdapter extends  ArrayAdapter<MsgContent> {
@@ -44,7 +47,7 @@ public class MsgItemAdapter extends  ArrayAdapter<MsgContent> {
        long time = Long.parseLong(item.getMsgtime());
        String timeStrampStr = TimeUtil.displayDuration(time);
         showTime.setText(timeStrampStr);
-        SpannableString expressionString = ExpressionUtil.getExpressionString(context, item.getMsgData(), "mipmap");
+        SpannableString expressionString = ExpressionUtil.getExpressionString(context, ExpressionView.map,item.getMsgData(), "mipmap");
         showMsg.setText(expressionString);
        return view;
     }

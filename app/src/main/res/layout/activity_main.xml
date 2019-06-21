@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|right"
-        android:visibility="invisible">
+        android:visibility="visible">
         <tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView
             android:id="@+id/ijk_videoView"
             android:layout_width="160dp"
@@ -43,7 +43,7 @@
             android:layout_gravity="right|bottom"
             android:background="@drawable/bg"
             android:layout_marginBottom="220dp"
-            android:visibility="invisible"/>
+            android:visibility="visible"/>
     </com.sanhai.live.ijk.player.DragFrameLayout>
     <TextView
         android:id="@+id/sample_text"

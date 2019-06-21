@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +14,23 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sanhai.live.entity.ExpressionEntity;
 import com.sanhai.live.event.OnExpressionListener;
+import com.sanhai.live.module.OrderBean;
 import com.sanhai.live.util.DimensionUtils;
+import com.sanhai.live.util.ExpressionUtil;
+import com.sanhai.live.util.Util;
 import com.zhangbin.paint.R;
 import com.zhangbin.paint.adapter.ExpressionAdapter;
 import com.zhangbin.paint.adapter.ViewPagerAdapter;
 import com.sanhai.live.module.ExpressionData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO: document your custom view class.
@@ -46,20 +54,21 @@ public class ExpressionView extends FrameLayout implements AdapterView.OnItemCli
      * 当前页
      */
     private int mCurrentPage;
-    private String[] expressionChars = {"[aha]", "[hard]", "[good]", "[love]", "[flower]", "[cool]", "[why]", "[pitiful]", "[amaz]", "[bye]"};
+    /*private String[] expressionChars = {"[哈哈]", "[嘻嘻]", "[good]", "[love]", "[flower]", "[cool]", "[why]", "[pitiful]", "[amaz]", "[bye]"};
     private int[] expressionResIds = {R.mipmap.aha, R.mipmap.hard, R.mipmap.good, R.mipmap.love, R.mipmap.flower,
-            R.mipmap.cool,R.mipmap.why, R.mipmap.pitiful, R.mipmap.amaz, R.mipmap.bye};
-/*    private String[] expressionChars = {"[呵呵]",
+            R.mipmap.cool,R.mipmap.why, R.mipmap.pitiful, R.mipmap.amaz, R.mipmap.bye};*/
+    public static Map<String,Integer> map = new HashMap();
+
+    private String[] expressionChars = {"[呵呵]",
             "[嘻嘻]", "[哈哈]", "[爱你]", "[晕]", "[泪]", "[馋嘴]", "[抓狂]", "[哼]", "[可爱]", "[怒]",
             "[汗]", "[困]", "[害羞]", "[睡觉]", "[钱]", "[偷笑]", "[酷]", "[衰]", "[吃惊]", "[闭嘴]",
             "[鄙视]", "[挖鼻屎]", "[花心]", "[鼓掌]", "[失望]", "[思考]", "[生病]", "[亲亲]", "[怒骂]", "[太开心]",
             "[懒得理你]", "[右哼哼]", "[左哼哼]", "[嘘]", "[委屈]", "[吐]", "[可怜]", "[打哈气]", "[做鬼脸]", "[握手]",
             "[耶]", "[good]", "[弱]", "[不要]", "[ok]", "[赞]", "[来]", "[蛋糕]", "[心]", "[伤心]",
             "[猪头]", "[咖啡]", "[话筒]", "[干杯]", "[绿丝带]", "[蜡烛]", "[微风]", "[月亮]", "[挤眼]", "[书呆子]",
-            "[黑线]", "[疑问]", "[阴险]", "[顶]","[悲伤]", "[拜拜]", "[愤怒]", "[感冒]",
-            *//*"[095]", "[096]", "[098]", "[099]", "[100]", "[051]","[061]", "[062]", "[063]", "[064]", "[065]", "[066]", "[068]", "[069]", "[070]",
-            "[072]", "[073]", "[074]", "[075]", "[076]", "[077]", "[078]", "[079]", "[080]","[083]", "[084]", "[085]",
-            "[087]", "[088]", "[089]", "[090]", "[091]", "[092]", "[093]","[101]", "[102]", "[103]", "[104]", "[105]", "[106]","[109]", "[110]"*//*
+            "[黑线]", "[疑问]", "[阴险]", "[顶]", "[悲伤]", "[抱抱]", "[拜拜]", "[愤怒]", "[感冒]", "[haha]",
+            "[拳头]", "[最差]", "[右抱抱]", "[左抱抱]","[花]"
+
     };
     private int[] expressionResIds = {R.mipmap.emotion_000,
             R.mipmap.emotion_001, R.mipmap.emotion_002, R.mipmap.emotion_003, R.mipmap.emotion_004, R.mipmap.emotion_005,R.mipmap.emotion_006, R.mipmap.emotion_007, R.mipmap.emotion_008, R.mipmap.emotion_009, R.mipmap.emotion_010,
@@ -68,13 +77,9 @@ public class ExpressionView extends FrameLayout implements AdapterView.OnItemCli
             R.mipmap.emotion_031, R.mipmap.emotion_032, R.mipmap.emotion_033, R.mipmap.emotion_034, R.mipmap.emotion_035, R.mipmap.emotion_036, R.mipmap.emotion_037, R.mipmap.emotion_038,R.mipmap.emotion_039, R.mipmap.emotion_040,
             R.mipmap.emotion_041, R.mipmap.emotion_042, R.mipmap.emotion_043,R.mipmap.emotion_044, R.mipmap.emotion_045, R.mipmap.emotion_046, R.mipmap.emotion_047, R.mipmap.emotion_048,R.mipmap.emotion_049, R.mipmap.emotion_050,
             R.mipmap.emotion_052, R.mipmap.emotion_053, R.mipmap.emotion_054, R.mipmap.emotion_055,R.mipmap.emotion_056, R.mipmap.emotion_057, R.mipmap.emotion_058, R.mipmap.emotion_059, R.mipmap.emotion_060,R.mipmap.emotion_067,
-            R.mipmap.emotion_071, R.mipmap.emotion_081, R.mipmap.emotion_082, R.mipmap.emotion_086,R.mipmap.emotion_094, R.mipmap.emotion_097, R.mipmap.emotion_107, R.mipmap.emotion_108,
-            *//*R.mipmap.emotion_095, R.mipmap.emotion_096, R.mipmap.emotion_098,R.mipmap.emotion_099, R.mipmap.emotion_100, R.mipmap.emotion_051,R.mipmap.emotion_061, R.mipmap.emotion_062, R.mipmap.emotion_063, R.mipmap.emotion_064, R.mipmap.emotion_065, R.mipmap.emotion_066, R.mipmap.emotion_068, R.mipmap.emotion_069, R.mipmap.emotion_070,
-            R.mipmap.emotion_072, R.mipmap.emotion_073, R.mipmap.emotion_074, R.mipmap.emotion_075, R.mipmap.emotion_076, R.mipmap.emotion_077,R.mipmap.emotion_078, R.mipmap.emotion_079, R.mipmap.emotion_080,R.mipmap.emotion_083,
-            R.mipmap.emotion_084, R.mipmap.emotion_085,R.mipmap.emotion_087, R.mipmap.emotion_088,R.mipmap.emotion_089, R.mipmap.emotion_090,
-            R.mipmap.emotion_091, R.mipmap.emotion_092, R.mipmap.emotion_093,R.mipmap.emotion_101, R.mipmap.emotion_102, R.mipmap.emotion_103, R.mipmap.emotion_104, R.mipmap.emotion_105,R.mipmap.emotion_106,, R.mipmap.emotion_109, R.mipmap.emotion_110,*//*
-    };*/
-
+            R.mipmap.emotion_071, R.mipmap.emotion_081, R.mipmap.emotion_082, R.mipmap.emotion_086,R.mipmap.emotion_094, R.mipmap.emotion_096, R.mipmap.emotion_097, R.mipmap.emotion_107, R.mipmap.emotion_108,R.mipmap.emotion_113,
+            R.mipmap.emotion_116, R.mipmap.emotion_121, R.mipmap.emotion_122, R.mipmap.emotion_123,R.mipmap.emotion_168
+    };
 
     public ExpressionView(Context context, int pageColumn) {
         super(context);
@@ -99,8 +104,20 @@ public class ExpressionView extends FrameLayout implements AdapterView.OnItemCli
             mDataAction = new ExpressionData();
             mDataAction.parseData(expressionChars, expressionResIds);
             initUI();
+            initData();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 初始化map数据
+     */
+    private void initData() {
+        int length = expressionChars.length;
+        for(int i=0;i<length;i++){
+            String key = ExpressionUtil.getIMEmotionString(mContext,expressionChars[i],"mipmap");
+            map.put(key,expressionResIds[i]);
         }
     }
 

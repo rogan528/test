@@ -369,9 +369,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         // 更新界面
         if (state == 0 || state == 2) {
             //[嘻嘻]霸道1234[嘻嘻][哈哈]
-            SpannableString expressionString = ExpressionUtil.getExpressionString(this, event, "mipmap");
-            Log.e("--------","main String:"+expressionString);
-            mShow.setText(expressionString);
             sendMsg(event);
         } else {
             mToast.setText("连接互动服务失败");
