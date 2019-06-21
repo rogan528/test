@@ -8,34 +8,13 @@
         android:layout_width="100dp"
         android:layout_height="100dp">
     </FrameLayout>
-    <LinearLayout
-        android:id="@+id/ll_InputLayout"
+    <com.zhangbin.paint.view.InputBarView
+        android:id="@+id/inputEdt_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="330dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
-            <EditText
-                android:id="@+id/et"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:hint="请输入内容"
-                />
-            <Button
-                android:id="@+id/btn_send_msg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="发送"/>
-        <Button
-            android:id="@+id/btn_forbid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="禁言"
-            android:layout_weight="1"
-            android:visibility="gone"/>
-        </LinearLayout>
+        android:layout_gravity="bottom">
+    </com.zhangbin.paint.view.InputBarView>
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
@@ -46,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|right"
-        android:visibility="visible">
+        android:visibility="invisible">
         <tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView
             android:id="@+id/ijk_videoView"
             android:layout_width="160dp"
@@ -64,7 +43,7 @@
             android:layout_gravity="right|bottom"
             android:background="@drawable/bg"
             android:layout_marginBottom="220dp"
-            android:visibility="visible"/>
+            android:visibility="invisible"/>
     </com.sanhai.live.ijk.player.DragFrameLayout>
     <TextView
         android:id="@+id/sample_text"
@@ -142,7 +121,7 @@
         android:layout_marginTop="200dp"
         android:layout_gravity="top"
         android:text="显示"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
     <Button
         android:id="@+id/btn_play"
         android:layout_width="wrap_content"

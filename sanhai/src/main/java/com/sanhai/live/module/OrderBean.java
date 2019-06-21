@@ -73,6 +73,25 @@ public class OrderBean {
     private String uuid;
     @SerializedName("tx")
     private String text;
+    @SerializedName("ts")
+    private float textSize;
+    @SerializedName("tc")
+    private String textColor;
+    public float getTextSize() {
+        return textSize;
+    }
+
+    public void setTextSize(float textSize) {
+        this.textSize = textSize;
+    }
+
+    public String getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(String textColor) {
+        this.textColor = textColor;
+    }
     /**
      * x1 : 100.0
      * y1 : 100.0
@@ -88,6 +107,27 @@ public class OrderBean {
     private float x2;
     @SerializedName("y2")
     private float y2;
+
+    public float getGw() {
+        return gw;
+    }
+
+    public void setGw(float gw) {
+        this.gw = gw;
+    }
+
+    public String getGc() {
+        return gc;
+    }
+
+    public void setGc(String gc) {
+        this.gc = gc;
+    }
+
+    @SerializedName("gw")
+    private float gw;
+    @SerializedName("gc")
+    private String gc;
 
     /**
      * e : 223434349

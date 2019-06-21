@@ -192,8 +192,9 @@ public class DrawLayerView
 
             if (draw.getIsShow()) {
                 this.fabricViewDataList.add(draw);
+                this.undoDrawableList.add(draw);
             }
-            this.undoDrawableList.add(draw);
+
             invalidate();
         }
     }

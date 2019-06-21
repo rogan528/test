@@ -6,4 +6,8 @@
     <color name="white">#ffffffff</color>
     <color name="black">#ff000000</color>
     <color name="beautiful_blue">#00B0F0</color>
+    <color name="input_layout_bg">#303a5e</color>
+    <color name="blue">#4285f4</color>
+    <color name="room_new_skin_bg">#222a46</color>
+    <color name="expression_area_bg">#303a5e</color>
 </resources>

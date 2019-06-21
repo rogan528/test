@@ -22,6 +22,8 @@ import com.sanhai.live.whiteboard.shape.DrawFactory;
 
 import java.util.List;
 
+import static android.view.View.INVISIBLE;
+
 /**
  * @ClassName fffff
  * @Description TODO
@@ -59,7 +61,14 @@ public class WhiteboardPresenter {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                jumpPage(OperationUtils.getInstance().mCurrentPage, 1);
+
+                testPage(OperationUtils.getInstance().mCurrentPage, new WhiteDrawView.ICallBack() {
+                    @Override
+                    public void postExec() {
+                        jumpPage(OperationUtils.getInstance().mCurrentPage, 1);
+                    }
+                });
+
             }
         }, 1000);
 
@@ -333,11 +342,16 @@ public class WhiteboardPresenter {
      */
     public void jumpPage(int currentPage, int currentAnimation) {
         this.whiteDrawView.jumpPage(currentPage, currentAnimation);
-        this.indexPage = currentPage;
-        if (!this.whiteDrawView.exist(currentPage)) {
+        //Log.e("SanHaiEdu","jumpPage currentPage:"+currentPage);
+        /*if (!this.whiteDrawView.exist(currentPage)) {
             this.requestNetPageOrder(currentPage);
-        }
+        }*/
+        this.requestNetPageOrder(currentPage);
+        this.indexPage = currentPage;
+    }
 
+    public void testPage(int currentPage, WhiteDrawView.ICallBack callBack) {
+        this.whiteDrawView.testPage(currentPage, callBack);
     }
 
     /**
@@ -439,7 +453,7 @@ public class WhiteboardPresenter {
                 case 409:
                     this.addDrawData(orderBean);
                     break;
-                case 410:
+                /*case 410:
                     //打开草稿纸
                     this.openDraftPaper(OperationUtils.getInstance().mEndDraftPage);
                     break;
@@ -462,7 +476,7 @@ public class WhiteboardPresenter {
                 case 414:
                     //新建草稿纸
                     this.addDraftPaper(OperationUtils.getInstance().mEndDraftPage);
-                    break;
+                    break;*/
                 case 500:
                     //清空
                     this.orderClear();

@@ -1,5 +1,6 @@
 package com.zhangbin.paint;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,10 +35,12 @@ import com.example.lijian.sf_im_sdk.OnGetInterface;
 import com.example.lijian.sf_im_sdk.OnUpdateUiInterface;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sanhai.live.entity.ExpressionEntity;
+import com.sanhai.live.module.ExpressionData;
+import com.sanhai.live.util.ExpressionUtil;
 import com.zhangbin.paint.adapter.MsgItemAdapter;
 import com.zhangbin.paint.bugly.BaseActivity;
 import com.sanhai.live.module.OrderBean;
-import com.sanhai.live.consts.Constatans;
 import com.sanhai.live.util.ActivityUtil;
 import com.sanhai.live.util.DimensionUtils;
 import com.sanhai.live.util.ScreenSwitchUtils;
@@ -44,6 +48,12 @@ import com.sanhai.live.util.Util;
 import com.sanhai.live.ijk.player.DragFrameLayout;
 import com.sanhai.live.whiteboard.OrderDrawManger;
 import com.sanhai.live.whiteboard.presenter.WhiteboardPresenter;
+import com.zhangbin.paint.view.ExpressionView;
+import com.zhangbin.paint.view.InputBarView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -51,6 +61,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import tv.danmaku.ijk.media.example.callback.OnGetMediaPlayInterface;
 import tv.danmaku.ijk.media.example.widget.media.AndroidMediaController;
@@ -74,7 +85,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private Context mContext;
     private ArrayList<OrderBean> listOrderBean;
     private OrderDrawManger orderDrawManger;
-    private Handler handler = new Handler();
+    //private Handler handler = new Handler();
     protected boolean isTitleBarShow = false;
     protected boolean isLongShowTitleBar = false;
     //是否是VIP
@@ -95,26 +106,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private TextView loginStateView;
     List<MsgContent> list = new ArrayList<>();
     MsgItemAdapter itemAdapter;
-    private Button forbidPerson;
     private Toast mToast;
     private long preClickTime = 0L;
     private long endClickTime = 0L;
     private int initType = 1, ipPort = 8084;
     private String groupID = "2";
-    private LinearLayout inputLayout;
+    private InputBarView inputEdt_layout;
     //连接互联服务状态码
     private int state = -6;
     //发消息错误回调码
     private int resCode = -8;
     private InputMethodManager imm;
     private ImageView mImageVideoView;
-    //输入框
-    private EditText mEdit;
     private int sendType = 0, forbidType = 0;
     private String forbidUserId, forbidUserName, forbidTime;
     int mDefaultRes;
     private Button mPlay;
     private TextView mShow;
+    private AlertDialog.Builder normalDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,12 +142,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         ijkVideoUrl = mIjkUrl.length() == 0 ? ijkVideoUrl : mIjkUrl;
         mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
         im_sdk = MyApplication.getApplication().getmIm_sdk();
+        EventBus.getDefault().register(this);
         initIM();
         initView();
         playiJKVideo();
         initOrderData();
         showTitleBar();
         initVideoStatus();
+        ExpressionUtil.tvImgWidth = DimensionUtils.dip2px(this, 55);
+        ExpressionUtil.tvImgHeight = DimensionUtils.dip2px(this, 45);
     }
 
     @Override
@@ -146,20 +158,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         super.onResume();
         initData();
         initAssetsData();
-        mDragIjkVideoView.resume();
-        mDragIjkVideoView.start();
+        //mDragIjkVideoView.resume();
+        //mDragIjkVideoView.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mDragIjkVideoView.pause();
+        //mDragIjkVideoView.pause();
     }
 
     /**
      * 获取视频状态
      */
     private void initVideoStatus() {
+        mDragIjkVideoView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(IMediaPlayer mp, int framework_err, int impl_err) {
+                mImageVideoView.setVisibility(View.VISIBLE);
+                dragFrameLayout.setIsDrag(false);
+                showExitDialog("发生错误", "视频传输,发生错误("+framework_err+","+impl_err+"),是否退出");
+                return true;
+            }
+        });
         mDragIjkVideoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(IMediaPlayer iMediaPlayer) {
@@ -208,10 +229,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         titlebarContainer = findViewById(R.id.title_bar);
         loginStateView = findViewById(R.id.sample_text);
         lvMsg = findViewById(R.id.listview);
-        inputLayout = findViewById(R.id.ll_InputLayout);
-        forbidPerson = findViewById(R.id.btn_forbid);
+        inputEdt_layout = findViewById(R.id.inputEdt_layout);
         mImageVideoView = findViewById(R.id.iv_videoView);
-        mEdit = findViewById(R.id.et);
         mPlay = findViewById(R.id.btn_play);
         mShow = findViewById(R.id.tv_show);
         findViewById(R.id.jx_next).setOnClickListener(this);
@@ -223,8 +242,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         findViewById(R.id.iv_go_back).setOnClickListener(this);
         findViewById(R.id.is_fullscreen).setOnClickListener(this);
         findViewById(R.id.pptLayout).setOnClickListener(this);
-        findViewById(R.id.btn_send_msg).setOnClickListener(this);
-        findViewById(R.id.btn_forbid).setOnClickListener(this);
         mPlay.setOnClickListener(this);
     }
 
@@ -339,6 +356,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             Gson gson = new Gson();
             try {
                 OrderBean orderBean = gson.fromJson(text, OrderBean.class);
+                //Log.e("SanHaiEdu","executeOrder text:"+text);
                 mShow.setText("第"+orderBean.getSi()+"步");
                 orderDrawManger.SetOrder(orderBean).ExecuteOrder();
             } catch (Exception e) {
@@ -346,7 +364,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
         }
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(String event) {
+        // 更新界面
+        if (state == 0 || state == 2) {
+            //[嘻嘻]霸道1234[嘻嘻][哈哈]
+            SpannableString expressionString = ExpressionUtil.getExpressionString(this, event, "mipmap");
+            Log.e("--------","main String:"+expressionString);
+            mShow.setText(expressionString);
+            sendMsg(event);
+        } else {
+            mToast.setText("连接互动服务失败");
+            mToast.show();
+        }
+    }
     private static final int MSG_UPDATE_BOARD = 1;
     private static final int DRAG_SHOW = 2;
     private Handler mHandler = new Handler() {
@@ -415,22 +446,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     showTitleBar();
                 }
                 break;
-            case R.id.btn_send_msg:
-                if (state == 0 || state == 2) {
-                    sendMsg();
-                } else {
-                    mToast.setText("连接互动服务失败");
-                    mToast.show();
-                }
-                break;
-            case R.id.btn_forbid:
-                if (state == 0 || state == 2) {
-                    forbidPerson();
-                } else {
-                    mToast.setText("连接互动服务失败");
-                    mToast.show();
-                }
-                break;
             case R.id.btn_play:
                 playAndPause();
                 break;
@@ -451,38 +466,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     /**
-     * 禁言和解除
-     */
-    private void forbidPerson() {
-        preClickTime = System.currentTimeMillis();
-        if (forbidPerson.getText().toString().trim().equals("解除禁言")) {//设置禁言
-            im_sdk.ForbidSendMsg(2, 4, "02", "02", "600");
-            mToast.setText("用户02被解除禁言");
-            mToast.show();
-            forbidPerson.setText("禁言");
-        } else if (forbidPerson.getText().toString().trim().equals("禁言")) {  //解除禁言操作
-            im_sdk.ForbidSendMsg(1, 4, "02", "02", "600");
-            mToast.setText("用户02被禁言!");
-            mToast.show();
-            forbidPerson.setText("解除禁言");
-        }
-        endClickTime = System.currentTimeMillis();
-    }
-
-    /**
      * 发送消息
      */
-    private void sendMsg() {
-        String msgData = mEdit.getText().toString();
+    private void sendMsg(String msgData) {
         if (!msgData.isEmpty()) {
             im_sdk.SendMsg(msgData, msgData.length());
-            imm.hideSoftInputFromWindow(mEdit.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(inputEdt_layout.getWindowToken(), 0);
             int serverTime = im_sdk.GetServerTime();
             String timeStr = Long.toString(serverTime);
             MsgContent item = new MsgContent(userName, timeStr, msgData);
             list.add(item);
             itemAdapter.notifyDataSetChanged();
-            mEdit.setText("");
         } else {
             mToast.setText("发送消息不允许为空!");
             mToast.show();
@@ -589,8 +583,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      * 退出的dialog
      */
     private void showExitDialog(String title, String msg) {
-        final AlertDialog.Builder normalDialog =
-                new AlertDialog.Builder(MainActivity.this);
+        normalDialog = new AlertDialog.Builder(MainActivity.this);
         normalDialog.setTitle(title);
         normalDialog.setMessage(msg);
 
@@ -598,8 +591,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        normalDialog = null;
                         finish();
-                        ScreenSwitchUtils.getInstance(MainActivity.this).stop();
+                        ScreenSwitchUtils.getInstance(MainActivity.this).destroy();
                     }
                 });
         normalDialog.setNegativeButton("取消",
@@ -609,7 +603,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
                     }
                 });
-        normalDialog.show();
+        if(normalDialog != null  && !((Activity) mContext).isFinishing()){
+            normalDialog.show();
+        }
     }
 
 
@@ -617,22 +613,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      * 输入框的控制
      */
     private void showInputLayout() {
-        if (handler == null) {
+        if (mHandler == null) {
             return;
         }
-        handler.postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (!DimensionUtils.isPad(MainActivity.this) && ScreenSwitchUtils.getInstance(MainActivity.this).isFullScreen()) {
                     //输入框的隐藏
-                    if (inputLayout != null && lvMsg != null) {
-                        inputLayout.setVisibility(View.GONE);
+                    if (inputEdt_layout != null && lvMsg != null) {
+                        inputEdt_layout.setVisibility(View.GONE);
                         lvMsg.setVisibility(View.GONE);
                     }
                 } else {
                     //输入框的显示
-                    if (inputLayout != null && lvMsg != null) {
-                        inputLayout.setVisibility(View.VISIBLE);
+                    if (inputEdt_layout != null && lvMsg != null) {
+                        inputEdt_layout.setVisibility(View.VISIBLE);
                         lvMsg.setVisibility(View.VISIBLE);
                     }
                 }
@@ -673,7 +669,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 pptLayoutWidth = width;
                 height = 3 * width / 4;
                 lvMsg.setVisibility(View.VISIBLE);
-                inputLayout.setVisibility(View.VISIBLE);
+                inputEdt_layout.setVisibility(View.VISIBLE);
             } else {  //横屏
                 if (DimensionUtils.isPad(this)) {
                     pptLayoutWidth = (int) (width * 0.72);
@@ -683,7 +679,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     pptLayoutWidth = width;
                 }
                 lvMsg.setVisibility(View.GONE);
-                inputLayout.setVisibility(View.GONE);
+                inputEdt_layout.setVisibility(View.GONE);
             }
             pptParams.width = pptLayoutWidth;
             pptParams.height = height;
@@ -713,13 +709,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     state = dataBundle.getInt("state");
                     switch (state) {
                         case -1: {
-                            mEdit.setEnabled(false);
-                            //mEdit.setText("连接互动服务失败");
+                            inputEdt_layout.setEnabled(false);
                             loginStateView.setText("连接互动服务失败");
                             break;
                         }
                         case 0: {
-                            mEdit.setEnabled(true);
+                            inputEdt_layout.setEnabled(true);
                             loginStateView.setText("已连上互动服务");
                             break;
                         }
@@ -728,7 +723,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             break;
                         }
                         case 2: {
-                            mEdit.setEnabled(true);
+                            inputEdt_layout.setEnabled(true);
                             loginStateView.setText("已重连到互动服务");
                             break;
                         }
@@ -834,19 +829,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onStop() {
         super.onStop();
-        im_sdk.DisConnServer();
-        //im_sdk = null;
-        handler.removeCallbacksAndMessages(null);
-        whiteboardPresenter.release();
-        //mDragIjkVideoView.stopPlayback();
-        //mDragIjkVideoView.release(true);
-        mDragIjkVideoView.stopBackgroundPlay();
-        IjkMediaPlayer.native_profileEnd();
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        im_sdk.DisConnServer();
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler = null;
+        mHandlerUI.removeCallbacksAndMessages(null);
+        mHandlerUI = null;
+        whiteboardPresenter.release();
+        //使用原生的so下面两行不影响，使用的编译的打卡会卡住
+        //mDragIjkVideoView.stopPlayback();
+        //mDragIjkVideoView.release(true);
+        mDragIjkVideoView.stopBackgroundPlay();
+        IjkMediaPlayer.native_profileEnd();
+        im_sdk.setCalReCallBackListenner(null);
+        im_sdk = null;
+        EventBus.getDefault().unregister(this);
     }
 }

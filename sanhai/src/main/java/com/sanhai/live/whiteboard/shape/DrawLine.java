@@ -1,6 +1,7 @@
 package com.sanhai.live.whiteboard.shape;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 
 import com.sanhai.live.module.OrderBean;
@@ -59,8 +60,8 @@ public class DrawLine
         this.y1 = orderBean.getY1();
         this.x2 = orderBean.getX2();
         this.y2 = orderBean.getY2();
-        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
-        this.paint.setColor(OperationUtils.getInstance().mCurrentShapeColor);
-        this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
+        this.strokeWidth = orderBean.getGw();
+        this.paint.setColor(Color.parseColor(orderBean.getGc()));
+        this.paint.setStrokeWidth(orderBean.getGw());
     }
 }

@@ -150,7 +150,10 @@ public class ScreenSwitchUtils {
     }
 
     public void destroy() {
+        sm.unregisterListener(listener);
+        sm1.unregisterListener(listener1);
         mActivity = null;
+        mInstance = null;
     }
 
     public void toggleScreen(boolean isPortrait) {

@@ -36,8 +36,10 @@ public class IM_SDK {
     //登录状态回调LOGIN_RESCODE rescode
     public void OnGetLoginState(int rescode){
         System.out.println("登录状态回调： " + rescode);
-        this.m_callback.GetLoginStaete(rescode);
-        return;
+        if (m_callback != null) {
+            this.m_callback.GetLoginStaete(rescode);
+            return;
+        }
     }
 
     //接收消息
@@ -45,7 +47,9 @@ public class IM_SDK {
     {
         System.out.println("消息内容： " + msgcontent + "名字： " + userID + "时间 " + msgTime );
         MsgContent item = new MsgContent(fromUsernam,msgTime,msgcontent);
-        m_callback.AddItem(item);
+        if (m_callback != null) {
+            m_callback.AddItem(item);
+        }
     }
 
     //发消息回调

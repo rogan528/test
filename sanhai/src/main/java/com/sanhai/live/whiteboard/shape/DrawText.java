@@ -2,6 +2,7 @@ package com.sanhai.live.whiteboard.shape;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.sanhai.live.module.OrderBean;
@@ -106,8 +107,8 @@ public final class DrawText
         y = orderBean.getY();
         width=orderBean.getW();
 
-        this.size = OperationUtils.getInstance().mCurrentTextSize;
-        this.paint.setColor(OperationUtils.getInstance().mCurrentTextColor);
+        this.size = orderBean.getTextSize();
+        this.paint.setColor(Color.parseColor(orderBean.getTextColor()));
 
     }
 }

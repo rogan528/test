@@ -6,8 +6,6 @@ android {
         applicationId "com.zhangbin.paint"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -65,4 +63,9 @@ dependencies {
     implementation 'com.qianwen:okhttp-utils:3.8.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
     implementation project(':sanhai')
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
 }

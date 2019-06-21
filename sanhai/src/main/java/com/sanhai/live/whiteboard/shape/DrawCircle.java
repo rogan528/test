@@ -1,6 +1,7 @@
 package com.sanhai.live.whiteboard.shape;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.RectF;
 
 import com.sanhai.live.module.OrderBean;
@@ -59,9 +60,9 @@ public final class DrawCircle
         this.top = orderBean.getY1();
         this.right = orderBean.getX2();
         this.bottom = orderBean.getY2();
-        this.strokeWidth = OperationUtils.getInstance().mCurrentPenSize;
-        this.paint.setColor(OperationUtils.getInstance().mCurrentShapeColor);
-        this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentPenSize);
+        this.strokeWidth = orderBean.getGw();
+        this.paint.setColor(Color.parseColor(orderBean.getGc()));
+        this.paint.setStrokeWidth(orderBean.getGw());
     }
 }
 

@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.bugtags.library.Bugtags;
 import com.bugtags.library.BugtagsOptions;
 import com.example.lijian.sf_im_sdk.IM_SDK;
 import com.example.lijian.sf_im_sdk.OnGetInterface;
 import com.sanhai.live.consts.Constatans;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +22,14 @@ public class MyApplication extends Application {
     private static Context applicationContext;
     private List<Activity> activities = new ArrayList<Activity>();
     SharedPreferences share ;
-    private String userId,userName;
+    private String userId,userName,liveId;
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
         //在这里初始化
         BugtagsOptions options = new BugtagsOptions.Builder().trackingCrashLog(true).build();
         Bugtags.start("2a63961cc73893b2b2709103505438d0", this, Bugtags.BTGInvocationEventNone,options);
@@ -31,7 +37,8 @@ public class MyApplication extends Application {
         share = this.getSharedPreferences("userInfo",MODE_PRIVATE);
         userId = share.getString("userId","001");
         userName = share.getString("userName","测试1");
-        mIm_sdk.InitSDK(1, userId, userName, "2", "", Constatans.serverImIP, "", 8084);
+        liveId = share.getString("liveId","100120190330EO9Fr0V6");
+        mIm_sdk.InitSDK(1, userId, userName, liveId, "", Constatans.serverImIP, "", 8084);
         myApplication = this;
         applicationContext = getApplicationContext();
     }
@@ -39,6 +46,7 @@ public class MyApplication extends Application {
         return myApplication;
     }
     public void setCallback(OnGetInterface callback){
+        if (mIm_sdk != null)
         mIm_sdk.setCalReCallBackListenner(callback);
     }
     /**

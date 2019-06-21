@@ -8,11 +8,15 @@ package com.sanhai.live.whiteboard;
  */
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -294,9 +298,45 @@ public final class WhiteDrawView extends FrameLayout {
      * @param currentAnimation
      */
     public void jumpPage(int currentPage, int currentAnimation) {
-        String js = "javascript:JumpPage(" + currentPage + "," + currentAnimation + ",1)";
+        String js = "javascript:JumpPage(" + currentPage + "," + currentAnimation + ")";
         webViewLoad(js);
         this.pageWhite.ToPage(currentPage);
+        if (currentPage >= OperationUtils.getInstance().mStartDraftPage){
+            webView.setVisibility(INVISIBLE);
+            setBackgroundColor(Color.parseColor("#ff0f261e"));
+        }
+    }
+
+    public void testPage(int currentPage, final ICallBack callBack) {
+        String js = "javascript:JumpPage(" + currentPage + ", 1)";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(js, new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String value) {
+                            if (value != null) {
+                                callBack.postExec();
+                            } else {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callBack.postExec();
+                                    }
+                                }, 3000);
+
+                            }
+
+                            Log.i("web返回值", value);
+                        }
+                    }
+            );
+
+        } else {
+            webView.loadUrl(js);
+            callBack.postExec();
+        }
+
+        webView.setVisibility(VISIBLE);
+
     }
 
     public boolean exist(int currentPage) {
@@ -310,7 +350,14 @@ public final class WhiteDrawView extends FrameLayout {
      */
     private void webViewLoad(final String js) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript(js, null);
+            webView.evaluateJavascript(js, new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String value) {
+                            Log.e("web返回值", value);
+                        }
+                    }
+            );
+
         } else {
             webView.loadUrl(js);
         }
@@ -361,6 +408,11 @@ public final class WhiteDrawView extends FrameLayout {
      */
     public void redo() {
         this.pageWhite.redo();
+    }
+
+
+    public interface ICallBack {
+        void postExec();
     }
 
 

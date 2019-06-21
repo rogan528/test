@@ -53,11 +53,11 @@ public class OperationUtils {
     /**
      * 草稿纸开始页码
      */
-    public int mStartDraftPage =100000;
+    public int mStartDraftPage =10001;
     /**
      * 草稿纸结束页码
      */
-    public int mEndDraftPage =100000;
+    public int mEndDraftPage =10001;
     /**
      * 记录打开草稿纸之前的页码
      */
@@ -70,6 +70,10 @@ public class OperationUtils {
      * 当前页码
      */
     public int mCurrentPage = 1;
+    /**
+     * 迟到进来拿到的页码
+     */
+    public int mFirstPage = 1;
     /**
      * H5 Path
      */

@@ -65,9 +65,9 @@ public class FirstActivity extends BaseActivity {
                                 intent.putExtra(MainActivity.IS_VIP, true);
                                 intent.putExtra(MainActivity.USER_ID,Id);
                                 intent.putExtra(MainActivity.USER_NAME,Name);
-                                saveLoginInfo(Id,Name);
                                 String allIpAddress = startBean.getLiveInfo().getPullUrl()+startBean.getLiveInfo().getLiveId();
                                 intent.putExtra(MainActivity.ALL_IP_ADDRESS,allIpAddress);
+                                saveLoginInfo(Id,Name,liveId);
                                 startActivity(intent);
                             }
                         }
@@ -76,11 +76,12 @@ public class FirstActivity extends BaseActivity {
             }
         });
     }
-    private void saveLoginInfo(String userId, String userName) {
+    private void saveLoginInfo(String userId, String userName,String liveId) {
         SharedPreferences share = getSharedPreferences("userInfo",MODE_PRIVATE);
         SharedPreferences.Editor editor = share.edit();
         editor.putString("userId",userId);
         editor.putString("userName",userName);
+        editor.putString("liveId",liveId);
         editor.commit();
 
     }
@@ -94,6 +95,7 @@ public class FirstActivity extends BaseActivity {
         int size = startBean.getPptInfo().size();
         OperationUtils.getInstance().mCurrentSlide = Integer.parseInt(startBean.getPptInfo().get(size - 1).getCurrentSlide());
         OperationUtils.getInstance().mCurrentPage = Integer.parseInt(startBean.getPptInfo().get(size - 1).getCurrentPage());
+        OperationUtils.getInstance().mFirstPage = Integer.parseInt(startBean.getPptInfo().get(size - 1).getCurrentPage());
         OperationUtils.getInstance().mDeployPath = startBean.getPptInfo().get(size - 1).getDeployPath();
         OperationUtils.getInstance().mPptId = startBean.getPptInfo().get(size - 1).getPptId();
         OperationUtils.getInstance().mLiveId  = startBean.getPptInfo().get(size - 1).getLiveId();

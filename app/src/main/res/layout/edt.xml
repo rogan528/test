@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@color/input_layout_bg"
+    android:orientation="horizontal">
+
+    <include
+        android:id="@+id/btn_send"
+        layout="@layout/flower_btn_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"/>
+
+    <ImageView
+        android:id="@+id/iv_expression"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toLeftOf="@+id/btn_send"
+        android:src="@drawable/expression_icon"
+        android:visibility="visible"/>
+
+    <EditText
+        android:id="@+id/input_edt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/iv_expression"
+        android:layout_toStartOf="@id/iv_expression"
+        android:cursorVisible="true"
+        android:focusable="true"
+        android:hint="请输入文字..."
+        android:maxLines="3"
+        android:paddingBottom="8dp"
+        android:layout_marginLeft="5dp"
+        android:textColor="@color/white"
+        android:textColorHint="#93a9d1"
+        android:textSize="16sp" />
+
+</RelativeLayout>
