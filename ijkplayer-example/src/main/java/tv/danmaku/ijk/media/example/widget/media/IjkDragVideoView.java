@@ -561,7 +561,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                      * if we're attached to a window. When we're going away and no
                      * longer have a window, don't bother showing the user an error.
                      */
-                    if (getWindowToken() != null) {
+                    /*if (getWindowToken() != null) {
                         Resources r = mAppContext.getResources();
                         int messageId;
 
@@ -576,9 +576,9 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                                 .setPositiveButton(R.string.VideoView_error_button,
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
-                                            /* If we get here, there is no onError listener, so
+                                            *//* If we get here, there is no onError listener, so
                                              * at least inform them that the video is over.
-                                             */
+                                             *//*
                                                 if (mOnCompletionListener != null) {
                                                     mOnCompletionListener.onCompletion(mMediaPlayer);
                                                 }
@@ -586,7 +586,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                                         })
                                 .setCancelable(false)
                                 .show();
-                    }
+                    }*/
                     return true;
                 }
             };
@@ -612,7 +612,7 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
     private IMediaPlayer.OnTimedTextListener mOnTimedTextListener = new IMediaPlayer.OnTimedTextListener() {
         @Override
         public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
-           if (text != null) {
+           if (text != null && m_callback != null) {
                 setJsonMsg(text.getText());
                 //subtitleDisplay.setText(text.getText());
                 m_callback.GetMediaPlayerText(text.getText());
@@ -1081,11 +1081,13 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", pixelFormat);
                     }
                     // 网络不好的情况下进行丢一帧
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5);
+                    //一进来就播放
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
                     //设置是否开启环路过滤:  0开启，画面质量高，解码开销大，48关闭，画面质量差点，解码开销小
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+					//以下代码新增的优化
                     //是否开启预缓冲，一般直播项目会开启，达到秒开的效果，不过带来了播放丢帧卡顿的体验
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "packet-buffering", 0);
                     //设置播放前的最大探测时间
@@ -1098,11 +1100,15 @@ public class IjkDragVideoView extends FrameLayout implements MediaController.Med
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"flush_packets",1);
                     //设置无线读
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "infbuf", 1);
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 20*1000);
+                    //ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", 20*1000);
                     //如果是rtsp协议，可以优先用tcp(默认是用udp)
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
                     //播放重连次数
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"reconnect",5);
+                    //1为硬解 0为软解默认为软解
+                    //ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"mediacodec",1);
+                    // 清空DNS,有时因为在APP里面要播放多种类型的视频(如:MP4,直播,直播平台保存的视频,和其他http视频), 有时会造成因为DNS的问题而报10000问题的
+                    //ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
                 }
                 mediaPlayer = ijkMediaPlayer;
             }

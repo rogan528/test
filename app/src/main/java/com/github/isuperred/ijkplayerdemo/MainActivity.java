@@ -35,26 +35,19 @@ public class MainActivity extends AppCompatActivity {
         startVideo();
 
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mVideoView.resume();
-        mVideoView.start();
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mVideoView.pause();
-    }
     private void startVideo() {
         mSettings = new Settings(this);
+    //    mVideoPath = "rtmp://192.168.1.207/live/sanhaieduLive";
+      //  mVideoPath = "rtmp://192.168.1.207/live/100120190330P6jUPHIs";
         mVideoPath = "rtmp://192.168.1.207/live/100120190330EO9Fr0V6";
+       // mVideoPath = "rtmp://192.168.1.207/live/100120190330ztULVAWV";
+        //mVideoPath = "rtmp://www.bj-mobiletv.com:8000/live/FreeManCamera20180918";
 
         mMediaController = new AndroidMediaController(this, false);
 
         IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");//上一句已加载，这里为什么还加载一次？
+        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
 
         mVideoView = (IjkDragVideoView) findViewById(R.id.videoView);
         mHudView = (TableLayout) findViewById(R.id.hud_view);
@@ -74,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        mVideoView.stopPlayback();
-        mVideoView.release(true);
+        //mVideoView.stopPlayback();
+        //mVideoView.release(true);
         mVideoView.stopBackgroundPlay();
         IjkMediaPlayer.native_profileEnd();
     }
