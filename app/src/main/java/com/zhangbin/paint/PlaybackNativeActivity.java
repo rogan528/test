@@ -158,9 +158,7 @@ public class PlaybackNativeActivity extends BaseActivity implements View.OnClick
         mDragIjkVideoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(IMediaPlayer iMediaPlayer) {
-                mDragIjkVideoView.start();
-                seekBarUtil.resetSeekBarProgress();
-                seekBarUtil.updateSeekBar();
+                showExitDialog("提示", "点播视频已经播放结束,是否退出?");
             }
         });
     }
@@ -211,7 +209,8 @@ public class PlaybackNativeActivity extends BaseActivity implements View.OnClick
 
     private void seekToVideo(int currentPosition) {
         currentDuration.setText(TimeUtil.displayHHMMSS(currentPosition/1000));
-        seekBarUtil.seekTo(currentPosition);
+        //seekBarUtil.seekTo(currentPosition/1000);
+        seekBar.setProgress(currentPosition/1000);
         requestData(currentPosition);
     }
 
@@ -529,8 +528,6 @@ public class PlaybackNativeActivity extends BaseActivity implements View.OnClick
         isTitleBarShow = false;
         if (seekbarLayout == null)
             return;
-        /*seekbarLayout.setVisibility(View.INVISIBLE);
-        operationContainer.setVisibility(View.GONE);*/
     }
 
     /**
