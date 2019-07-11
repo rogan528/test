@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 
+import com.sanhai.live.module.OrderBean;
 import com.sanhai.live.util.OperationUtils;
 
 public class DrawEraser extends DrawBrush {
@@ -18,9 +19,12 @@ public class DrawEraser extends DrawBrush {
         this.paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         //这两个方法一起使用才能出现橡皮擦效果
         this.paint.setColor(Color.TRANSPARENT);
-        this.paint.setStrokeWidth(OperationUtils.getInstance().mCurrentEraserSize);
+        this.paint.setStrokeWidth(this.strokeWidth);
         super.draw(canvas);
     }
 
-
+    public void explainOrder(OrderBean orderBean) {
+        super.explainOrder(orderBean);
+        this.strokeWidth = orderBean.getDw();
+    }
 }

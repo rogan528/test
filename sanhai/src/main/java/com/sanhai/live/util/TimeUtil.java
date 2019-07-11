@@ -42,9 +42,12 @@ public class TimeUtil {
         int hs = durationInSecond % (60 * 60);
         int m = hs / 60;
         int s = hs % 60;
-        String hours = "%scaleRatio";
+        /*String hours = "%scaleRatio";
         String minute = "%scaleRatio";
-        String seconds = "%scaleRatio";
+        String seconds = "%scaleRatio";*/
+        String hours = "%s";
+        String minute = "%s";
+        String seconds = "%s";
         if (h < 10) {
             hours = "0" + hours;
         }

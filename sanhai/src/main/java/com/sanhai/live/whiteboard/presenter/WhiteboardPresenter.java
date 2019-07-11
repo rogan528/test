@@ -99,6 +99,7 @@ public class WhiteboardPresenter {
                     OrderBean jumporderBean = null;
                     for (int i = 0; i < data.size(); i++) {
                         final OrderBean orderBean = data.get(i).getOrderBean();
+                        orderBean.setLiveTime(data.get(i).getLiveTime());
                         if (orderBean == null) {
                             continue;
                         }

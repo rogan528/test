@@ -1,132 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <FrameLayout
-        android:id="@+id/pptLayout"
-        android:layout_width="100dp"
-        android:layout_height="100dp">
-    </FrameLayout>
-    <com.zhangbin.paint.view.InputBarView
-        android:id="@+id/inputEdt_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="330dp"
-        android:layout_gravity="bottom">
-    </com.zhangbin.paint.view.InputBarView>
-    <ListView
-        android:id="@+id/listview"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:layout_height="330dp"/>
-    <com.sanhai.live.ijk.player.DragFrameLayout
-        android:id="@+id/dragframeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom|right"
-        android:visibility="visible">
-        <tv.danmaku.ijk.media.example.widget.media.IjkDragVideoView
-            android:id="@+id/ijk_videoView"
-            android:layout_width="160dp"
-            android:layout_height="120dp"
-            android:background="@color/black"
-            android:layout_gravity="right|bottom"
-            android:layout_marginBottom="220dp"
-            android:clickable="false"
-            android:longClickable="false"
-            android:visibility="invisible"/>
-        <ImageView
-            android:id="@+id/iv_videoView"
-            android:layout_width="160dp"
-            android:layout_height="120dp"
-            android:layout_gravity="right|bottom"
-            android:background="@drawable/bg"
-            android:layout_marginBottom="220dp"
-            android:visibility="visible"/>
-    </com.sanhai.live.ijk.player.DragFrameLayout>
-    <TextView
-        android:id="@+id/sample_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:lineSpacingExtra="4dp"
-        android:textStyle="bold"
-        android:text="连接互联服务ing"/>
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".LiveNativeActivity">
     <LinearLayout
-        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="直播ID:"/>
+    <EditText
+        android:id="@+id/et_liveId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="100120190330EO9Fr0V6"
+        android:hint="请输入直播ID"
+        />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="用户ID:"/>
+    <EditText
+        android:id="@+id/et_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入用户ID"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="用户名称:"/>
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入用户名称"/>
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="visible"
-        >
-        <Button
-            android:id="@+id/iv_go_back"
-            android:layout_weight="1"
+        android:visibility="visible">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="返回"
-            android:visibility="visible"/>
-        <Button
-            android:id="@+id/jx_next"
-            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:text="点播视频ID:"/>
+        <EditText
+            android:id="@+id/et_videoId"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="解析"
-            android:visibility="gone"/>
-        <Button
-            android:id="@+id/btn_exchange"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="交换"
-            android:visibility="gone"/>
-        <Button
-            android:id="@+id/undo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="撤销" />
-        <Button
-            android:id="@+id/redo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="恢复" />
-        <Button
-            android:id="@+id/clear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="清空" />
-        <Button
-            android:id="@+id/is_visiable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="visible"
-            android:text="不可见" />
-        <Button
-            android:id="@+id/is_fullscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="全屏" />
+            android:text="10012019033011111111"
+            android:hint="请输入点播视频ID"/>
     </LinearLayout>
-    <TextView
-        android:id="@+id/tv_show"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:layout_gravity="top"
-        android:text="显示"
-        android:visibility="visible"/>
     <Button
-        android:id="@+id/btn_play"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_livedata"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:text="暂停"
-        android:visibility="gone"/>
-</FrameLayout>
+        android:text="看直播" />
+    <Button
+        android:id="@+id/btn_playback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="看点播" />
+</LinearLayout>

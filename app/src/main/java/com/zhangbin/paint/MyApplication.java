@@ -21,24 +21,13 @@ public class MyApplication extends Application {
     private static MyApplication myApplication = null;
     private static Context applicationContext;
     private List<Activity> activities = new ArrayList<Activity>();
-    SharedPreferences share ;
-    private String userId,userName,liveId;
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return;
-        }
-        LeakCanary.install(this);
         //在这里初始化
         BugtagsOptions options = new BugtagsOptions.Builder().trackingCrashLog(true).build();
         Bugtags.start("2a63961cc73893b2b2709103505438d0", this, Bugtags.BTGInvocationEventNone,options);
         mIm_sdk = new IM_SDK();
-        share = this.getSharedPreferences("userInfo",MODE_PRIVATE);
-        userId = share.getString("userId","001");
-        userName = share.getString("userName","测试1");
-        liveId = share.getString("liveId","100120190330EO9Fr0V6");
-        mIm_sdk.InitSDK(1, userId, userName, liveId, "", Constatans.serverImIP, "", 8084);
         myApplication = this;
         applicationContext = getApplicationContext();
     }
@@ -54,6 +43,9 @@ public class MyApplication extends Application {
      * @return
      */
     public IM_SDK getmIm_sdk(){
+        if (mIm_sdk == null){
+            mIm_sdk = new IM_SDK();
+        }
         return mIm_sdk;
     }
     /**

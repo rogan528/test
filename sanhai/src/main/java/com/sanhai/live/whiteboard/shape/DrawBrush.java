@@ -50,7 +50,7 @@ public class DrawBrush
     }
 
 
-    public final void explainOrder(OrderBean orderBean) {
+    public void explainOrder(OrderBean orderBean) {
         super.explainOrder(orderBean);
         if (orderBean != null && orderBean.getPenColor() != null){
             this.paint.setColor(Color.parseColor(orderBean.getPenColor()));

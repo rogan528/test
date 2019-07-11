@@ -25,6 +25,9 @@ public class OrderBean {
     private float w;
     @SerializedName("h")
     private float h;
+
+    @SerializedName("liveTime")
+    private long liveTime;
     /**
      * v : 6
      */
@@ -44,6 +47,7 @@ public class OrderBean {
      * e : 223434349
      * th : 30
      * pc : ffffff
+     * dw
      * d : [{"x":364,"y":110},{"x":364,"y":110},{"x":364,"y":110},{"x":364,"y":110},{"x":364,"y":110},{"x":364,"y":110},{"x":361,"y":110}]
      */
 
@@ -51,6 +55,17 @@ public class OrderBean {
     private long endTime;
     @SerializedName("th")
     private int strokeWidth;
+
+    public float getDw() {
+        return dw;
+    }
+
+    public void setDw(float dw) {
+        this.dw = dw;
+    }
+
+    @SerializedName("dw")
+    private float dw;
     @SerializedName("pc")
     private String penColor;
     @SerializedName("d")
@@ -301,6 +316,14 @@ public class OrderBean {
 
     public void setY2(float y2) {
         this.y2 = y2;
+    }
+
+    public long getLiveTime() {
+        return liveTime;
+    }
+
+    public void setLiveTime(long litveTime) {
+        this.liveTime = litveTime;
     }
 
     public static class DataBean {

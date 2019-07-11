@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gradient_bg_top">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        style="@style/menu_image_style"
+        android:src="@drawable/go_back_icon"
+        android:visibility="visible"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/video_visibility_iv"
+            style="@style/menu_image_style"
+            android:src="@drawable/camera_selected"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/exchange"
+            style="@style/menu_image_style"
+            android:src="@drawable/exchange_view" />
+
+        <ImageView
+            android:id="@+id/iv_refresh"
+            style="@style/menu_image_style"
+            android:src="@drawable/refresh_icon" />
+    </LinearLayout>
+</RelativeLayout>

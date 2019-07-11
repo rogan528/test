@@ -189,6 +189,31 @@ public class InputBarView extends LinearLayout implements View.OnClickListener, 
         if (flowerNumTv != null)
             flowerNumTv.setText(flowerNum + "");
     }
+    /**
+     * 设置禁言或者解除
+     */
+    public void setGetDisableSend(int sendType, int resCode ,int forbidType, String userId, String userName, String userLoginId,String userLoginName,String time) {
+       // Log.e("------", "sendType:" + sendType + " resCode:" + resCode + " forbidType:" + forbidType + "userId:" + userId + " userName:" + userName + " time:" + time);
+        //sendType:1 resCode:0 forbidType:4userId: userName: time:
+        if (resCode == 0) {//正常
+            //解除
+            if (sendType == 1) {
+                if (forbidType == 4 || (forbidType ==3 && userLoginId.equals(userId) && userLoginName.equals(userName))) {
+                    inputEdt.setEnabled(true);
+                    inputEdt.setText("");
+                    canInput = true;
+                }
+            } else { //禁言
+                if (forbidType == 4 || (forbidType ==3 && userLoginId.equals(userId) && userLoginName.equals(userName))) {
+                    inputEdt.setEnabled(false);
+                    inputEdt.setText("你已被老师禁言！");
+                    canInput = false;
+                }
+            }
+        }else {//发送太快(1) 发送失败(2)
+
+        }
+    }
 
     @Override
     public void OnExpressionSelected(ExpressionEntity entity) {

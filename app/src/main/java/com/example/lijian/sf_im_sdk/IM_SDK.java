@@ -45,7 +45,7 @@ public class IM_SDK {
     //接收消息
     public void onGetMsgData(int resCode,int fromUserRole,String userID,String	fromUsernam,String fromUserHead,String  fromUerGroupID,String  fromGroup,String   msgTime,String   msgcontent)
     {
-        System.out.println("消息内容： " + msgcontent + "名字： " + userID + "时间 " + msgTime );
+        System.out.println("消息内容:" + msgcontent +"  用户ID:"+userID+ "  用户名:" + fromUsernam+"  时间:" + msgTime );
         MsgContent item = new MsgContent(fromUsernam,msgTime,msgcontent);
         if (m_callback != null) {
             m_callback.AddItem(item);
@@ -55,14 +55,17 @@ public class IM_SDK {
     //发消息回调
     public void onSendMsgData(int resCode,String userID)
     {
-        System.out.println("消息内容： " + resCode + "名字： " + userID);
+        System.out.println("消息内容:" + resCode + "  名字:" + userID);
         return;
     }
 
     //接收禁言消息
     public void onGetDisableSend(int sendType, int resCode ,int forbidType, String userId, String username, String time){
 
-        System.out.println("禁言66： " + username + "时间 " + time +  "禁言类型:" +  sendType );
+        System.out.println("禁言66： " + username + "  时间 " + time +  "  禁言类型:" +  sendType );
+        if (m_callback != null) {
+            m_callback.GetDisableSend(sendType, resCode, forbidType, userId, username, time);
+        }
     }
 
     OnGetInterface m_callback;

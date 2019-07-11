@@ -47,6 +47,9 @@ public class LiveBoard extends CommonJson {
         private String page;
         @SerializedName("liveId")
         private String liveId;
+
+        @SerializedName("liveTime")
+        private long liveTime;
         @SerializedName("seqId")
         private String seqId;
         @SerializedName("content")
@@ -114,6 +117,14 @@ public class LiveBoard extends CommonJson {
 
         public void setContent(String content) {
             this.content = content;
+        }
+
+        public long getLiveTime() {
+            return liveTime;
+        }
+
+        public void setLiveTime(long liveTime) {
+            this.liveTime = liveTime;
         }
     }
 }
