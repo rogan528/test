@@ -1,23 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.isuperred.ijkplayerdemo">
+    package="com.android.agingtest">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-        </activity>
-        <activity android:name=".FirstActivity">
+        android:icon="@drawable/arrow"
+        android:label="@string/app_name">
+        <activity
+            android:name=".AgingTestMainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".test.VibrateActivity" />
+        <activity
+            android:name=".ReportActivity" />
+        <activity
+            android:name=".test.ReceiverActivity" />
+        <activity
+            android:name=".test.MotorZoomActivity" />
+        <activity
+            android:name=".test.FrontTakingPictureActivity" />
+        <activity
+            android:name=".test.FlashLightActivity" />
+        <activity
+            android:name=".test.BackTakingPictureActivity" />
+        <activity
+            android:name=".test.PlayVideoActivity" />
+        <activity
+            android:name=".test.LoudSpeakerActivity" />
+        <activity
+            android:name=".TimeSettingsActivity" />
+        <activity
+            android:name=".test.TPTestActivity"></activity>
     </application>
 
 </manifest>

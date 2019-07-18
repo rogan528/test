@@ -1,4 +1,11 @@
-## 博客地址
-[Ijkplayer demo 基本使用](https://www.jianshu.com/p/5d1d46aa721d)
-## 效果图
-<img src="https://github.com/iSuperRed/IjkplayerDemo/blob/master/screenshot/ijkplayer.jpg" width="375" alt="效果图"/>
+# Agingtest
+老化测试<br>
+包含有以下几个测试：振动测试、听筒测试、前摄像头拍照、后摄像头拍照、播放视频、摄像头马达测试、闪光灯、扬声器、TP测试<br>
+# 主要界面
+首页：列出所有的测试项，每个测试项旁边有一个复选框可供选择<br>
+测试设置：设置每一个测试项持续的时间，单位是分钟<br>
+测试结果：显示测试结果<br>
+
+注意以下几点：<br>
+1.所有测试项的后退键都要屏蔽<br>
+2.测试期间屏幕要常量<br>
